@@ -935,8 +935,8 @@ document.addEventListener("DOMContentLoaded", function () {
   };
 
     // ── Supabase Live Authentication Integration ───────────────────────────
-  var SUPABASE_URL = window.RI_SUPABASE_URL || store.getItem("ri_supabase_url") || "";
-  var SUPABASE_ANON_KEY = window.RI_SUPABASE_ANON_KEY || store.getItem("ri_supabase_anon_key") || "";
+  var SUPABASE_URL = window.RI_SUPABASE_URL || store.getItem("ri_supabase_url") || "https://spktuogyoxgofbnqbeqo.supabase.co";
+  var SUPABASE_ANON_KEY = window.RI_SUPABASE_ANON_KEY || store.getItem("ri_supabase_anon_key") || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNwa3R1b2d5b3hnb2ZibnFiZXFvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA1MjQ3OTIsImV4cCI6MjEwNjEwMDc5Mn0.-mXXxdtqfYyZeBYMxtV1HHCZFW384wk_5duOjRiydAc";
   var supabaseClient = null;
 
   if (typeof window !== "undefined" && window.supabase && SUPABASE_URL && SUPABASE_ANON_KEY) {
