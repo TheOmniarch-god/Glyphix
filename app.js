@@ -934,7 +934,55 @@ document.addEventListener("DOMContentLoaded", function () {
     pendingChapter: "Chapter 1"
   };
 
-  function getStoredToken() {
+    // ── Supabase Live Authentication Integration ───────────────────────────
+  var SUPABASE_URL = window.RI_SUPABASE_URL || store.getItem("ri_supabase_url") || "";
+  var SUPABASE_ANON_KEY = window.RI_SUPABASE_ANON_KEY || store.getItem("ri_supabase_anon_key") || "";
+  var supabaseClient = null;
+
+  if (typeof window !== "undefined" && window.supabase && SUPABASE_URL && SUPABASE_ANON_KEY) {
+    try {
+      supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    } catch (e) {
+      console.warn("Supabase init error:", e);
+    }
+  }
+
+  function syncSupabaseUser(u, token) {
+    if (!u) return;
+    var meta = u.user_metadata || {};
+    var realName = meta.full_name || meta.name || (u.email ? u.email.split("@")[0] : "Reader");
+    var avatarUrl = meta.avatar_url || meta.picture || "";
+    var userObj = {
+      id: u.id,
+      name: realName,
+      email: u.email,
+      avatar: avatarUrl,
+      provider: "google",
+      userLevel: "Verified"
+    };
+    saveSession(userObj, token);
+    showToast("✓ Signed in as " + realName);
+  }
+
+  if (supabaseClient) {
+    try {
+      supabaseClient.auth.getSession().then(function (res) {
+        if (res && res.data && res.data.session && res.data.session.user) {
+          syncSupabaseUser(res.data.session.user, res.data.session.access_token);
+        }
+      });
+
+      supabaseClient.auth.onAuthStateChange(function (event, session) {
+        if ((event === "SIGNED_IN" || event === "INITIAL_SESSION") && session && session.user) {
+          syncSupabaseUser(session.user, session.access_token);
+        } else if (event === "SIGNED_OUT") {
+          saveSession(null, null);
+        }
+      });
+    } catch (e) {}
+  }
+
+function getStoredToken() {
     try { return store.getItem(TOKEN_KEY); } catch (e) { return null; }
   }
 
@@ -959,6 +1007,9 @@ document.addEventListener("DOMContentLoaded", function () {
       } else {
         store.removeItem(USER_KEY);
         store.removeItem(TOKEN_KEY);
+        if (supabaseClient) {
+          try { supabaseClient.auth.signOut(); } catch (e) {}
+        }
       }
     } catch (e) {}
     updateHeaderUI();
@@ -990,7 +1041,13 @@ document.addEventListener("DOMContentLoaded", function () {
         authIcon.style.display = "inline-block";
         authIcon.innerHTML = '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line>';
       }
-      if (popAvatar) popAvatar.textContent = (user.name ? user.name.charAt(0) : "R").toUpperCase();
+      if (popAvatar) {
+        if (user.avatar) {
+          popAvatar.innerHTML = '<img src="' + user.avatar + '" alt="" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
+        } else {
+          popAvatar.textContent = (user.name ? user.name.charAt(0) : "R").toUpperCase();
+        }
+      }
       if (popName) popName.textContent = user.name || "Reader";
       if (popEmail) popEmail.textContent = user.email || "";
       if (popBadge) popBadge.textContent = user.userLevel || "Verified";
@@ -1174,26 +1231,68 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // Google 1-Click Sign In
+  function promptSupabaseSetup() {
+    var noticeBox = document.getElementById("supabaseNoticeBox");
+    if (!noticeBox) {
+      noticeBox = document.createElement("div");
+      noticeBox.id = "supabaseNoticeBox";
+      noticeBox.style.cssText = "margin-top:14px; padding:12px; border-radius:8px; background:rgba(212,163,71,0.08); border:1px solid rgba(212,163,71,0.3); font-size:12px; color:var(--head, #f4ede2);";
+      noticeBox.innerHTML =
+        '<div style="font-weight:700; color:var(--gold, #d4a347); margin-bottom:6px;">⚡ Connect Supabase for Google OAuth</div>' +
+        '<p style="margin:0 0 10px; color:var(--muted, #9a958d); line-height:1.4;">Live Google Sign-In requires your Supabase Project URL and Public Anon Key.</p>' +
+        '<input type="url" id="sbUrlInput" placeholder="https://xyzcompany.supabase.co" style="width:100%; box-sizing:border-box; padding:7px 10px; margin-bottom:8px; border-radius:6px; border:1px solid var(--line, #333); background:var(--bg, #0b0c10); color:#fff; font-size:12px;">' +
+        '<input type="text" id="sbKeyInput" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6..." style="width:100%; box-sizing:border-box; padding:7px 10px; margin-bottom:10px; border-radius:6px; border:1px solid var(--line, #333); background:var(--bg, #0b0c10); color:#fff; font-size:12px;">' +
+        '<button type="button" id="btnSaveSupabase" style="width:100%; padding:8px; border-radius:6px; background:#d4a347; color:#0b0c10; font-weight:700; border:none; cursor:pointer;">Save &amp; Connect Google</button>';
+
+      var viewGateway = document.getElementById("authViewGateway");
+      if (viewGateway) viewGateway.appendChild(noticeBox);
+
+      var btnSave = document.getElementById("btnSaveSupabase");
+      if (btnSave) {
+        btnSave.addEventListener("click", function() {
+          var u = (document.getElementById("sbUrlInput").value || "").trim();
+          var k = (document.getElementById("sbKeyInput").value || "").trim();
+          if (!u || !k) {
+            alert("Please provide both Supabase URL and Anon Key.");
+            return;
+          }
+          store.setItem("ri_supabase_url", u);
+          store.setItem("ri_supabase_anon_key", k);
+          window.RI_SUPABASE_URL = u;
+          window.RI_SUPABASE_ANON_KEY = k;
+          if (window.supabase) {
+            supabaseClient = window.supabase.createClient(u, k);
+            showToast("✓ Supabase connected! Initiating Google Sign-In...");
+            setTimeout(function() {
+              supabaseClient.auth.signInWithOAuth({
+                provider: "google",
+                options: { redirectTo: window.location.origin + window.location.pathname }
+              });
+            }, 600);
+          } else {
+            showToast("Supabase credentials saved. Reloading...");
+            setTimeout(function() { window.location.reload(); }, 600);
+          }
+        });
+      }
+    }
+    noticeBox.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+
+  // Google OAuth Sign In
   var googleLoginBtn = document.getElementById("googleLoginBtn");
   if (googleLoginBtn) {
     googleLoginBtn.addEventListener("click", function(e) {
       e.preventDefault();
-      var gUser = {
-        id: "usr_g_" + Math.random().toString(36).substring(2, 8),
-        name: "Reader",
-        email: "reader@gmail.com",
-        emailVerified: true,
-        userLevel: "Verified",
-        avatarBg: "#b8860b",
-        provider: "google"
-      };
-      saveSession(gUser, "tok_g_" + gUser.id);
-      closeAuthModal();
-      showToast("✓ Signed in with Google.");
-      if (labState.pendingReviewTriggered) {
-        labState.pendingReviewTriggered = false;
-        openReviewModal(labState.pendingChapter);
+      if (supabaseClient) {
+        supabaseClient.auth.signInWithOAuth({
+          provider: "google",
+          options: {
+            redirectTo: window.location.origin + window.location.pathname
+          }
+        });
+      } else {
+        promptSupabaseSetup();
       }
     });
   }
