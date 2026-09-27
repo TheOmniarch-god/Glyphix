@@ -489,7 +489,12 @@ class LabRequestHandler(http.server.SimpleHTTPRequestHandler):
                         break
             if not existing_rev and user_email:
                 for r in reviews:
-                    if r.get("userEmail") == user_email:
+                    if r.get("userEmail") and r.get("userEmail").lower() == user_email.lower():
+                        existing_rev = r
+                        break
+            if not existing_rev and user_name:
+                for r in reviews:
+                    if r.get("userName") and r.get("userName").lower() == user_name.lower():
                         existing_rev = r
                         break
 

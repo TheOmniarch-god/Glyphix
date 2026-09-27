@@ -607,6 +607,29 @@ document.addEventListener("DOMContentLoaded", function () {
         if (r) return JSON.parse(r);
       } catch (e) {}
       var initial = [
+        {
+          id: "rev_3a78bfb9",
+          userId: "usr_guest_03d3e6",
+          user: "The Omniarch",
+          userName: "The Omniarch",
+          userAvatar: "",
+          userEmail: "theomniarch6@gmail.com",
+          userProvider: "google",
+          verified: true,
+          overall: 5,
+          rating: 5.0,
+          categories: { writing: 5.0, story: 5.0, characters: 5.0, stability: 5.0, world: 5.0 },
+          title: "Unrivaled philosophical depth",
+          text: "The schemes and perseverance in this translation are transcendent.",
+          body: "The schemes and perseverance in this translation are transcendent.",
+          chapter: "Novel Review",
+          spoilers: false,
+          spoiler: false,
+          helpful: 0,
+          likes: 0,
+          date: "Just now",
+          createdAt: "2026-09-27T20:07:45Z"
+        },
         { id: "usr_01", name: "Heaven Refining", email: "venerable@gmail.com", emailVerified: true, avatarBg: "#b8860b", provider: "google" },
         { id: "usr_02", name: "Bai Ning Bing", email: "icemuscle@qingmao.net", emailVerified: true, avatarBg: "#4a7a96", provider: "email" },
         { id: "usr_03", name: "Gu Yue Mo Chen", email: "mochen@guyue.clan", emailVerified: true, avatarBg: "#734d26", provider: "email" }
@@ -634,8 +657,7 @@ document.addEventListener("DOMContentLoaded", function () {
           verified: true,
           overall: 5,
           rating: 5.0,
-          userLevel: "LV 4",
-          categories: { writing: 5.0, story: 5.0, characters: 5.0, stability: 5.0, world: 5.0 },
+                    categories: { writing: 5.0, story: 5.0, characters: 5.0, stability: 5.0, world: 5.0 },
           title: "A masterwork of ruthless philosophy and perseverance",
           text: "Fang Yuan is one of the most logically consistent and compelling protagonists in fiction. The world building around Gu worms, primeval essence, and clan politics is layered and unyielding. The Omniarch translation is remarkably crisp and elevates the prose.",
           body: "Fang Yuan is one of the most logically consistent and compelling protagonists in fiction. The world building around Gu worms, primeval essence, and clan politics is layered and unyielding. The Omniarch translation is remarkably crisp and elevates the prose.",
@@ -704,8 +726,7 @@ document.addEventListener("DOMContentLoaded", function () {
           verified: true,
           overall: 5,
           rating: 5.0,
-          userLevel: "LV 4",
-          categories: { writing: 5.0, story: 5.0, characters: 5.0, stability: 5.0, world: 5.0 },
+                    categories: { writing: 5.0, story: 5.0, characters: 5.0, stability: 5.0, world: 5.0 },
           title: "Unrivaled philosophical depth in modern web fiction",
           text: "The way Fang Yuan navigates Gu Yue Village with 500 years of demonic wisdom makes every interaction thrilling.",
           body: "The way Fang Yuan navigates Gu Yue Village with 500 years of demonic wisdom makes every interaction thrilling.",
@@ -997,8 +1018,9 @@ document.addEventListener("DOMContentLoaded", function () {
   function syncSupabaseUser(u, token) {
     if (!u) return;
     var meta = u.user_metadata || {};
-    var realName = meta.full_name || meta.name || (u.email ? u.email.split("@")[0] : "Reader");
-    var avatarUrl = meta.avatar_url || meta.picture || "";
+    var idData = (u.identities && u.identities[0] && u.identities[0].identity_data) || {};
+    var realName = meta.full_name || meta.name || idData.full_name || idData.name || (u.email ? u.email.split("@")[0] : "Reader");
+    var avatarUrl = meta.avatar_url || meta.picture || idData.avatar_url || idData.picture || "";
     var userObj = {
       id: u.id,
       name: realName,
@@ -1008,6 +1030,45 @@ document.addEventListener("DOMContentLoaded", function () {
       userLevel: "Verified"
     };
     saveSession(userObj, token);
+    syncUserReviewWithAccount(userObj);
+  }
+
+  function syncUserReviewWithAccount(user) {
+    if (!user) return;
+    var avatarUrl = user.avatar || "";
+    var realName = user.name || "Reader";
+    var userEmail = user.email || "";
+
+    try {
+      var revs = localDb.getReviews();
+      var myRev = findMyReview(revs, user);
+      if (myRev) {
+        var changed = false;
+        if (avatarUrl && myRev.userAvatar !== avatarUrl) {
+          myRev.userAvatar = avatarUrl;
+          changed = true;
+        }
+        if (realName && myRev.userName !== realName) {
+          myRev.userName = realName;
+          myRev.user = realName;
+          changed = true;
+        }
+        if (userEmail && myRev.userEmail !== userEmail) {
+          myRev.userEmail = userEmail;
+          changed = true;
+        }
+        if (changed) {
+          localDb.saveReviews(revs);
+          store.setItem("ri_my_review_id", myRev.id);
+          callApi("/api/reviews", "POST", {
+            reviewId: myRev.id,
+            userAvatar: avatarUrl,
+            userName: realName,
+            userEmail: userEmail
+          }).catch(function() {});
+        }
+      }
+    } catch(e) {}
   }
 
   if (supabaseClient) {
@@ -1059,6 +1120,9 @@ function getStoredToken() {
       }
     } catch (e) {}
     updateHeaderUI();
+    if (typeof updateDrawerUI === "function") updateDrawerUI();
+    if (user && typeof syncUserReviewWithAccount === "function") syncUserReviewWithAccount(user);
+    if (typeof loadReviews === "function") loadReviews();
   }
 
   function updateHeaderUI() {
@@ -1719,11 +1783,26 @@ function getStoredToken() {
   // ── Webnovel Review Modal ─────────────────────────────────────────────
     // Helper to find the current user's review
   function findMyReview(revList, user) {
-    if (!user || !revList) return null;
+    if (!revList || revList.length === 0) return null;
+    var myRevId = store.getItem("ri_my_review_id");
+    if (myRevId) {
+      var byId = revList.find(function(r) { return r.id === myRevId; });
+      if (byId) return byId;
+    }
+    if (!user) return null;
+    var uEmail = (user.email || "").toLowerCase();
+    var uName = (user.name || "").toLowerCase();
+
     return revList.find(function(r) {
-      return (r.userEmail && user.email && r.userEmail === user.email) ||
-             (r.userName && user.name && r.userName === user.name) ||
-             (r.userId && user.id && r.userId === user.id);
+      var rEmail = (r.userEmail || "").toLowerCase();
+      var rName = (r.userName || r.user || "").toLowerCase();
+      var rId = r.userId || "";
+
+      if (uEmail && rEmail && rEmail === uEmail) return true;
+      if (uName && rName && rName === uName) return true;
+      if (user.id && rId && rId === user.id) return true;
+      if (uName.indexOf("omniarch") !== -1 && (rName.indexOf("omniarch") !== -1 || r.id === "rev_3a78bfb9")) return true;
+      return false;
     });
   }
 
@@ -1926,10 +2005,11 @@ function getStoredToken() {
     card.className = "wn-card" + (isMyReview ? " wn-my-card" : "");
 
     var uName = rev.userName || rev.user || "Reader";
-    var avatarSrc = rev.userAvatar || "";
+    var currentUser = getStoredUser();
+    var avatarSrc = (isMyReview && currentUser && currentUser.avatar) ? currentUser.avatar : (rev.userAvatar || "");
     var avatarHtml = "";
     if (avatarSrc && (avatarSrc.startsWith("http") || avatarSrc.startsWith("data:") || avatarSrc.indexOf(".png") !== -1 || avatarSrc.indexOf(".jpg") !== -1 || avatarSrc.indexOf(".webp") !== -1)) {
-      avatarHtml = '<img src="' + escapeHtml(avatarSrc) + '" alt="' + escapeHtml(uName) + '" class="wn-user-avatar-img">';
+      avatarHtml = '<img src="' + escapeHtml(avatarSrc) + '" alt="' + escapeHtml(uName) + '" class="wn-user-avatar-img" referrerpolicy="no-referrer" onerror="this.onerror=null; this.src="logo-circle.png";">';
     } else {
       var initial = (avatarSrc || uName.charAt(0) || "R").substring(0, 1).toUpperCase();
       avatarHtml = '<div class="wn-user-avatar">' + initial + '</div>';
@@ -2208,7 +2288,8 @@ function getStoredToken() {
           return;
         }
 
-        var visibleLimit = 4;
+        var isReviewsPage = (window.location.pathname.indexOf("reviews") !== -1 || window.location.href.indexOf("reviews") !== -1);
+        var visibleLimit = isReviewsPage ? 1000 : 4;
         listEl.innerHTML = "";
         var subset = revList.slice(0, visibleLimit);
 
@@ -2222,7 +2303,7 @@ function getStoredToken() {
         });
 
         // If more reviews exist, show modal opener and link to dedicated reviews page
-        if (revList.length > visibleLimit) {
+        if (!isReviewsPage && revList.length > visibleLimit) {
           var moreBox = document.createElement("div");
           moreBox.style.cssText = "text-align:center; margin-top:24px; padding-bottom:12px; display:flex; justify-content:center; align-items:center; gap:12px; flex-wrap:wrap;";
           moreBox.innerHTML =
@@ -2375,6 +2456,11 @@ function getStoredToken() {
     var dpBadge = document.getElementById("dpBadge");
     var dpBookmarkBox = document.getElementById("dpBookmarkBox");
     var dpBookmarkLink = document.getElementById("dpBookmarkLink");
+    var dpReviewCard = document.getElementById("dpReviewCard");
+    var dpMyReviewStars = document.getElementById("dpMyReviewStars");
+    var dpMyReviewTitle = document.getElementById("dpMyReviewTitle");
+    var drawerReviewBtn = document.getElementById("drawerReviewBtn");
+    var btnEditMyReviewFromDrawer = document.getElementById("btnEditMyReviewFromDrawer");
 
     if (user) {
       if (dpBox) dpBox.style.display = "flex";
@@ -2384,7 +2470,7 @@ function getStoredToken() {
       if (dpAvatar) {
         var aSrc = user.avatar || "";
         if (aSrc && (aSrc.startsWith("http") || aSrc.startsWith("data:") || aSrc.indexOf(".png") !== -1 || aSrc.indexOf(".jpg") !== -1 || aSrc.indexOf(".webp") !== -1)) {
-          dpAvatar.innerHTML = '<img src="' + escapeHtml(aSrc) + '" alt="' + escapeHtml(user.name || "Reader") + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
+          dpAvatar.innerHTML = '<img src="' + escapeHtml(aSrc) + '" alt="' + escapeHtml(user.name || "Reader") + '" referrerpolicy="no-referrer" onerror="this.onerror=null; this.src="logo-circle.png";" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
         } else {
           var initial = (user.name || "R").charAt(0).toUpperCase();
           dpAvatar.textContent = initial;
@@ -2393,6 +2479,24 @@ function getStoredToken() {
       if (dpName) dpName.textContent = user.name || "Reader";
       if (dpEmail) dpEmail.textContent = user.email || "";
       if (dpBadge) dpBadge.innerHTML = "&check; Verified Reader";
+
+      // Dragonholic Drawer: Your Review status
+      var myRev = labState.userReview;
+      if (myRev && dpReviewCard) {
+        dpReviewCard.style.display = "block";
+        if (dpMyReviewStars) dpMyReviewStars.textContent = "★".repeat(Math.round(myRev.rating || myRev.overall || 5));
+        if (dpMyReviewTitle) dpMyReviewTitle.textContent = myRev.title || "Your Review";
+        if (drawerReviewBtn) drawerReviewBtn.textContent = "✏️ Edit Your Review";
+        if (btnEditMyReviewFromDrawer) {
+          btnEditMyReviewFromDrawer.onclick = function() {
+            closeReaderDrawer();
+            openReviewModal("Novel Review");
+          };
+        }
+      } else if (dpReviewCard) {
+        dpReviewCard.style.display = "none";
+        if (drawerReviewBtn) drawerReviewBtn.textContent = "Rate & Review Novel";
+      }
 
       // Bookmark / reading progress
       var lastCh = store.getItem("ri_bookmark_ch") || store.getItem("ri_last_read_ch") || "Chapter 1";
@@ -2404,8 +2508,10 @@ function getStoredToken() {
       }
     } else {
       if (dpBox) dpBox.style.display = "none";
+      if (dpReviewCard) dpReviewCard.style.display = "none";
       if (drawerSignOutBtn) drawerSignOutBtn.style.display = "none";
       if (drawerSignInBtn) drawerSignInBtn.style.display = "block";
+      if (drawerReviewBtn) drawerReviewBtn.textContent = "Rate & Review Novel";
     }
   }
 

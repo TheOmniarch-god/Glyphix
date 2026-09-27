@@ -3908,7 +3908,7 @@ a.fc.on:hover { box-shadow: 0 0 0 2px rgba(143,29,29,.35); }
 }
 
 [data-theme="obsidian"] .auth-modal-box {
-  background: #141419;
+  background: #080808;
   border-color: rgba(255, 255, 255, 0.12);
 }
 
@@ -4383,7 +4383,7 @@ a.fc.on:hover { box-shadow: 0 0 0 2px rgba(143,29,29,.35); }
 }
 
 [data-theme="obsidian"] .wn-form-drawer {
-  background: #141419;
+  background: #080808;
   box-shadow: 0 18px 48px rgba(0, 0, 0, 0.5);
 }
 
@@ -4467,7 +4467,7 @@ a.fc.on:hover { box-shadow: 0 0 0 2px rgba(143,29,29,.35); }
 }
 
 [data-theme="obsidian"] .wn-card {
-  background: #141419;
+  background: #080808;
   border-color: rgba(255, 255, 255, 0.08);
 }
 
@@ -4672,7 +4672,7 @@ a.fc.on:hover { box-shadow: 0 0 0 2px rgba(143,29,29,.35); }
 }
 
 [data-theme="obsidian"] .book-rating-panel {
-  background: #141419;
+  background: #080808;
   border-color: rgba(236, 199, 104, 0.35);
   box-shadow: 0 20px 52px rgba(0, 0, 0, 0.45), 0 0 32px rgba(236, 199, 104, 0.07);
 }
@@ -5027,7 +5027,7 @@ a.fc.on:hover { box-shadow: 0 0 0 2px rgba(143,29,29,.35); }
 }
 
 [data-theme="obsidian"] .wiki-modal-box {
-  background: #141418;
+  background: #080808;
   border-color: rgba(255, 255, 255, 0.1);
 }
 
@@ -5189,7 +5189,7 @@ a.fc.on:hover { box-shadow: 0 0 0 2px rgba(143,29,29,.35); }
 }
 
 [data-theme="obsidian"] .wn-score-banner {
-  background: #141419;
+  background: #080808;
   border-color: rgba(236, 199, 104, 0.28);
   box-shadow: 0 14px 38px rgba(0, 0, 0, 0.4);
 }
@@ -5322,7 +5322,7 @@ a.fc.on:hover { box-shadow: 0 0 0 2px rgba(143,29,29,.35); }
 }
 
 [data-theme="obsidian"] .wn-card {
-  background: #141419;
+  background: #080808;
   border-color: rgba(255, 255, 255, 0.08);
 }
 
@@ -5713,7 +5713,7 @@ a.fc.on:hover { box-shadow: 0 0 0 2px rgba(143,29,29,.35); }
   font-weight: 700;
   margin-top: 6px;
   background: linear-gradient(135deg, #d4a347 0%, #ecc768 100%);
-  color: #0e0f14;
+  color: #000000;
   border: none;
   cursor: pointer;
   transition: all 0.15s ease;
@@ -5957,7 +5957,7 @@ a.fc.on:hover { box-shadow: 0 0 0 2px rgba(143,29,29,.35); }
 }
 
 [data-theme="obsidian"] .chapter-review-strip {
-  background: #141419;
+  background: #080808;
   border-color: rgba(236, 199, 104, 0.25);
 }
 
@@ -6236,7 +6236,7 @@ a.fc.on:hover { box-shadow: 0 0 0 2px rgba(143,29,29,.35); }
 .auth-textarea:focus {
   border-color: #d4a347;
   box-shadow: 0 0 0 3px rgba(212, 163, 71, 0.18);
-  background: #0e0f14;
+  background: #000000;
 }
 
 .auth-submit-btn {
@@ -6819,7 +6819,7 @@ a.fc.on:hover { box-shadow: 0 0 0 2px rgba(143,29,29,.35); }
 }
 
 [data-theme="obsidian"] .wn-passport-card {
-  background: #14151c radial-gradient(circle at 50% 0%, rgba(212, 163, 71, 0.14), transparent 75%) !important;
+  background: #080808 radial-gradient(circle at 50% 0%, rgba(212, 163, 71, 0.14), transparent 75%) !important;
   border: 1.5px solid rgba(212, 163, 71, 0.35) !important;
   box-shadow: 0 24px 64px rgba(0, 0, 0, 0.85), 0 0 40px rgba(212, 163, 71, 0.1) !important;
   color: var(--ink, #d4cfc7) !important;
@@ -7119,7 +7119,7 @@ a.fc.on:hover { box-shadow: 0 0 0 2px rgba(143,29,29,.35); }
 }
 
 [data-theme="obsidian"] .user-menu-popover {
-  background: #14151b;
+  background: #080808;
   border-color: rgba(212, 163, 71, 0.28);
   box-shadow: 0 18px 54px rgba(0, 0, 0, 0.75);
 }
@@ -7665,7 +7665,7 @@ a.fc.on:hover { box-shadow: 0 0 0 2px rgba(143,29,29,.35); }
 
 [data-theme="obsidian"] .normal-review-box .auth-input,
 [data-theme="obsidian"] .normal-review-box .auth-textarea {
-  background: #0e0f14 !important;
+  background: #000000 !important;
   border-color: rgba(255, 255, 255, 0.14) !important;
   color: #f4ede2 !important;
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4) !important;
@@ -7734,7 +7734,7 @@ a.fc.on:hover { box-shadow: 0 0 0 2px rgba(143,29,29,.35); }
 }
 
 [data-theme="obsidian"] .drawer-panel {
-  background: #13141a;
+  background: #080808;
   border-left-color: rgba(212, 163, 71, 0.25);
   box-shadow: -16px 0 54px rgba(0, 0, 0, 0.85);
 }
@@ -8283,7 +8283,7 @@ a.fc.on:hover { box-shadow: 0 0 0 2px rgba(143,29,29,.35); }
 
 [data-theme="obsidian"] .auth-modal-box.wn-passport-card,
 [data-theme="obsidian"] .wn-passport-card {
-  background: #14151c !important;
+  background: #080808 !important;
   border: 1.5px solid rgba(212, 163, 71, 0.35) !important;
   box-shadow: 0 24px 64px rgba(0, 0, 0, 0.85), 0 0 40px rgba(212, 163, 71, 0.1) !important;
   color: #d4cfc7 !important;
@@ -8374,7 +8374,7 @@ a.fc.on:hover { box-shadow: 0 0 0 2px rgba(143,29,29,.35); }
 [data-theme="obsidian"] .wn-passport-card .auth-textarea,
 [data-theme="obsidian"] .auth-modal-box .auth-input,
 [data-theme="obsidian"] .auth-modal-box .auth-textarea {
-  background: #0d0e12 !important;
+  background: #000000 !important;
   border: 1px solid rgba(255, 255, 255, 0.14) !important;
   color: #f2ede4 !important;
   box-shadow: none !important;
@@ -8384,7 +8384,7 @@ a.fc.on:hover { box-shadow: 0 0 0 2px rgba(143,29,29,.35); }
 [data-theme="obsidian"] .wn-passport-card .auth-textarea:focus,
 [data-theme="obsidian"] .auth-modal-box .auth-input:focus,
 [data-theme="obsidian"] .auth-modal-box .auth-textarea:focus {
-  background: #0e0f14 !important;
+  background: #000000 !important;
   border-color: #ecc768 !important;
   box-shadow: 0 0 0 3px rgba(212, 163, 71, 0.22) !important;
 }
@@ -8431,7 +8431,7 @@ a.fc.on:hover { box-shadow: 0 0 0 2px rgba(143,29,29,.35); }
 
 [data-theme="obsidian"] .wn-passport-card .otp-input,
 [data-theme="obsidian"] .auth-modal-box .otp-input {
-  background: #0d0e12 !important;
+  background: #000000 !important;
   color: #ecc768 !important;
   border: 1.5px solid rgba(255, 255, 255, 0.18) !important;
 }
@@ -8625,7 +8625,7 @@ a.btn.btn-primary.btn-resumed:hover {
 }
 
 [data-theme="obsidian"] .wn-reply-input {
-  background: #0d0e12;
+  background: #000000;
   border-color: rgba(255, 255, 255, 0.16);
   color: #f2ede4;
 }
@@ -8650,4 +8650,17 @@ a.btn.btn-primary.btn-resumed:hover {
 .wn-reply-send-btn:hover {
   background: #ecc768;
   transform: translateY(-1px);
+}
+
+/* Dragonholic Drawer Review Card */
+.dp-review-card {
+  margin: 0 0 16px;
+  padding: 14px 16px;
+  background: rgba(212, 163, 71, 0.08);
+  border: 1px solid rgba(212, 163, 71, 0.25);
+  border-radius: 14px;
+}
+[data-theme="obsidian"] .dp-review-card {
+  background: #000000 !important;
+  border: 1px solid rgba(212, 163, 71, 0.3) !important;
 }
