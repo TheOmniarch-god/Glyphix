@@ -1279,6 +1279,23 @@ function getStoredToken() {
     noticeBox.scrollIntoView({ behavior: "smooth", block: "nearest" });
   }
 
+  function showGoogleSetupNotice() {
+    var noticeBox = document.getElementById("googleSetupNoticeBox");
+    if (!noticeBox) {
+      noticeBox = document.createElement("div");
+      noticeBox.id = "googleSetupNoticeBox";
+      noticeBox.style.cssText = "margin-top:14px; padding:12px; border-radius:8px; background:rgba(212,163,71,0.08); border:1px solid rgba(212,163,71,0.3); font-size:12px; color:var(--head, #f4ede2);";
+      noticeBox.innerHTML =
+        '<div style="font-weight:700; color:var(--gold, #d4a347); margin-bottom:6px;">⚡ Google Login Not Enabled in Supabase Yet</div>' +
+        '<p style="margin:0 0 8px; color:var(--muted, #9a958d); line-height:1.4;">To activate Google login, enable Google in your Supabase Dashboard under <b>Authentication &rarr; Providers &rarr; Google</b> with your Google Client ID &amp; Secret.</p>' +
+        '<p style="margin:0; color:var(--gold, #d4a347); font-weight:600;">You can sign in or create an account right now with Email &amp; Password below!</p>';
+
+      var viewGateway = document.getElementById("authViewGateway");
+      if (viewGateway) viewGateway.appendChild(noticeBox);
+    }
+    noticeBox.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+
   // Google OAuth Sign In
   var googleLoginBtn = document.getElementById("googleLoginBtn");
   if (googleLoginBtn) {
@@ -1290,6 +1307,14 @@ function getStoredToken() {
           options: {
             redirectTo: window.location.origin + window.location.pathname
           }
+        }).then(function(res) {
+          if (res && res.error) {
+            showToast("⚠️ " + res.error.message);
+            showGoogleSetupNotice();
+          }
+        }).catch(function(err) {
+          showToast("⚠️ " + (err.message || err));
+          showGoogleSetupNotice();
         });
       } else {
         promptSupabaseSetup();
@@ -1297,7 +1322,7 @@ function getStoredToken() {
     });
   }
 
-  // Sign In Form submission
+  // Sign In Form submission (Supabase + Local fallback)
   var signInForm = document.getElementById("signInForm");
   if (signInForm) {
     signInForm.addEventListener("submit", function(e) {
@@ -1315,6 +1340,46 @@ function getStoredToken() {
         submitBtn.textContent = "Signing In...";
       }
 
+      if (supabaseClient) {
+        supabaseClient.auth.signInWithPassword({ email: email, password: password })
+          .then(function(res) {
+            if (submitBtn) {
+              submitBtn.disabled = false;
+              submitBtn.textContent = "Sign In";
+            }
+            if (res.error) {
+              showToast("⚠️ " + res.error.message);
+              return;
+            }
+            var u = res.data.user;
+            var meta = u.user_metadata || {};
+            var realName = meta.full_name || meta.name || email.split("@")[0] || "Reader";
+            var userObj = {
+              id: u.id,
+              name: realName,
+              email: u.email,
+              avatar: meta.avatar_url || meta.picture || "",
+              provider: "email",
+              userLevel: "Verified"
+            };
+            saveSession(userObj, res.data.session ? res.data.session.access_token : ("tok_" + u.id));
+            closeAuthModal();
+            showToast("✓ Welcome back, " + realName + "!");
+            if (labState.pendingReviewTriggered) {
+              labState.pendingReviewTriggered = false;
+              openReviewModal(labState.pendingChapter);
+            }
+          })
+          .catch(function(err) {
+            if (submitBtn) {
+              submitBtn.disabled = false;
+              submitBtn.textContent = "Sign In";
+            }
+            showToast("⚠️ Sign in error: " + (err.message || err));
+          });
+        return;
+      }
+
       var uName = email.split("@")[0] || "Reader";
       uName = uName.charAt(0).toUpperCase() + uName.slice(1);
 
@@ -1323,7 +1388,7 @@ function getStoredToken() {
         name: uName,
         email: email,
         emailVerified: true,
-        userLevel: "LV 2",
+        userLevel: "Verified",
         avatarBg: "#b8860b",
         provider: "email"
       };
@@ -1346,7 +1411,7 @@ function getStoredToken() {
     });
   }
 
-  // Sign Up Form submission
+  // Sign Up Form submission (Supabase + Local fallback)
   var signUpForm = document.getElementById("signUpForm");
   if (signUpForm) {
     signUpForm.addEventListener("submit", function(e) {
@@ -1366,12 +1431,57 @@ function getStoredToken() {
         submitBtn.textContent = "Creating Account...";
       }
 
+      if (supabaseClient) {
+        supabaseClient.auth.signUp({
+          email: email,
+          password: password,
+          options: {
+            data: { full_name: name, name: name }
+          }
+        })
+          .then(function(res) {
+            if (submitBtn) {
+              submitBtn.disabled = false;
+              submitBtn.textContent = "Create Account";
+            }
+            if (res.error) {
+              showToast("⚠️ " + res.error.message);
+              return;
+            }
+            var u = res.data.user;
+            var userObj = {
+              id: u ? u.id : ("usr_" + Date.now()),
+              name: name,
+              email: email,
+              avatar: "",
+              provider: "email",
+              userLevel: "Verified"
+            };
+            var tok = (res.data.session && res.data.session.access_token) ? res.data.session.access_token : ("tok_" + userObj.id);
+            saveSession(userObj, tok);
+            closeAuthModal();
+            showToast("✓ Account created for " + name + "!");
+            if (labState.pendingReviewTriggered) {
+              labState.pendingReviewTriggered = false;
+              openReviewModal(labState.pendingChapter);
+            }
+          })
+          .catch(function(err) {
+            if (submitBtn) {
+              submitBtn.disabled = false;
+              submitBtn.textContent = "Create Account";
+            }
+            showToast("⚠️ Sign up error: " + (err.message || err));
+          });
+        return;
+      }
+
       var newUser = {
         id: "usr_" + Math.random().toString(36).substring(2, 8),
         name: name,
         email: email,
         emailVerified: true,
-        userLevel: "LV 1",
+        userLevel: "Verified",
         avatarBg: "#b8860b",
         provider: "email"
       };
