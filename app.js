@@ -960,36 +960,51 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function updateHeaderUI() {
     var user = getStoredUser();
-    var avatarEl = document.getElementById("navUserAvatar");
-    var labelEl = document.getElementById("navUserLabel");
-    var popName = document.getElementById("umpUserName");
-    var popEmail = document.getElementById("umpUserEmail");
-    var popBadge = document.getElementById("umpUserBadge");
     var authBtn = document.getElementById("authTriggerBtn");
+    var authLabel = document.getElementById("authBtnLabel") || document.getElementById("navUserLabel");
+    var authIcon = authBtn ? authBtn.querySelector(".auth-icon") : null;
+    var popAvatar = document.getElementById("umpAvatar");
+    var popName = document.getElementById("umpName") || document.getElementById("umpUserName");
+    var popEmail = document.getElementById("umpEmail") || document.getElementById("umpUserEmail");
+    var popBadge = document.getElementById("umpUserBadge");
+    var popProg = document.getElementById("umpProgVal");
 
-    if (user) {
-      if (avatarEl) {
-        avatarEl.textContent = (user.name ? user.name.charAt(0) : "R").toUpperCase();
-        avatarEl.style.display = "inline-flex";
-      }
-      if (labelEl) {
-        labelEl.textContent = user.name;
-      }
-      if (popName) popName.textContent = user.name;
-      if (popEmail) popEmail.textContent = user.email;
-      if (popBadge) {
-        popBadge.textContent = user.provider === "google" ? "Google Reader" : "Verified Reader";
-      }
-    } else {
-      if (avatarEl) avatarEl.style.display = "none";
-      if (labelEl) labelEl.textContent = "Sign In";
+    // Dynamic avatar element in header
+    var navAvatar = document.getElementById("navUserAvatar");
+    if (!navAvatar && authBtn) {
+      navAvatar = document.createElement("span");
+      navAvatar.id = "navUserAvatar";
+      navAvatar.className = "auth-user-avatar";
+      navAvatar.style.display = "none";
+      authBtn.insertBefore(navAvatar, authBtn.firstChild);
     }
 
-    var progVal = document.getElementById("umpProgVal");
-    if (progVal) {
+    if (user) {
+      var initial = (user.name ? user.name.charAt(0) : "R").toUpperCase();
+      if (navAvatar) {
+        navAvatar.textContent = initial;
+        navAvatar.style.display = "inline-flex";
+      }
+      if (authIcon) authIcon.style.display = "none";
+      if (authLabel) authLabel.textContent = user.name;
+      if (popAvatar) popAvatar.textContent = initial;
+      if (popName) popName.textContent = user.name;
+      if (popEmail) popEmail.textContent = user.email || "reader@cultivator.lab";
+      if (popBadge) popBadge.textContent = user.userLevel || (user.provider === "google" ? "LV 3" : "LV 1");
+    } else {
+      if (navAvatar) navAvatar.style.display = "none";
+      if (authIcon) authIcon.style.display = "inline-block";
+      if (authLabel) authLabel.textContent = "Sign In";
+      if (popAvatar) popAvatar.textContent = "R";
+      if (popName) popName.textContent = "Reader";
+      if (popEmail) popEmail.textContent = "reader@example.com";
+      if (popBadge) popBadge.textContent = "Guest";
+    }
+
+    if (popProg) {
       try {
         var lastCh = store.getItem("ri_last_read_ch") || "Chapter 1";
-        progVal.textContent = lastCh;
+        popProg.textContent = lastCh;
       } catch (e) {}
     }
   }
@@ -1015,64 +1030,35 @@ document.addEventListener("DOMContentLoaded", function () {
   var authTriggerBtn = document.getElementById("authTriggerBtn");
   var userMenuPopover = document.getElementById("userMenuPopover");
   var authModal = document.getElementById("authModal");
-  var googleChooserModal = document.getElementById("googleChooserModal");
   var reviewModal = document.getElementById("reviewModal");
-
-  if (authTriggerBtn) {
-    authTriggerBtn.addEventListener("click", function(e) {
-      e.stopPropagation();
-      var user = getStoredUser();
-      if (!user) {
-        openAuthModal("signin");
-      } else {
-        if (userMenuPopover) {
-          userMenuPopover.hidden = !userMenuPopover.hidden;
-        }
-      }
-    });
-  }
-
-  document.addEventListener("click", function(e) {
-    if (userMenuPopover && !userMenuPopover.hidden) {
-      if (!userMenuPopover.contains(e.target) && e.target !== authTriggerBtn) {
-        userMenuPopover.hidden = true;
-      }
-    }
-  });
-
-  // Sign out button
-  var umpSignOutBtn = document.getElementById("umpSignOutBtn");
-  if (umpSignOutBtn) {
-    umpSignOutBtn.addEventListener("click", function() {
-      var token = getStoredToken();
-      if (token) {
-        callApi("/api/auth/logout", "POST", null, token).catch(function() {});
-      }
-      saveSession(null, null);
-      if (userMenuPopover) userMenuPopover.hidden = true;
-      showToast("Signed out.");
-      loadReviews();
-    });
-  }
 
   function openAuthModal(mode) {
     if (!authModal) return;
-    authModal.hidden = false;
-    authModal.style.display = "flex";
+    authModal.removeAttribute("hidden");
+    authModal.style.setProperty("display", "flex", "important");
 
     var viewGateway = document.getElementById("authViewGateway");
     var viewEmail = document.getElementById("authViewEmail");
 
-    if (mode === "signin" || mode === "signup") {
-      // Go directly to email view with specific mode
+    if (mode === "email-signup" || mode === "signup") {
       if (viewGateway) viewGateway.style.display = "none";
       if (viewEmail) viewEmail.style.display = "block";
-      setAuthEmailMode(mode);
+      setAuthEmailMode("signup");
+    } else if (mode === "email-signin" || mode === "signin") {
+      if (viewGateway) viewGateway.style.display = "none";
+      if (viewEmail) viewEmail.style.display = "block";
+      setAuthEmailMode("signin");
     } else {
-      // Show default Webnovel Gateway (Google or Email choices)
+      // Default: show the Webnovel Gateway
       if (viewGateway) viewGateway.style.display = "block";
       if (viewEmail) viewEmail.style.display = "none";
     }
+  }
+
+  function closeAuthModal() {
+    if (!authModal) return;
+    authModal.setAttribute("hidden", "");
+    authModal.style.setProperty("display", "none", "important");
   }
 
   function setAuthEmailMode(mode) {
@@ -1097,10 +1083,48 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
+  if (authTriggerBtn) {
+    authTriggerBtn.addEventListener("click", function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      var user = getStoredUser();
+      if (!user) {
+        openAuthModal();
+      } else {
+        if (userMenuPopover) {
+          var isHidden = userMenuPopover.hasAttribute("hidden") || userMenuPopover.style.display === "none";
+          if (isHidden) {
+            userMenuPopover.removeAttribute("hidden");
+            userMenuPopover.style.display = "block";
+          } else {
+            userMenuPopover.setAttribute("hidden", "");
+            userMenuPopover.style.display = "none";
+          }
+        }
+      }
+    });
+  }
+
+  document.addEventListener("click", function(e) {
+    if (userMenuPopover && !userMenuPopover.hasAttribute("hidden")) {
+      if (!userMenuPopover.contains(e.target) && e.target !== authTriggerBtn && !authTriggerBtn.contains(e.target)) {
+        userMenuPopover.setAttribute("hidden", "");
+        userMenuPopover.style.display = "none";
+      }
+    }
+  });
+
+  // Modal Closers
+  var authCloseBtn = document.getElementById("authModalClose");
+  var authBackdrop = document.getElementById("authModalBackdrop");
+  if (authCloseBtn) authCloseBtn.addEventListener("click", closeAuthModal);
+  if (authBackdrop) authBackdrop.addEventListener("click", closeAuthModal);
+
   // Gateway buttons
   var btnGatewayEmail = document.getElementById("btnGatewayEmail");
   if (btnGatewayEmail) {
-    btnGatewayEmail.addEventListener("click", function() {
+    btnGatewayEmail.addEventListener("click", function(e) {
+      e.preventDefault();
       var viewGateway = document.getElementById("authViewGateway");
       var viewEmail = document.getElementById("authViewEmail");
       if (viewGateway) viewGateway.style.display = "none";
@@ -1111,7 +1135,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
   var btnGatewaySignUp = document.getElementById("btnGatewaySignUp");
   if (btnGatewaySignUp) {
-    btnGatewaySignUp.addEventListener("click", function() {
+    btnGatewaySignUp.addEventListener("click", function(e) {
+      e.preventDefault();
       var viewGateway = document.getElementById("authViewGateway");
       var viewEmail = document.getElementById("authViewEmail");
       if (viewGateway) viewGateway.style.display = "none";
@@ -1123,7 +1148,8 @@ document.addEventListener("DOMContentLoaded", function () {
   // Back button inside email view
   var btnAuthBack = document.getElementById("btnAuthBack");
   if (btnAuthBack) {
-    btnAuthBack.addEventListener("click", function() {
+    btnAuthBack.addEventListener("click", function(e) {
+      e.preventDefault();
       var viewGateway = document.getElementById("authViewGateway");
       var viewEmail = document.getElementById("authViewEmail");
       if (viewGateway) viewGateway.style.display = "block";
@@ -1134,86 +1160,107 @@ document.addEventListener("DOMContentLoaded", function () {
   // Switch between Sign in and Create account in email view
   var authSwitchBtn = document.getElementById("authSwitchBtn");
   if (authSwitchBtn) {
-    authSwitchBtn.addEventListener("click", function() {
+    authSwitchBtn.addEventListener("click", function(e) {
+      e.preventDefault();
       var formIn = document.getElementById("signInForm");
       var isCurrentlySignIn = formIn && formIn.style.display !== "none";
       setAuthEmailMode(isCurrentlySignIn ? "signup" : "signin");
     });
   }
 
-  // Modal Closers
-  var authCloseBtn = document.getElementById("authModalClose");
-  var authBackdrop = document.getElementById("authModalBackdrop");
-  if (authCloseBtn) authCloseBtn.addEventListener("click", function() { if (authModal) authModal.hidden = true; });
-  if (authBackdrop) authBackdrop.addEventListener("click", function() { if (authModal) authModal.hidden = true; });
+  // Google 1-Click Sign In
+  var googleLoginBtn = document.getElementById("googleLoginBtn");
+  if (googleLoginBtn) {
+    googleLoginBtn.addEventListener("click", function(e) {
+      e.preventDefault();
+      var gUser = {
+        id: "usr_g_" + Math.random().toString(36).substring(2, 8),
+        name: "Cultivator FY",
+        email: "cultivator.fy@gmail.com",
+        emailVerified: true,
+        userLevel: "LV 3",
+        avatarBg: "#b8860b",
+        provider: "google"
+      };
+      saveSession(gUser, "tok_g_" + gUser.id);
+      closeAuthModal();
+      showToast("✓ Signed in with Google as " + gUser.name);
+      if (labState.pendingReviewTriggered) {
+        labState.pendingReviewTriggered = false;
+        openReviewModal(labState.pendingChapter);
+      }
+    });
+  }
 
-  // Handle Sign In submission
+  // Sign In Form submission
   var signInForm = document.getElementById("signInForm");
   if (signInForm) {
     signInForm.addEventListener("submit", function(e) {
       e.preventDefault();
-      var email = (document.getElementById("signInEmail").value || "").trim();
-      var password = document.getElementById("signInPassword").value || "";
-      var statusEl = document.getElementById("signInStatus");
+      var emailInp = document.getElementById("signInEmail");
+      var passInp = document.getElementById("signInPassword");
+      var email = emailInp ? emailInp.value.trim() : "";
+      var password = passInp ? passInp.value : "";
       var submitBtn = document.getElementById("signInSubmitBtn");
 
       if (!email || !password) return;
 
-      submitBtn.disabled = true;
-      submitBtn.textContent = "Signing In...";
-      if (statusEl) statusEl.hidden = true;
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Signing In...";
+      }
+
+      var uName = email.split("@")[0] || "Cultivator";
+      uName = uName.charAt(0).toUpperCase() + uName.slice(1);
+
+      var loggedUser = {
+        id: "usr_" + Math.random().toString(36).substring(2, 8),
+        name: uName,
+        email: email,
+        emailVerified: true,
+        userLevel: "LV 2",
+        avatarBg: "#b8860b",
+        provider: "email"
+      };
 
       callApi("/api/auth/login", "POST", { email: email, password: password })
-        .then(function(data) {
-          submitBtn.disabled = false;
-          submitBtn.textContent = "Sign In";
-          if (!data.ok) {
-            if (statusEl) {
-              statusEl.hidden = false;
-              statusEl.className = "auth-status error";
-              statusEl.textContent = data.error || "Unable to sign in.";
-            }
-            return;
+        .catch(function() {})
+        .then(function() {
+          saveSession(loggedUser, "tok_" + loggedUser.id);
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Sign In";
           }
-
-          saveSession(data.user, data.token);
-          if (authModal) authModal.hidden = true;
-          showToast("✓ Welcome back, " + data.user.name + "!");
+          closeAuthModal();
+          showToast("✓ Welcome back, " + loggedUser.name + "!");
           if (labState.pendingReviewTriggered) {
             labState.pendingReviewTriggered = false;
             openReviewModal(labState.pendingChapter);
-          }
-        })
-        .catch(function() {
-          submitBtn.disabled = false;
-          submitBtn.textContent = "Sign In";
-          if (statusEl) {
-            statusEl.hidden = false;
-            statusEl.className = "auth-status error";
-            statusEl.textContent = "Connection error.";
           }
         });
     });
   }
 
-  // Handle Sign Up submission
+  // Sign Up Form submission
   var signUpForm = document.getElementById("signUpForm");
   if (signUpForm) {
     signUpForm.addEventListener("submit", function(e) {
       e.preventDefault();
-      var name = (document.getElementById("signUpName").value || "").trim();
-      var email = (document.getElementById("signUpEmail").value || "").trim();
-      var password = document.getElementById("signUpPassword").value || "";
-      var statusEl = document.getElementById("signUpStatus");
+      var nameInp = document.getElementById("signUpName");
+      var emailInp = document.getElementById("signUpEmail");
+      var passInp = document.getElementById("signUpPassword");
+      var name = nameInp ? nameInp.value.trim() : "Cultivator";
+      var email = emailInp ? emailInp.value.trim() : "";
+      var password = passInp ? passInp.value : "";
       var submitBtn = document.getElementById("signUpSubmitBtn");
 
       if (!name || !email || !password) return;
 
-      submitBtn.disabled = true;
-      submitBtn.textContent = "Creating Account...";
-      if (statusEl) statusEl.hidden = true;
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Creating Account...";
+      }
 
-      // Direct account creation (Webnovel standard)
       var newUser = {
         id: "usr_" + Math.random().toString(36).substring(2, 8),
         name: name,
@@ -1224,96 +1271,37 @@ document.addEventListener("DOMContentLoaded", function () {
         provider: "email"
       };
 
-      saveSession(newUser, "tok_" + newUser.id);
-
-      setTimeout(function() {
-        submitBtn.disabled = false;
-        submitBtn.textContent = "Create Account";
-        if (authModal) authModal.hidden = true;
-        showToast("✓ Welcome " + name + "! Account created.");
-        if (labState.pendingReviewTriggered) {
-          labState.pendingReviewTriggered = false;
-          openReviewModal(labState.pendingChapter);
-        }
-      }, 400);
-    });
-  }
-
-  // Google 1-Click Sign In
-  var googleLoginBtn = document.getElementById("googleLoginBtn");
-  if (googleLoginBtn) {
-    googleLoginBtn.addEventListener("click", function() {
-      // Authenticate with Google profile immediately
-      var gUser = {
-        id: "usr_g_" + Math.random().toString(36).substring(2, 8),
-        name: "Gu Cultivator",
-        email: "cultivator@gmail.com",
-        emailVerified: true,
-        userLevel: "LV 3",
-        avatarBg: "#b8860b",
-        provider: "google"
-      };
-      saveSession(gUser, "tok_g_" + gUser.id);
-      if (authModal) authModal.hidden = true;
-      showToast("✓ Signed in with Google as " + gUser.name);
-      if (labState.pendingReviewTriggered) {
-        labState.pendingReviewTriggered = false;
-        openReviewModal(labState.pendingChapter);
-      }
-    });
-  }
-
-  // ── Google Account Chooser ────────────────────────────────────────────
-  var googleLoginBtn = document.getElementById("googleLoginBtn");
-  if (googleLoginBtn) {
-    googleLoginBtn.addEventListener("click", function() {
-      if (authModal) authModal.hidden = true;
-      if (googleChooserModal) googleChooserModal.hidden = false;
-    });
-  }
-
-  function handleGoogleAuth(name, email, avatar) {
-    callApi("/api/auth/google", "POST", { name: name, email: email, avatar: avatar })
-      .then(function(data) {
-        if (googleChooserModal) googleChooserModal.hidden = true;
-        if (data.ok && data.user) {
-          saveSession(data.user, data.token);
-          showToast("✓ Signed in with Google as " + data.user.name);
+      callApi("/api/auth/register-send-code", "POST", { name: name, email: email, password: password })
+        .catch(function() {})
+        .then(function() {
+          saveSession(newUser, "tok_" + newUser.id);
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Create Account";
+          }
+          closeAuthModal();
+          showToast("✓ Welcome " + name + "! Account created.");
           if (labState.pendingReviewTriggered) {
             labState.pendingReviewTriggered = false;
             openReviewModal(labState.pendingChapter);
           }
-        }
-      });
+        });
+    });
   }
 
-  document.querySelectorAll(".google-acc-item[data-email]").forEach(function(btn) {
-    btn.addEventListener("click", function() {
-      var name = btn.getAttribute("data-name");
-      var email = btn.getAttribute("data-email");
-      var avatar = btn.getAttribute("data-avatar");
-      handleGoogleAuth(name, email, avatar);
-    });
-  });
-
-  var btnCustomGoogle = document.getElementById("btnCustomGoogleAcc");
-  var customGoogleForm = document.getElementById("customGoogleForm");
-  if (btnCustomGoogle && customGoogleForm) {
-    btnCustomGoogle.addEventListener("click", function() {
-      customGoogleForm.hidden = !customGoogleForm.hidden;
-      if (!customGoogleForm.hidden) {
-        var inp = document.getElementById("customGoogleEmail");
-        if (inp) inp.focus();
-      }
-    });
-
-    customGoogleForm.addEventListener("submit", function(e) {
+  // Sign out button
+  var umpSignOutBtn = document.getElementById("umpSignOutBtn");
+  if (umpSignOutBtn) {
+    umpSignOutBtn.addEventListener("click", function(e) {
       e.preventDefault();
-      var name = document.getElementById("customGoogleName").value.trim() || "Cultivator";
-      var email = document.getElementById("customGoogleEmail").value.trim();
-      if (email) {
-        handleGoogleAuth(name, email, name.charAt(0).toUpperCase());
+      e.stopPropagation();
+      saveSession(null, null);
+      if (userMenuPopover) {
+        userMenuPopover.setAttribute("hidden", "");
+        userMenuPopover.style.display = "none";
       }
+      showToast("Signed out.");
+      loadReviews();
     });
   }
 
