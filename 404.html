@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Page not found — Reverend Insanity | The Omniarch Translation</title>
+<link rel="stylesheet" href="style.css?v=20260927-d9d7ff77">
+<link rel="icon" href="favicon.ico" sizes="32x32">
+<link rel="icon" href="icon-48.png" type="image/png" sizes="48x48">
+<link rel="icon" href="icon-192.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="apple-touch-icon.png" sizes="180x180">
+<link rel="manifest" href="site.webmanifest">
+<script>
+  (function() {
+    try {
+    var saved = localStorage.getItem('theme');
+    if (saved === 'obsidian' || (!saved && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+    document.documentElement.setAttribute('data-theme', 'obsidian');
+    }
+    } catch (e) { /* storage unavailable */ }
+    if ("IntersectionObserver" in window && !(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches)) {
+      document.documentElement.classList.add("js-anim");
+    }
+  })();
+</script>
+</head>
+<body>
+<!-- Lab Staging Banner -->
+<div class="lab-banner" id="labBanner">
+  <div class="lab-banner-inner">
+    <div class="lab-banner-left">
+      <span class="lab-badge-icon">🧪</span>
+      <strong class="lab-banner-title">REVEREND INSANITY &mdash; TEST LAB</strong>
+      <span class="lab-banner-tag">Webnovel Process &amp; Real Storage</span>
+    </div>
+    <div class="lab-banner-right">
+      <span class="lab-status-indicator" id="labDbStatus"><span class="status-dot-pulse"></span> Persistent DB Online</span>
+      <button type="button" class="btn-lab-reset" id="labResetBtn" title="Reset test database to defaults">Reset Test DB</button>
+    </div>
+  </div>
+</div>
+
+<main class="error-page" style="min-height:100vh;display:grid;place-items:center;padding:40px 24px;background:#f7f6f2;">
+  <div class="error-box" style="text-align:center;max-width:480px;background:#fff;border:1px solid #e7e5de;border-radius:14px;padding:52px 40px 44px;box-shadow:0 1px 0 rgba(23,23,26,.03);">
+    <img src="logo-circle.png" width="64" height="64" alt="" style="margin:0 auto 20px;border-radius:50%;">
+    <p style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#8f1d1d;">Error 404</p>
+    <h1 class="error-title" style="font-size:22px;font-weight:800;color:#17171a;margin:10px 0 12px;letter-spacing:-.01em;">This path holds nothing yet.</h1>
+    <p style="font-size:14px;color:#6f6e69;line-height:1.7;">The chapter you sought has not been translated — or the trail has gone cold. The ledger is the truth of what exists.</p>
+    <p style="margin-top:26px;">
+      <a href="./" style="display:inline-block;background:#8f1d1d;color:#fff;font-size:13px;font-weight:600;padding:11px 24px;border-radius:8px;text-decoration:none;">Return to the Ledger</a>
+    </p>
+  </div>
+</main>
+<!-- Webnovel Auth & Email Verification Modal -->
+<div class="auth-modal" id="authModal" hidden role="dialog" aria-modal="true" aria-labelledby="authModalTitle">
+  <div class="auth-modal-backdrop" id="authModalBackdrop"></div>
+  <div class="auth-modal-box">
+    <button type="button" class="auth-modal-close" id="authModalClose" aria-label="Close dialog">&times;</button>
+    
+    <!-- Step 1: Login / Sign Up Screen -->
+    <div id="authScreenMain">
+      <div class="auth-header">
+        <div class="auth-badge">Gu World Reader</div>
+        <h3 class="auth-title" id="authModalTitle">Sign in to Reverend Insanity</h3>
+        <p class="auth-sub">Keep your reading progress, bookmarks, and reader ratings synced across devices.</p>
+      </div>
+
+      <!-- Google OAuth Button -->
+      <button type="button" class="btn-google-login" id="googleLoginBtn">
+        <svg class="google-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+          <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.66v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.15z"/>
+          <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.34 24 12 24z"/>
+          <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
+          <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+        </svg>
+        <span>Continue with Google</span>
+      </button>
+
+      <div class="auth-divider">
+        <span>or continue with email</span>
+      </div>
+
+      <!-- Tabs: Sign In / Sign Up -->
+      <div class="auth-tabs" role="tablist">
+        <button type="button" class="auth-tab-btn active" id="tabSignInBtn" data-tab="signin" role="tab" aria-selected="true">Sign In</button>
+        <button type="button" class="auth-tab-btn" id="tabSignUpBtn" data-tab="signup" role="tab" aria-selected="false">Create Account</button>
+      </div>
+
+      <!-- Sign In Form -->
+      <form class="auth-form" id="signInForm">
+        <div class="auth-field">
+          <label for="signInEmail" class="auth-label">Email address</label>
+          <input type="email" id="signInEmail" class="auth-input" placeholder="reader@example.com" required autocomplete="email">
+        </div>
+        <div class="auth-field">
+          <div class="auth-label-row">
+            <label for="signInPassword" class="auth-label">Password</label>
+            <button type="button" class="auth-forgot-link" id="authForgotBtn">Forgot?</button>
+          </div>
+          <input type="password" id="signInPassword" class="auth-input" placeholder="Your password" required autocomplete="current-password">
+        </div>
+        <button type="submit" class="btn btn-primary auth-submit-btn" id="signInSubmitBtn">Sign In</button>
+        <p class="auth-status" id="signInStatus" hidden></p>
+      </form>
+
+      <!-- Sign Up Form (Triggers Email Verification) -->
+      <form class="auth-form" id="signUpForm" hidden>
+        <div class="auth-field">
+          <label for="signUpName" class="auth-label">Reader Name / Handle</label>
+          <input type="text" id="signUpName" class="auth-input" placeholder="e.g. SpectralSoul" required maxlength="30" autocomplete="nickname">
+        </div>
+        <div class="auth-field">
+          <label for="signUpEmail" class="auth-label">Email address</label>
+          <input type="email" id="signUpEmail" class="auth-input" placeholder="reader@example.com" required autocomplete="email">
+        </div>
+        <div class="auth-field">
+          <label for="signUpPassword" class="auth-label">Password <small class="muted">(min. 6 characters)</small></label>
+          <input type="password" id="signUpPassword" class="auth-input" placeholder="Create a password" required minlength="6" autocomplete="new-password">
+        </div>
+        <button type="submit" class="btn btn-primary auth-submit-btn" id="signUpSubmitBtn">Send Verification Code &rarr;</button>
+        <p class="auth-status" id="signUpStatus" hidden></p>
+      </form>
+    </div>
+
+    <!-- Step 2: Email Verification (OTP) Screen -->
+    <div id="authScreenVerify" hidden>
+      <div class="auth-header">
+        <div class="auth-badge">Email Verification</div>
+        <h3 class="auth-title">Verify Your Email</h3>
+        <p class="auth-sub">We sent a 6-digit verification code to <strong id="verifyEmailDisplay" class="text-gold">reader@example.com</strong></p>
+      </div>
+
+      <!-- Test Lab Mailbox Simulation Banner -->
+      <div class="test-mailbox-banner" id="testMailboxBanner">
+        <div class="tmb-icon">📬</div>
+        <div class="tmb-cnt">
+          <div class="tmb-title">Test Lab Mailbox Dispatcher:</div>
+          <div class="tmb-desc">Code sent: <span class="tmb-code-pill" id="tmbCodeDisplay">------</span> <button type="button" class="btn-autofill-otp" id="btnAutofillOtp">Click to auto-fill</button></div>
+        </div>
+      </div>
+
+      <form class="auth-form" id="verifyOtpForm">
+        <div class="otp-inputs-row" id="otpInputsRow">
+          <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-digit" data-idx="0" required autofocus>
+          <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-digit" data-idx="1" required>
+          <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-digit" data-idx="2" required>
+          <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-digit" data-idx="3" required>
+          <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-digit" data-idx="4" required>
+          <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-digit" data-idx="5" required>
+        </div>
+
+        <div class="otp-timer-row">
+          <span class="otp-timer-text" id="otpTimerText">Resend code in <span id="otpCountdown">45</span>s</span>
+          <button type="button" class="btn-resend-otp" id="btnResendOtp" hidden>Resend Code</button>
+          <button type="button" class="btn-change-email" id="btnChangeEmail">Change email</button>
+        </div>
+
+        <button type="submit" class="btn btn-primary auth-submit-btn" id="verifySubmitBtn">Verify Code &amp; Create Account</button>
+        <p class="auth-status" id="verifyStatus" hidden></p>
+      </form>
+    </div>
+
+  </div>
+</div>
+
+<!-- Webnovel Google Account Chooser Modal -->
+<div class="auth-modal" id="googleChooserModal" hidden role="dialog" aria-modal="true" aria-labelledby="googleChooserTitle">
+  <div class="auth-modal-backdrop" id="googleChooserBackdrop"></div>
+  <div class="auth-modal-box google-sheet-box">
+    <button type="button" class="auth-modal-close" id="googleChooserClose" aria-label="Close dialog">&times;</button>
+    <div class="google-sheet-header">
+      <svg class="google-icon" viewBox="0 0 24 24" width="28" height="28" aria-hidden="true">
+        <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.66v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.15z"/>
+        <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.34 24 12 24z"/>
+        <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
+        <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+      </svg>
+      <h3 class="google-sheet-title" id="googleChooserTitle">Sign in with Google</h3>
+      <p class="google-sheet-sub">to continue to <strong>Reverend Insanity Lab</strong></p>
+    </div>
+
+    <div class="google-account-list">
+      <button type="button" class="google-acc-item" data-name="Cultivator FY" data-email="cultivator.fy@gmail.com" data-avatar="F">
+        <div class="g-acc-avatar" style="background:#b8860b;">F</div>
+        <div class="g-acc-info">
+          <span class="g-acc-name">Cultivator FY</span>
+          <span class="g-acc-email">cultivator.fy@gmail.com</span>
+        </div>
+        <span class="g-acc-badge">Default</span>
+      </button>
+
+      <button type="button" class="google-acc-item" data-name="Bai Ning Bing" data-email="icemuscle.ice@gmail.com" data-avatar="B">
+        <div class="g-acc-avatar" style="background:#4a7a96;">B</div>
+        <div class="g-acc-info">
+          <span class="g-acc-name">Bai Ning Bing</span>
+          <span class="g-acc-email">icemuscle.ice@gmail.com</span>
+        </div>
+      </button>
+
+      <button type="button" class="google-acc-item" id="btnCustomGoogleAcc">
+        <div class="g-acc-avatar g-acc-plus">+</div>
+        <div class="g-acc-info">
+          <span class="g-acc-name">Use another Google account</span>
+          <span class="g-acc-email">Enter any email address</span>
+        </div>
+      </button>
+    </div>
+
+    <form id="customGoogleForm" hidden class="custom-google-form">
+      <input type="text" id="customGoogleName" class="auth-input" placeholder="Google Name" required value="Dao Master">
+      <input type="email" id="customGoogleEmail" class="auth-input" placeholder="name@gmail.com" required>
+      <button type="submit" class="btn btn-primary auth-submit-btn">Continue</button>
+    </form>
+
+    <div class="google-sheet-footer">
+      <small>To continue, Google will share your name, email address, and profile picture with Reverend Insanity Lab.</small>
+    </div>
+  </div>
+</div>
+
+<!-- Webnovel Compact Review Modal -->
+<div class="auth-modal" id="reviewModal" hidden role="dialog" aria-modal="true" aria-labelledby="reviewModalTitle">
+  <div class="auth-modal-backdrop" id="reviewModalBackdrop"></div>
+  <div class="auth-modal-box review-modal-box">
+    <button type="button" class="auth-modal-close" id="reviewModalClose" aria-label="Close dialog">&times;</button>
+    <div class="auth-header">
+      <div class="auth-badge">Webnovel Review</div>
+      <h3 class="auth-title" id="reviewModalTitle">Review Reverend Insanity</h3>
+      <p class="auth-sub" id="reviewModalUserLine">Publishing as <strong id="reviewUserNameDisplay">Reader</strong></p>
+    </div>
+
+    <form class="auth-form" id="reviewSubmitForm">
+      <!-- Overall Rating Stars -->
+      <div class="rating-picker-card">
+        <span class="rpc-label">Overall Rating:</span>
+        <div class="rpc-stars" id="rpcStars" role="radiogroup" aria-label="Overall 5 star rating">
+          <button type="button" class="star-btn" data-val="1" aria-label="1 star">&#9733;</button>
+          <button type="button" class="star-btn" data-val="2" aria-label="2 stars">&#9733;</button>
+          <button type="button" class="star-btn" data-val="3" aria-label="3 stars">&#9733;</button>
+          <button type="button" class="star-btn" data-val="4" aria-label="4 stars">&#9733;</button>
+          <button type="button" class="star-btn active" data-val="5" aria-label="5 stars">&#9733;</button>
+        </div>
+        <span class="rpc-score" id="rpcScoreDisplay">5.0 / 5.0</span>
+      </div>
+
+      <!-- 4 Webnovel Aspect Dimensions -->
+      <div class="aspect-grid">
+        <div class="aspect-row">
+          <span class="aspect-name">Story</span>
+          <select class="aspect-select" id="dimStory">
+            <option value="5.0" selected>5.0 ★ Masterpiece</option>
+            <option value="4.5">4.5 ★ Great</option>
+            <option value="4.0">4.0 ★ Good</option>
+            <option value="3.5">3.5 ★ Decent</option>
+            <option value="3.0">3.0 ★ Average</option>
+          </select>
+        </div>
+        <div class="aspect-row">
+          <span class="aspect-name">Characters</span>
+          <select class="aspect-select" id="dimCharacters">
+            <option value="5.0" selected>5.0 ★ Masterpiece</option>
+            <option value="4.5">4.5 ★ Great</option>
+            <option value="4.0">4.0 ★ Good</option>
+            <option value="3.5">3.5 ★ Decent</option>
+            <option value="3.0">3.0 ★ Average</option>
+          </select>
+        </div>
+        <div class="aspect-row">
+          <span class="aspect-name">World</span>
+          <select class="aspect-select" id="dimWorld">
+            <option value="5.0" selected>5.0 ★ Masterpiece</option>
+            <option value="4.5">4.5 ★ Great</option>
+            <option value="4.0">4.0 ★ Good</option>
+            <option value="3.5">3.5 ★ Decent</option>
+            <option value="3.0">3.0 ★ Average</option>
+          </select>
+        </div>
+        <div class="aspect-row">
+          <span class="aspect-name">Translation</span>
+          <select class="aspect-select" id="dimTranslation">
+            <option value="5.0" selected>5.0 ★ Masterpiece</option>
+            <option value="4.5">4.5 ★ Great</option>
+            <option value="4.0">4.0 ★ Good</option>
+            <option value="3.5">3.5 ★ Decent</option>
+            <option value="3.0">3.0 ★ Average</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Headline -->
+      <div class="auth-field">
+        <label for="reviewTitle" class="auth-label">Review Headline</label>
+        <input type="text" id="reviewTitle" class="auth-input" placeholder="e.g. Masterclass in ruthless pragmatism" required maxlength="100">
+      </div>
+
+      <!-- Body -->
+      <div class="auth-field">
+        <label for="reviewBody" class="auth-label">Detailed Review <small class="muted">(min. 10 chars)</small></label>
+        <textarea id="reviewBody" class="auth-input auth-textarea" rows="4" placeholder="Share your analysis of the schemes, cultivation system, and prose..." required minlength="10"></textarea>
+      </div>
+
+      <!-- Metadata & Options -->
+      <div class="review-meta-row">
+        <div class="rm-chapter">
+          <label for="reviewChapterSelect" class="rm-label">Current Chapter:</label>
+          <select id="reviewChapterSelect" class="rm-select">
+            <option value="Chapter 1">Chapter 1: The Fallen Demonic Path</option>
+            <option value="Chapter 2">Chapter 2: Past Reincarnation</option>
+            <option value="Chapter 3" selected>Chapter 3: Kindly Piss Off</option>
+            <option value="Chapter 4">Chapter 4: The Path of Blood</option>
+            <option value="Chapter 5">Chapter 5: Moonlight Gu</option>
+          </select>
+        </div>
+        <label class="rm-spoiler-label">
+          <input type="checkbox" id="reviewSpoilerCheck">
+          <span>Contains Spoilers</span>
+        </label>
+      </div>
+
+      <button type="submit" class="btn btn-primary auth-submit-btn" id="btnSubmitReview">Publish Review</button>
+      <p class="auth-status" id="reviewStatus" hidden></p>
+    </form>
+  </div>
+</div>
+
+</body>
+</html>

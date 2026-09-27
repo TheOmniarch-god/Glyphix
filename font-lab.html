@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Font Lab — Reverend Insanity | The Omniarch Translation</title>
+<meta name="description" content="Compare the four reading typefaces of The Omniarch Translation reader and test them live.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Noto+Sans+SC:wght@400&family=Playfair+Display:ital,wght@0,700;0,800;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=20260927-d9d7ff77">
+<link rel="icon" href="favicon.ico" sizes="32x32">
+<link rel="icon" href="icon-48.png" type="image/png" sizes="48x48">
+<link rel="icon" href="icon-192.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="apple-touch-icon.png" sizes="180x180">
+<link rel="manifest" href="site.webmanifest">
+<script>
+  (function() {
+    try {
+    var saved = localStorage.getItem('theme');
+    if (saved === 'obsidian' || (!saved && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+    document.documentElement.setAttribute('data-theme', 'obsidian');
+    }
+    } catch (e) { /* storage unavailable */ }
+    if ("IntersectionObserver" in window && !(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches)) {
+      document.documentElement.classList.add("js-anim");
+    }
+  })();
+</script>
+<style>
+  .lab-wrap { max-width: 1180px; margin: 0 auto; padding: 104px 22px 90px; }
+  .lab-head { text-align: center; max-width: 640px; margin: 0 auto 30px; }
+  .lab-kicker {
+    font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--red); font-weight: 800; margin-bottom: 12px;
+  }
+  .lab-head h1 {
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: clamp(30px, 5vw, 44px); font-weight: 800;
+    color: var(--ink); margin: 0 0 12px; line-height: 1.12;
+  }
+  .lab-head p { color: var(--muted); font-size: 15px; line-height: 1.7; margin: 0; }
+
+  .lab-bar {
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
+    gap: 14px; margin: 0 auto 34px; max-width: 640px;
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 14px; padding: 12px 16px;
+  }
+  .lab-bar label {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--muted);
+  }
+  .lab-bar input[type="range"] { width: 160px; accent-color: var(--red); cursor: pointer; }
+  .lab-size-val { font-size: 12px; font-weight: 700; color: var(--ink); min-width: 42px; }
+  .lab-theme-btn {
+    background: transparent; border: 1px solid var(--line); color: var(--ink);
+    border-radius: 9px; padding: 7px 13px; font-size: 12px; font-weight: 700;
+    cursor: pointer; font-family: var(--sans);
+  }
+  .lab-theme-btn:hover { border-color: var(--red); color: var(--red); }
+
+  .lab-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr));
+    gap: 22px;
+  }
+  .lab-card {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 16px; padding: 24px 26px 22px;
+    display: flex; flex-direction: column;
+  }
+  .lab-card-top { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+  .lab-card h2 { margin: 0; font-size: 24px; line-height: 1.2; color: var(--ink); }
+  .lab-badge {
+    font-family: var(--sans); font-size: 9.5px; font-weight: 800;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    border: 1px solid var(--line); border-radius: 99px;
+    padding: 4px 10px; color: var(--muted); white-space: nowrap;
+  }
+  .lab-badge.gold { color: #9a7414; border-color: rgba(154,116,20,0.4); }
+  [data-theme="obsidian"] .lab-badge.gold { color: #d8b45a; border-color: rgba(216,180,90,0.35); }
+  .lab-desc {
+    font-family: var(--sans); font-size: 12px; color: var(--muted);
+    margin: 7px 0 16px; line-height: 1.55;
+  }
+  .lab-sample { border-top: 1px solid var(--line); padding-top: 18px; flex: 1; }
+  .lab-sample p { margin: 0 0 1.15em; }
+  .lab-sample p:last-child { margin-bottom: 0; }
+  .lab-sample strong { font-weight: 700; }
+  .lab-sample em { font-style: italic; }
+  .s-inter      { font-family: var(--sans); font-size: calc(var(--lab-size, 17) * 1px); line-height: 1.95; }
+  .s-opendyslexic { font-family: "OpenDyslexic", var(--sans); letter-spacing: 0.015em; word-spacing: 0.08em; font-size: calc(var(--lab-size, 17) * 1px); line-height: 2; }
+  .s-cormorant  { font-family: "Cormorant Garamond", Georgia, serif; font-weight: 500; letter-spacing: 0.01em; font-size: calc(var(--lab-size, 17) * 1.12px); line-height: 1.9; }
+  .s-newsreader { font-family: "Newsreader", Georgia, serif; font-size: calc(var(--lab-size, 17) * 1.03px); line-height: 1.9; }
+  .s-spectral   { font-family: "Spectral", Georgia, serif; letter-spacing: 0.005em; font-size: calc(var(--lab-size, 17) * 1.05px); line-height: 1.95; }
+  .s-cormorant strong, .s-newsreader strong, .s-spectral strong { color: var(--ink); }
+
+  .lab-card-foot { margin-top: 20px; }
+  .lab-try-btn {
+    display: inline-block; width: 100%; text-align: center;
+    background: var(--ink); color: var(--paper, #fff);
+    border: none; border-radius: 10px; padding: 12px 18px;
+    font-family: var(--sans); font-size: 13px; font-weight: 700;
+    cursor: pointer; text-decoration: none; transition: all .2s ease;
+    box-sizing: border-box;
+  }
+  .lab-try-btn:hover { background: var(--red); }
+  [data-theme="obsidian"] .lab-try-btn { background: #1b1915; color: #e8e3d8; border: 1px solid #1f1c17; }
+  [data-theme="obsidian"] .lab-try-btn:hover { background: var(--red); color: #fff; border-color: var(--red); }
+
+  .lab-note {
+    max-width: 720px; margin: 34px auto 0; text-align: center;
+    border: 1px dashed var(--line); border-radius: 14px; padding: 20px 26px;
+    font-family: var(--sans); font-size: 12.5px; color: var(--muted); line-height: 1.75;
+  }
+  .lab-note strong { color: var(--ink); }
+  .lab-poem-demo {
+    max-width: 520px; margin: 22px auto 0;
+    padding: 18px 24px; border-left: 3px solid var(--red);
+    background: #faf8f4; border-radius: 0 8px 8px 0;
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 17.5px; line-height: 1.85; color: var(--ink);
+  }
+  [data-theme="obsidian"] .lab-poem-demo { background: #14120f; }
+  .lab-poem-caption {
+    text-align: center; font-family: var(--sans); font-size: 11px;
+    color: var(--muted); margin-top: 10px; letter-spacing: 0.08em;
+  }
+</style>
+</head>
+<body>
+<!-- Lab Staging Banner -->
+<div class="lab-banner" id="labBanner">
+  <div class="lab-banner-inner">
+    <div class="lab-banner-left">
+      <span class="lab-badge-icon">🧪</span>
+      <strong class="lab-banner-title">REVEREND INSANITY &mdash; TEST LAB</strong>
+      <span class="lab-banner-tag">Webnovel Process &amp; Real Storage</span>
+    </div>
+    <div class="lab-banner-right">
+      <span class="lab-status-indicator" id="labDbStatus"><span class="status-dot-pulse"></span> Persistent DB Online</span>
+      <button type="button" class="btn-lab-reset" id="labResetBtn" title="Reset test database to defaults">Reset Test DB</button>
+    </div>
+  </div>
+</div>
+
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="nav-logo" href="./">
+      <img class="nav-logo-img" src="logo-circle.png" width="32" height="32" alt="The Omniarch Translation logo">
+      <span class="wordmark"><span class="brand-name">The Omniarch</span><span class="brand-sub"> Translation</span> <span class="nav-lab-badge">TEST LAB</span></span>
+    </a>
+    <div class="nav-actions">
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme" title="Toggle theme">
+        <svg class="icon-moon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        <svg class="icon-sun" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line></svg>
+        <span class="toggle-text" id="themeToggleText">Dark theme</span>
+      </button>
+      <button class="nav-burger" aria-label="Menu">☰</button>
+    </div>
+    <ul class="nav-links">
+      <li><a href="./">Home</a></li>
+      <li><a href="./#chapters">Chapters</a></li>
+      <li><a href="search">Search</a></li>
+      <li><a href="wiki">Wiki</a></li>
+      <li><a href="about">About</a></li>
+      <li><a href="support">Support</a></li>
+      <li><a href="https://discord.gg/UgwTKn4sQf" target="_blank" rel="noopener">Discord</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main class="lab-wrap">
+  <div class="lab-head reveal">
+    <div class="lab-kicker">The Omniarch · Font Lab</div>
+    <h1>Choose the Voice of the Story</h1>
+    <p>Five reading typefaces. The same passage from Chapter 1 — normal words, <em>italics</em> and <strong>bold</strong> included. Test each one live in the reader before you decide.</p>
+  </div>
+
+  <div class="lab-bar reveal d1">
+    <label for="labSize">Text size</label>
+    <input type="range" id="labSize" min="15" max="23" step="1" value="17">
+    <span class="lab-size-val" id="labSizeVal">17px</span>
+    <button class="lab-theme-btn" id="labThemeBtn" type="button">Toggle dark / light</button>
+  </div>
+
+  <div class="lab-grid">
+
+    <div class="lab-card reveal d1">
+      <div class="lab-card-top">
+        <h2 class="s-opendyslexic">OpenDyslexic</h2>
+        <span class="lab-badge gold">Friend's pick · dyslexia-friendly</span>
+      </div>
+      <p class="lab-desc">The typeface your friend sent — designed against common symptoms of dyslexia: weighted letter bottoms stop characters flipping and spinning. Unmistakable, welcoming, free under the SIL-OFL license.</p>
+      <div class="lab-sample s-opendyslexic">
+        <p>Fang Yuan stood cloaked in a tattered emerald robe, his hair wild and unkempt, his body bathed in blood. Besieged on every flank by bitter foes, every path to life had long been severed. The trap had snapped shut; on this day, death was absolute.</p>
+        <p><strong>Fang Yuan</strong> perceived his doom with crystalline clarity. Yet even as the shadow of death loomed before him, he remained expressionless. His eyes were <em>abyssal</em> — like an ancient well, unfathomably deep, without shore and without bottom.</p>
+      </div>
+      <div class="lab-card-foot"><a class="lab-try-btn" href="/chapter-1" data-font="opendyslexic">Test OpenDyslexic in the reader →</a></div>
+    </div>
+
+    <div class="lab-card reveal d1">
+      <div class="lab-card-top">
+        <h2 class="s-inter">Inter</h2>
+        <span class="lab-badge">Original UI sans</span>
+      </div>
+      <p class="lab-desc">The clean, modern sans the site already uses. Neutral and highly legible — lets the translation speak with zero ornament.</p>
+      <div class="lab-sample s-inter">
+        <p>Fang Yuan stood cloaked in a tattered emerald robe, his hair wild and unkempt, his body bathed in blood. Besieged on every flank by bitter foes, every path to life had long been severed. The trap had snapped shut; on this day, death was absolute.</p>
+        <p><strong>Fang Yuan</strong> perceived his doom with crystalline clarity. Yet even as the shadow of death loomed before him, he remained expressionless. His eyes were <em>abyssal</em> — like an ancient well, unfathomably deep, without shore and without bottom.</p>
+      </div>
+      <div class="lab-card-foot"><a class="lab-try-btn" href="/chapter-1" data-font="inter">Test Inter in the reader →</a></div>
+    </div>
+
+    <div class="lab-card reveal d1">
+      <div class="lab-card-top">
+        <h2 class="s-cormorant">Cormorant Garamond</h2>
+        <span class="lab-badge">Premium serif</span>
+      </div>
+      <p class="lab-desc">A luxurious high-contrast Garamond revival with dramatic hairlines and regal letterforms. The most opulent choice — classic scripture energy.</p>
+      <div class="lab-sample s-cormorant">
+        <p>Fang Yuan stood cloaked in a tattered emerald robe, his hair wild and unkempt, his body bathed in blood. Besieged on every flank by bitter foes, every path to life had long been severed. The trap had snapped shut; on this day, death was absolute.</p>
+        <p><strong>Fang Yuan</strong> perceived his doom with crystalline clarity. Yet even as the shadow of death loomed before him, he remained expressionless. His eyes were <em>abyssal</em> — like an ancient well, unfathomably deep, without shore and without bottom.</p>
+      </div>
+      <div class="lab-card-foot"><a class="lab-try-btn" href="/chapter-1" data-font="cormorant">Test Cormorant in the reader →</a></div>
+    </div>
+
+    <div class="lab-card reveal d2">
+      <div class="lab-card-top">
+        <h2 class="s-newsreader">Newsreader</h2>
+        <span class="lab-badge">Premium serif</span>
+      </div>
+      <p class="lab-desc">A sharp editorial serif built for on-screen reading — the polished voice of a broadsheet feature. Crisp, confident, quietly distinctive.</p>
+      <div class="lab-sample s-newsreader">
+        <p>Fang Yuan stood cloaked in a tattered emerald robe, his hair wild and unkempt, his body bathed in blood. Besieged on every flank by bitter foes, every path to life had long been severed. The trap had snapped shut; on this day, death was absolute.</p>
+        <p><strong>Fang Yuan</strong> perceived his doom with crystalline clarity. Yet even as the shadow of death loomed before him, he remained expressionless. His eyes were <em>abyssal</em> — like an ancient well, unfathomably deep, without shore and without bottom.</p>
+      </div>
+      <div class="lab-card-foot"><a class="lab-try-btn" href="/chapter-1" data-font="newsreader">Test Newsreader in the reader →</a></div>
+    </div>
+
+    <div class="lab-card reveal d2">
+      <div class="lab-card-top">
+        <h2 class="s-spectral">Spectral</h2>
+        <span class="lab-badge">Premium serif</span>
+      </div>
+      <p class="lab-desc">A refined literary serif with a slightly darker, bookish warmth. Designed for long-form immersion — the natural voice of a novel.</p>
+      <div class="lab-sample s-spectral">
+        <p>Fang Yuan stood cloaked in a tattered emerald robe, his hair wild and unkempt, his body bathed in blood. Besieged on every flank by bitter foes, every path to life had long been severed. The trap had snapped shut; on this day, death was absolute.</p>
+        <p><strong>Fang Yuan</strong> perceived his doom with crystalline clarity. Yet even as the shadow of death loomed before him, he remained expressionless. His eyes were <em>abyssal</em> — like an ancient well, unfathomably deep, without shore and without bottom.</p>
+      </div>
+      <div class="lab-card-foot"><a class="lab-try-btn" href="/chapter-1" data-font="spectral">Test Spectral in the reader →</a></div>
+    </div>
+
+  </div>
+
+  <div class="lab-poem-demo" aria-hidden="true">
+    <p>Though the flesh perish,<br>the demonic heart knows no regret.</p>
+    <div class="lab-poem-caption">POEM BOXES ALWAYS KEEP PLAYFAIR DISPLAY — UNTOUCHED BY THE TYPEFACE CHOICE</div>
+  </div>
+
+  <div class="lab-note reveal">
+    <strong>How it works:</strong> the typeface only changes the story text on reading pages — normal words, <em>italics</em> and <strong>bold</strong> included. Poem boxes, chapter titles and all display designs keep their own fonts. Your choice is saved in your browser; readers can switch anytime with the <strong>Aa</strong> button in the reader toolbar. Hit <strong>Test in the reader</strong> on any card to try it on the full chapter.
+  </div>
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <span><img class="f-logo" src="logo-circle.png" width="18" height="18" alt="">The Omniarch Translation</span>
+    <span>Fan translation · For educational purposes</span>
+  </div>
+</footer>
+
+<script src="app.js?v=20260927-d9d7ff77"></script>
+<script>
+  (function () {
+    // Size slider drives all four samples at once
+    var slider = document.getElementById("labSize");
+    var valEl = document.getElementById("labSizeVal");
+    function setLabSize(v) {
+      document.documentElement.style.setProperty("--lab-size", v);
+      valEl.textContent = v + "px";
+    }
+    slider.addEventListener("input", function () { setLabSize(this.value); });
+    setLabSize(slider.value);
+
+    // Local dark/light toggle (same mechanism as the site theme)
+    var labBtn = document.getElementById("labThemeBtn");
+    if (labBtn) {
+      labBtn.addEventListener("click", function () {
+        var html = document.documentElement;
+        if (html.getAttribute("data-theme") === "obsidian") {
+          html.removeAttribute("data-theme");
+          localStorage.setItem("theme", "light");
+        } else {
+          html.setAttribute("data-theme", "obsidian");
+          localStorage.setItem("theme", "obsidian");
+        }
+      });
+    }
+
+    // "Test in reader" buttons save the choice, then open Chapter 1
+    var btns = document.querySelectorAll(".lab-try-btn");
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].addEventListener("click", function () {
+        try { localStorage.setItem("readerFont", this.getAttribute("data-font")); } catch (e) {}
+      });
+    }
+  })();
+</script>
+<!-- Webnovel Auth & Email Verification Modal -->
+<div class="auth-modal" id="authModal" hidden role="dialog" aria-modal="true" aria-labelledby="authModalTitle">
+  <div class="auth-modal-backdrop" id="authModalBackdrop"></div>
+  <div class="auth-modal-box">
+    <button type="button" class="auth-modal-close" id="authModalClose" aria-label="Close dialog">&times;</button>
+    
+    <!-- Step 1: Login / Sign Up Screen -->
+    <div id="authScreenMain">
+      <div class="auth-header">
+        <div class="auth-badge">Gu World Reader</div>
+        <h3 class="auth-title" id="authModalTitle">Sign in to Reverend Insanity</h3>
+        <p class="auth-sub">Keep your reading progress, bookmarks, and reader ratings synced across devices.</p>
+      </div>
+
+      <!-- Google OAuth Button -->
+      <button type="button" class="btn-google-login" id="googleLoginBtn">
+        <svg class="google-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+          <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.66v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.15z"/>
+          <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.34 24 12 24z"/>
+          <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
+          <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+        </svg>
+        <span>Continue with Google</span>
+      </button>
+
+      <div class="auth-divider">
+        <span>or continue with email</span>
+      </div>
+
+      <!-- Tabs: Sign In / Sign Up -->
+      <div class="auth-tabs" role="tablist">
+        <button type="button" class="auth-tab-btn active" id="tabSignInBtn" data-tab="signin" role="tab" aria-selected="true">Sign In</button>
+        <button type="button" class="auth-tab-btn" id="tabSignUpBtn" data-tab="signup" role="tab" aria-selected="false">Create Account</button>
+      </div>
+
+      <!-- Sign In Form -->
+      <form class="auth-form" id="signInForm">
+        <div class="auth-field">
+          <label for="signInEmail" class="auth-label">Email address</label>
+          <input type="email" id="signInEmail" class="auth-input" placeholder="reader@example.com" required autocomplete="email">
+        </div>
+        <div class="auth-field">
+          <div class="auth-label-row">
+            <label for="signInPassword" class="auth-label">Password</label>
+            <button type="button" class="auth-forgot-link" id="authForgotBtn">Forgot?</button>
+          </div>
+          <input type="password" id="signInPassword" class="auth-input" placeholder="Your password" required autocomplete="current-password">
+        </div>
+        <button type="submit" class="btn btn-primary auth-submit-btn" id="signInSubmitBtn">Sign In</button>
+        <p class="auth-status" id="signInStatus" hidden></p>
+      </form>
+
+      <!-- Sign Up Form (Triggers Email Verification) -->
+      <form class="auth-form" id="signUpForm" hidden>
+        <div class="auth-field">
+          <label for="signUpName" class="auth-label">Reader Name / Handle</label>
+          <input type="text" id="signUpName" class="auth-input" placeholder="e.g. SpectralSoul" required maxlength="30" autocomplete="nickname">
+        </div>
+        <div class="auth-field">
+          <label for="signUpEmail" class="auth-label">Email address</label>
+          <input type="email" id="signUpEmail" class="auth-input" placeholder="reader@example.com" required autocomplete="email">
+        </div>
+        <div class="auth-field">
+          <label for="signUpPassword" class="auth-label">Password <small class="muted">(min. 6 characters)</small></label>
+          <input type="password" id="signUpPassword" class="auth-input" placeholder="Create a password" required minlength="6" autocomplete="new-password">
+        </div>
+        <button type="submit" class="btn btn-primary auth-submit-btn" id="signUpSubmitBtn">Send Verification Code &rarr;</button>
+        <p class="auth-status" id="signUpStatus" hidden></p>
+      </form>
+    </div>
+
+    <!-- Step 2: Email Verification (OTP) Screen -->
+    <div id="authScreenVerify" hidden>
+      <div class="auth-header">
+        <div class="auth-badge">Email Verification</div>
+        <h3 class="auth-title">Verify Your Email</h3>
+        <p class="auth-sub">We sent a 6-digit verification code to <strong id="verifyEmailDisplay" class="text-gold">reader@example.com</strong></p>
+      </div>
+
+      <!-- Test Lab Mailbox Simulation Banner -->
+      <div class="test-mailbox-banner" id="testMailboxBanner">
+        <div class="tmb-icon">📬</div>
+        <div class="tmb-cnt">
+          <div class="tmb-title">Test Lab Mailbox Dispatcher:</div>
+          <div class="tmb-desc">Code sent: <span class="tmb-code-pill" id="tmbCodeDisplay">------</span> <button type="button" class="btn-autofill-otp" id="btnAutofillOtp">Click to auto-fill</button></div>
+        </div>
+      </div>
+
+      <form class="auth-form" id="verifyOtpForm">
+        <div class="otp-inputs-row" id="otpInputsRow">
+          <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-digit" data-idx="0" required autofocus>
+          <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-digit" data-idx="1" required>
+          <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-digit" data-idx="2" required>
+          <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-digit" data-idx="3" required>
+          <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-digit" data-idx="4" required>
+          <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-digit" data-idx="5" required>
+        </div>
+
+        <div class="otp-timer-row">
+          <span class="otp-timer-text" id="otpTimerText">Resend code in <span id="otpCountdown">45</span>s</span>
+          <button type="button" class="btn-resend-otp" id="btnResendOtp" hidden>Resend Code</button>
+          <button type="button" class="btn-change-email" id="btnChangeEmail">Change email</button>
+        </div>
+
+        <button type="submit" class="btn btn-primary auth-submit-btn" id="verifySubmitBtn">Verify Code &amp; Create Account</button>
+        <p class="auth-status" id="verifyStatus" hidden></p>
+      </form>
+    </div>
+
+  </div>
+</div>
+
+<!-- Webnovel Google Account Chooser Modal -->
+<div class="auth-modal" id="googleChooserModal" hidden role="dialog" aria-modal="true" aria-labelledby="googleChooserTitle">
+  <div class="auth-modal-backdrop" id="googleChooserBackdrop"></div>
+  <div class="auth-modal-box google-sheet-box">
+    <button type="button" class="auth-modal-close" id="googleChooserClose" aria-label="Close dialog">&times;</button>
+    <div class="google-sheet-header">
+      <svg class="google-icon" viewBox="0 0 24 24" width="28" height="28" aria-hidden="true">
+        <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.66v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.15z"/>
+        <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.34 24 12 24z"/>
+        <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
+        <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+      </svg>
+      <h3 class="google-sheet-title" id="googleChooserTitle">Sign in with Google</h3>
+      <p class="google-sheet-sub">to continue to <strong>Reverend Insanity Lab</strong></p>
+    </div>
+
+    <div class="google-account-list">
+      <button type="button" class="google-acc-item" data-name="Cultivator FY" data-email="cultivator.fy@gmail.com" data-avatar="F">
+        <div class="g-acc-avatar" style="background:#b8860b;">F</div>
+        <div class="g-acc-info">
+          <span class="g-acc-name">Cultivator FY</span>
+          <span class="g-acc-email">cultivator.fy@gmail.com</span>
+        </div>
+        <span class="g-acc-badge">Default</span>
+      </button>
+
+      <button type="button" class="google-acc-item" data-name="Bai Ning Bing" data-email="icemuscle.ice@gmail.com" data-avatar="B">
+        <div class="g-acc-avatar" style="background:#4a7a96;">B</div>
+        <div class="g-acc-info">
+          <span class="g-acc-name">Bai Ning Bing</span>
+          <span class="g-acc-email">icemuscle.ice@gmail.com</span>
+        </div>
+      </button>
+
+      <button type="button" class="google-acc-item" id="btnCustomGoogleAcc">
+        <div class="g-acc-avatar g-acc-plus">+</div>
+        <div class="g-acc-info">
+          <span class="g-acc-name">Use another Google account</span>
+          <span class="g-acc-email">Enter any email address</span>
+        </div>
+      </button>
+    </div>
+
+    <form id="customGoogleForm" hidden class="custom-google-form">
+      <input type="text" id="customGoogleName" class="auth-input" placeholder="Google Name" required value="Dao Master">
+      <input type="email" id="customGoogleEmail" class="auth-input" placeholder="name@gmail.com" required>
+      <button type="submit" class="btn btn-primary auth-submit-btn">Continue</button>
+    </form>
+
+    <div class="google-sheet-footer">
+      <small>To continue, Google will share your name, email address, and profile picture with Reverend Insanity Lab.</small>
+    </div>
+  </div>
+</div>
+
+<!-- Webnovel Compact Review Modal -->
+<div class="auth-modal" id="reviewModal" hidden role="dialog" aria-modal="true" aria-labelledby="reviewModalTitle">
+  <div class="auth-modal-backdrop" id="reviewModalBackdrop"></div>
+  <div class="auth-modal-box review-modal-box">
+    <button type="button" class="auth-modal-close" id="reviewModalClose" aria-label="Close dialog">&times;</button>
+    <div class="auth-header">
+      <div class="auth-badge">Webnovel Review</div>
+      <h3 class="auth-title" id="reviewModalTitle">Review Reverend Insanity</h3>
+      <p class="auth-sub" id="reviewModalUserLine">Publishing as <strong id="reviewUserNameDisplay">Reader</strong></p>
+    </div>
+
+    <form class="auth-form" id="reviewSubmitForm">
+      <!-- Overall Rating Stars -->
+      <div class="rating-picker-card">
+        <span class="rpc-label">Overall Rating:</span>
+        <div class="rpc-stars" id="rpcStars" role="radiogroup" aria-label="Overall 5 star rating">
+          <button type="button" class="star-btn" data-val="1" aria-label="1 star">&#9733;</button>
+          <button type="button" class="star-btn" data-val="2" aria-label="2 stars">&#9733;</button>
+          <button type="button" class="star-btn" data-val="3" aria-label="3 stars">&#9733;</button>
+          <button type="button" class="star-btn" data-val="4" aria-label="4 stars">&#9733;</button>
+          <button type="button" class="star-btn active" data-val="5" aria-label="5 stars">&#9733;</button>
+        </div>
+        <span class="rpc-score" id="rpcScoreDisplay">5.0 / 5.0</span>
+      </div>
+
+      <!-- 4 Webnovel Aspect Dimensions -->
+      <div class="aspect-grid">
+        <div class="aspect-row">
+          <span class="aspect-name">Story</span>
+          <select class="aspect-select" id="dimStory">
+            <option value="5.0" selected>5.0 ★ Masterpiece</option>
+            <option value="4.5">4.5 ★ Great</option>
+            <option value="4.0">4.0 ★ Good</option>
+            <option value="3.5">3.5 ★ Decent</option>
+            <option value="3.0">3.0 ★ Average</option>
+          </select>
+        </div>
+        <div class="aspect-row">
+          <span class="aspect-name">Characters</span>
+          <select class="aspect-select" id="dimCharacters">
+            <option value="5.0" selected>5.0 ★ Masterpiece</option>
+            <option value="4.5">4.5 ★ Great</option>
+            <option value="4.0">4.0 ★ Good</option>
+            <option value="3.5">3.5 ★ Decent</option>
+            <option value="3.0">3.0 ★ Average</option>
+          </select>
+        </div>
+        <div class="aspect-row">
+          <span class="aspect-name">World</span>
+          <select class="aspect-select" id="dimWorld">
+            <option value="5.0" selected>5.0 ★ Masterpiece</option>
+            <option value="4.5">4.5 ★ Great</option>
+            <option value="4.0">4.0 ★ Good</option>
+            <option value="3.5">3.5 ★ Decent</option>
+            <option value="3.0">3.0 ★ Average</option>
+          </select>
+        </div>
+        <div class="aspect-row">
+          <span class="aspect-name">Translation</span>
+          <select class="aspect-select" id="dimTranslation">
+            <option value="5.0" selected>5.0 ★ Masterpiece</option>
+            <option value="4.5">4.5 ★ Great</option>
+            <option value="4.0">4.0 ★ Good</option>
+            <option value="3.5">3.5 ★ Decent</option>
+            <option value="3.0">3.0 ★ Average</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Headline -->
+      <div class="auth-field">
+        <label for="reviewTitle" class="auth-label">Review Headline</label>
+        <input type="text" id="reviewTitle" class="auth-input" placeholder="e.g. Masterclass in ruthless pragmatism" required maxlength="100">
+      </div>
+
+      <!-- Body -->
+      <div class="auth-field">
+        <label for="reviewBody" class="auth-label">Detailed Review <small class="muted">(min. 10 chars)</small></label>
+        <textarea id="reviewBody" class="auth-input auth-textarea" rows="4" placeholder="Share your analysis of the schemes, cultivation system, and prose..." required minlength="10"></textarea>
+      </div>
+
+      <!-- Metadata & Options -->
+      <div class="review-meta-row">
+        <div class="rm-chapter">
+          <label for="reviewChapterSelect" class="rm-label">Current Chapter:</label>
+          <select id="reviewChapterSelect" class="rm-select">
+            <option value="Chapter 1">Chapter 1: The Fallen Demonic Path</option>
+            <option value="Chapter 2">Chapter 2: Past Reincarnation</option>
+            <option value="Chapter 3" selected>Chapter 3: Kindly Piss Off</option>
+            <option value="Chapter 4">Chapter 4: The Path of Blood</option>
+            <option value="Chapter 5">Chapter 5: Moonlight Gu</option>
+          </select>
+        </div>
+        <label class="rm-spoiler-label">
+          <input type="checkbox" id="reviewSpoilerCheck">
+          <span>Contains Spoilers</span>
+        </label>
+      </div>
+
+      <button type="submit" class="btn btn-primary auth-submit-btn" id="btnSubmitReview">Publish Review</button>
+      <p class="auth-status" id="reviewStatus" hidden></p>
+    </form>
+  </div>
+</div>
+
+</body>
+</html>

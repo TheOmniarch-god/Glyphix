@@ -1,0 +1,11 @@
+{
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/world",
+      "destination": "/wiki/world",
+      "permanent": false
+    }
+  ]
+}

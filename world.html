@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The world — Wiki | Reverend Insanity · The Omniarch Translation</title>
+<meta name="description" content="Every place and person the published chapters of Reverend Insanity name, standing in the world they were named in.">
+<link rel="canonical" href="https://ri.theomniarch.com.ng/wiki/world/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Playfair+Display:ital,wght@0,700;0,800;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css?v=20260927-d9d7ff77">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/icon-192.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180">
+<link rel="manifest" href="/site.webmanifest">
+<script>
+  (function () {
+    try {
+      var saved = localStorage.getItem('theme');
+      if (saved === 'obsidian') {
+        document.documentElement.setAttribute('data-theme', 'obsidian');
+        document.documentElement.classList.add('js-anim');
+      } else if (saved === 'light') {
+        document.documentElement.classList.add('js-anim');
+      }
+    } catch (e) {}
+  })();
+</script>
+<link rel="canonical" href="https://ri.theomniarch.com.ng/wiki/world/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="The world — Reverend Insanity Wiki">
+<meta property="og:description" content="Every place and person the published chapters name, standing in the world they were named in.">
+<meta property="og:url" content="https://ri.theomniarch.com.ng/wiki/world/">
+<meta property="og:image" content="https://ri.theomniarch.com.ng/share-card.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ri.theomniarch.com.ng/share-card.jpg">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "name": "The world at the reach of the translation", "url": "https://ri.theomniarch.com.ng/wiki/world/", "isPartOf": {"@type": "CreativeWork", "name": "Reverend Insanity Wiki"}, "description": "A live scene of the Gu world, drawn from the chapters that have been published and the places and people they name."}</script>
+</head>
+<body class="page-world">
+<!-- Lab Staging Banner -->
+<div class="lab-banner" id="labBanner">
+  <div class="lab-banner-inner">
+    <div class="lab-banner-left">
+      <span class="lab-badge-icon">🧪</span>
+      <strong class="lab-banner-title">REVEREND INSANITY &mdash; TEST LAB</strong>
+      <span class="lab-banner-tag">Webnovel Process &amp; Real Storage</span>
+    </div>
+    <div class="lab-banner-right">
+      <span class="lab-status-indicator" id="labDbStatus"><span class="status-dot-pulse"></span> Persistent DB Online</span>
+      <button type="button" class="btn-lab-reset" id="labResetBtn" title="Reset test database to defaults">Reset Test DB</button>
+    </div>
+  </div>
+</div>
+
+
+<div class="world-lock-curtain">
+  <div class="world-lock-card">
+    <div class="world-padlock-icon">
+      <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+      </svg>
+    </div>
+    <p class="world-lock-kicker">Gu World &middot; Interactive 3D</p>
+    <h2 class="world-lock-title">The World is Under Refinement</h2>
+    <p class="world-lock-desc">The character codex and 3D terrain are currently being compiled. They will unlock as the translation progresses.</p>
+    <div class="world-lock-actions">
+      <a class="btn btn-primary" href="/chapter-1">Return to Chapter 1 &rarr;</a>
+      <a class="btn btn-ghost" href="/">Homepage</a>
+    </div>
+  </div>
+</div>
+
+<main class="fw">
+  <canvas id="worldCanvas" class="world-canvas" data-zoom="1" aria-hidden="true"></canvas>
+  <div class="world-pins" id="worldPins" data-pins="[{&quot;t&quot;: &quot;Gu Yue Village&quot;, &quot;s&quot;: &quot;gu-yue-village&quot;, &quot;c&quot;: 1, &quot;x&quot;: 0.9, &quot;z&quot;: 1.1}, {&quot;t&quot;: &quot;Qing Mao Mountain&quot;, &quot;s&quot;: &quot;qing-mao-mountain&quot;, &quot;c&quot;: 1, &quot;x&quot;: 5.5, &quot;z&quot;: -2.8}, {&quot;t&quot;: &quot;Southern Border&quot;, &quot;s&quot;: &quot;southern-border&quot;, &quot;c&quot;: 4, &quot;x&quot;: -16.0, &quot;z&quot;: 16.0}]"></div>
+
+  <header class="fw-head">
+    <p class="fw-kicker">The Omniarch Translation &middot; 3D Interactive World <span class="badge-in-progress">Interactive 3D</span></p>
+    <h1 class="fw-title">The world</h1>
+    <p class="fw-sub">Every place and person the published chapters name, standing in the world
+      they were named in. <a href="/wiki/">Back to the wiki</a></p>
+  </header>
+
+  <!-- Character Inspection Card in 3D -->
+  <aside class="fw-card" id="fwCharCard" hidden aria-live="polite">
+    <button class="fw-card-close" id="fwCardClose" aria-label="Close character preview">&times;</button>
+    <div class="fw-card-tabs" id="fwCardTabs">
+      <button class="fw-tab-btn active" id="tabBtn3D" type="button">3D Figure</button>
+      <button class="fw-tab-btn" id="tabBtnAperture" type="button">Aperture &amp; Sea</button>
+    </div>
+    <div class="fw-card-media" id="fwCardMedia"></div>
+    <div class="fw-card-body">
+      <p class="fw-card-kicker" id="fwCardKicker">Character in 3D &middot; Qing Mao Mountain</p>
+      <h2 class="fw-card-title" id="fwCardTitle"></h2>
+      <p class="fw-card-meta" id="fwCardMeta"></p>
+      <p class="fw-card-desc" id="fwCardDesc"></p>
+      <div class="fw-card-actions">
+        <a class="btn btn-primary btn-sm" id="fwCardLink" href="#">Read Wiki Entry &rarr;</a>
+        <button class="btn btn-ghost btn-sm" id="fwCardReset">Overview</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Camera Vantage Presets Bar (All Places) -->
+  <nav class="fw-vantage-bar" id="fwVantageBar" aria-label="Camera viewpoints">
+    <div class="fw-vantage-head">
+      <p class="fw-vantage-title">Vantage Points</p>
+      <span class="fw-vantage-count">14 landmarks</span>
+    </div>
+    <div class="fw-vantage-scroll">
+      <button class="fw-vantage-btn active" data-vantage="overview" type="button">🏔️ Qing Mao Peak</button>
+      <button class="fw-vantage-btn" data-vantage="village" type="button">🏮 Gu Yue Village</button>
+      <button class="fw-vantage-btn" data-vantage="hall" type="button">🏛️ Grand Council Hall</button>
+      <button class="fw-vantage-btn" data-vantage="academy" type="button">📜 Clan Academy</button>
+      <button class="fw-vantage-btn" data-vantage="cavern" type="button">🌊 Spirit Cavern</button>
+      <button class="fw-vantage-btn" data-vantage="mo-manor" type="button">🦅 Mo Faction Manor</button>
+      <button class="fw-vantage-btn" data-vantage="chi-manor" type="button">🐅 Chi Faction Manor</button>
+      <button class="fw-vantage-btn" data-vantage="fang-residence" type="button">🏡 Fang Family Home</button>
+      <button class="fw-vantage-btn" data-vantage="mountain-gate" type="button">🚪 Mountain Gate</button>
+      <button class="fw-vantage-btn" data-vantage="north-tower" type="button">🔭 North Watchtower</button>
+      <button class="fw-vantage-btn" data-vantage="south-tower" type="button">🔥 South Watchtower</button>
+      <button class="fw-vantage-btn" data-vantage="bai" type="button">❄️ Bai Clan Peak</button>
+      <button class="fw-vantage-btn" data-vantage="xiong" type="button">🐻 Xiong Clan Peak</button>
+      <button class="fw-vantage-btn" data-vantage="southern-border" type="button">🌄 Southern Border (Grand Panorama)</button>
+    </div>
+  </nav>
+
+  <!-- Interactive Closer Zoom HUD -->
+  <div class="fw-zoom-hud" id="fwZoomHud" aria-label="Camera zoom controls">
+    <button class="fw-zoom-btn" id="btnZoomIn" type="button" title="Zoom in closer (+)" aria-label="Zoom in closer">&plus;</button>
+    <button class="fw-zoom-btn" id="btnZoomOut" type="button" title="Zoom out (&minus;)" aria-label="Zoom out">&minus;</button>
+    <button class="fw-zoom-btn fw-zoom-reset" id="btnZoomReset" type="button" title="Reset overview" aria-label="Reset overview">&#8635;</button>
+  </div>
+
+  <div class="fw-panel">
+    <div class="fw-panel-section">
+      <p class="fw-label">How the wiki grew</p>
+      <div class="fw-slider">
+        <input type="range" id="fwRange" min="1" max="5" step="1" value="5"
+               aria-label="Show the wiki as it stood at this chapter">
+        <output id="fwOut">chapter 5</output>
+      </div>
+      <p class="fw-note" id="fwNote">The mists stand where the translation has reached. Drag the
+        slider back to watch the wiki grow.</p>
+    </div>
+
+    <div class="fw-panel-section">
+      <p class="fw-label">Characters in 3D <span class="fw-sub-hint">&middot; click to focus</span></p>
+      <div class="fw-cast-grid" id="fwCastGrid"></div>
+    </div>
+
+    <div class="fw-panel-section fw-panel-meta">
+      <p class="fw-hint">Drag to orbit &middot; scroll to zoom &middot; click a person to fly in</p>
+      <button class="btn btn-ghost btn-sm fw-btn-reset" id="fwOverviewBtn" type="button">Reset to Mountain View</button>
+    </div>
+  </div>
+</main>
+
+<footer class="fw-foot">
+  <p>The Omniarch Translation &middot; 30 entries from 5 chapters.
+    <a href="/wiki/">The wiki</a></p>
+</footer>
+
+<script src="/app.js?v=20260927-d9d7ff77"></script>
+<script>window.RI_WORLD_CAST = [{"t": "Bai Ning Bing", "s": "bai-ning-bing", "c": 1, "x": 3.4, "z": -1.8, "kind": "", "desc": "The unmatched genius youth of Bai Clan, reaching Rank 3 at sixteen winters.", "rank": 3, "img": "bai-ning-bing-3d.webp"}, {"t": "Fang Yuan", "s": "fang-yuan", "c": 1, "x": 0.62, "z": 0.72, "kind": "demonic", "desc": "Five hundred years of memories reborn as a fifteen-year-old youth.", "grade": "C", "img": "fang-yuan-3d.webp"}, {"t": "Gu Yue Clan Leader", "s": "gu-yue-clan-leader", "c": 1, "x": -0.35, "z": 2.3, "kind": "elder", "desc": "Fourth generation leader of the Gu Yue clan, Rank 4 elder on Qing Mao Mountain.", "img": "gu-yue-clan-leader-3d.webp"}, {"t": "Fang Zheng", "s": "fang-zheng", "c": 2, "x": 0.85, "z": 1.15, "kind": "", "desc": "Twin brother to Fang Yuan, tested with supreme Grade A primeval talent.", "img": "fang-zheng-3d.webp"}, {"t": "Shen Cui", "s": "shen-cui", "c": 3, "x": 0.95, "z": 0.4, "kind": "", "desc": "Maidservant serving the brothers at their aunt and uncle’s courtyard.", "img": "shen-cui-3d.webp"}, {"t": "Academy Elder", "s": "academy-elder", "c": 4, "x": -0.15, "z": 1.75, "kind": "elder", "desc": "Strict academy elder presiding over the youths at the Aperture Opening Ceremony.", "img": "academy-elder-3d.webp"}, {"t": "Gu Yue Chen Bo", "s": "gu-yue-chen-bo", "c": 4, "x": 0.25, "z": 1.15, "kind": "", "desc": "First youth to enter the river of light, testing as a mortal with no aperture.", "img": "gu-yue-chen-bo-3d.webp"}, {"t": "Gu Yue Chi Cheng", "s": "gu-yue-chi-cheng", "c": 4, "x": -1.05, "z": 1.45, "kind": "", "desc": "Heir of the Chi faction, announced Grade B through clan deception.", "grade": "B", "img": "gu-yue-chi-cheng-3d.webp"}, {"t": "Gu Yue Chi Lian", "s": "gu-yue-chi-lian", "c": 4, "x": -1.35, "z": 1.85, "kind": "elder", "desc": "Elder heading the Chi faction, grandfather to Chi Cheng.", "img": "gu-yue-chi-lian-3d.webp"}, {"t": "Gu Yue Mo Bei", "s": "gu-yue-mo-bei", "c": 4, "x": 1.35, "z": 1.55, "kind": "", "desc": "Heir of the Mo faction, announced with sixty-six percent Grade B primeval sea.", "grade": "B", "img": "gu-yue-mo-bei-3d.webp"}, {"t": "Gu Yue Mo Chen", "s": "gu-yue-mo-chen", "c": 4, "x": 1.55, "z": 1.95, "kind": "elder", "desc": "Elder heading the Mo faction, rival to Chi Lian, grandfather to Mo Bei.", "img": "gu-yue-mo-chen-3d.webp"}];</script>
+<script src="/three.min.js?v=20260927-d9d7ff77"></script>
+<script src="/world.js?v=20260927-d9d7ff77"></script>
+<script>
+  (function () {
+    var cast = window.RI_WORLD_CAST || [];
+    var box = document.getElementById('worldPins');
+    var range = document.getElementById('fwRange');
+    var out = document.getElementById('fwOut');
+    var note = document.getElementById('fwNote');
+    var castGrid = document.getElementById('fwCastGrid');
+    var card = document.getElementById('fwCharCard');
+    var cardMedia = document.getElementById('fwCardMedia');
+    var cardTitle = document.getElementById('fwCardTitle');
+    var cardMeta = document.getElementById('fwCardMeta');
+    var cardDesc = document.getElementById('fwCardDesc');
+    var cardLink = document.getElementById('fwCardLink');
+    var cardClose = document.getElementById('fwCardClose');
+    var cardReset = document.getElementById('fwCardReset');
+    var tabBtn3D = document.getElementById('tabBtn3D');
+    var tabBtnAperture = document.getElementById('tabBtnAperture');
+    var vantageBar = document.getElementById('fwVantageBar');
+    var overviewBtn = document.getElementById('fwOverviewBtn');
+    var total = 5;
+    var activeSlug = null;
+    var selectedCultivator = null;
+    var currentCardTab = '3d';
+
+    if (window.RIWorld) {
+      window.RIWorld.setPeople(cast);
+      window.RIWorld.setReach(total);
+    }
+
+    var CULTIVATION_DATA = {
+      'fang-yuan': {
+        rank: 1, stage: 'Initial Stage (初阶)', grade: 'Grade C (丙等)', seaPct: 44,
+        seaName: 'Copper-Green Primeval Sea (青铜真元)', seaCol: '#27ae60', seaCol2: '#16a085',
+        crystalMembrane: 'rgba(46, 204, 113, 0.45)', cite: 'ch. 2 \u00b645',
+        quote: 'At best, merely a Grade C... forty-four percent primeval sea.'
+      },
+      'fang-zheng': {
+        rank: 1, stage: 'Initial Stage (初阶)', grade: 'Grade A (甲等)', seaPct: 84,
+        seaName: 'Brilliant Gold Primeval Sea (黄金真元)', seaCol: '#f39c12', seaCol2: '#e67e22',
+        crystalMembrane: 'rgba(155, 89, 182, 0.65)', cite: 'ch. 4 \u00b658',
+        quote: 'Grade A talent! Eighty percent primeval sea! The pride of Gu Yue Clan.'
+      },
+      'bai-ning-bing': {
+        rank: 3, stage: 'Peak Stage (巅峰)', grade: 'Northern Dark Ice Soul (北冥冰魄体)', seaPct: 98,
+        seaName: 'Snow-Silver Primeval Sea (雪银真元)', seaCol: '#dfe6e9', seaCol2: '#a4b0be',
+        crystalMembrane: 'rgba(223, 230, 233, 0.75)', cite: 'ch. 1 \u00b650',
+        quote: 'Reaching Rank 3 at sixteen winters... supreme genius of Bai Clan.'
+      },
+      'gu-yue-clan-leader': {
+        rank: 4, stage: 'Middle Stage (中阶)', grade: 'Clan Leader (四转族长)', seaPct: 78,
+        seaName: 'Yellow-Gold Primeval Sea (黄金真元)', seaCol: '#f1c40f', seaCol2: '#d4ac0d',
+        crystalMembrane: 'rgba(241, 196, 15, 0.75)', cite: 'ch. 1 \u00b612',
+        quote: 'Fourth generation leader of the Gu Yue clan, commanding Rank 4 power.'
+      },
+      'academy-elder': {
+        rank: 3, stage: 'Elder Rank (三转长者)', grade: 'Clan Elder (家老)', seaPct: 72,
+        seaName: 'Silver Primeval Sea (银色真元)', seaCol: '#bdc3c7', seaCol2: '#95a5a6',
+        crystalMembrane: 'rgba(189, 195, 199, 0.6)', cite: 'ch. 1 \u00b648',
+        quote: 'Presiding elder of the clan academy, maintaining clan order with strict discipline.'
+      },
+      'gu-yue-chi-lian': {
+        rank: 3, stage: 'Elder Rank (三转长者)', grade: 'Chi Faction Head (赤系长者)', seaPct: 70,
+        seaName: 'Silver Primeval Sea (银色真元)', seaCol: '#bdc3c7', seaCol2: '#7f8c8d',
+        crystalMembrane: 'rgba(189, 195, 199, 0.6)', cite: 'ch. 1 \u00b622',
+        quote: 'Elder heading the Chi faction, fierce rival to Mo Chen.'
+      },
+      'gu-yue-mo-chen': {
+        rank: 3, stage: 'Elder Rank (三转长者)', grade: 'Mo Faction Head (莫系长者)', seaPct: 71,
+        seaName: 'Silver Primeval Sea (银色真元)', seaCol: '#bdc3c7', seaCol2: '#7f8c8d',
+        crystalMembrane: 'rgba(189, 195, 199, 0.6)', cite: 'ch. 1 \u00b622',
+        quote: 'Elder heading the Mo faction, grandfather to Mo Bei.'
+      },
+      'gu-yue-mo-bei': {
+        rank: 1, stage: 'Initial Stage (初阶)', grade: 'Grade B (乙等)', seaPct: 66,
+        seaName: 'Steel-Iron Primeval Sea (赤铁真元)', seaCol: '#e67e22', seaCol2: '#d35400',
+        crystalMembrane: 'rgba(230, 126, 34, 0.55)', cite: 'ch. 4 \u00b649',
+        quote: 'Announced with sixty-six percent Grade B primeval sea.'
+      },
+      'gu-yue-chi-cheng': {
+        rank: 1, stage: 'Initial Stage (初阶)', grade: 'Grade B (乙等)', seaPct: 63,
+        seaName: 'Steel-Iron Primeval Sea (赤铁真元)', seaCol: '#e67e22', seaCol2: '#c0392b',
+        crystalMembrane: 'rgba(230, 126, 34, 0.55)', cite: 'ch. 4 \u00b653',
+        quote: 'Announced Grade B through elder deception.'
+      },
+      'gu-yue-chen-bo': {
+        rank: 0, stage: 'Mortal (凡人)', grade: 'No Aptitude (无资质)', seaPct: 0,
+        seaName: 'No Aperture Formed (无法修行)', seaCol: '#7f8c8d', seaCol2: '#34495e',
+        crystalMembrane: 'rgba(127, 140, 141, 0.2)', cite: 'ch. 4 \u00b636',
+        quote: 'Chen Bo stood in the river of light, but not a single Hope Gu entered him... A mortal.'
+      },
+      'shen-cui': {
+        rank: 0, stage: 'Mortal (凡人)', grade: 'Unawakened (未开窍)', seaPct: 0,
+        seaName: 'Mortal Maidservant', seaCol: '#7f8c8d', seaCol2: '#2c3e50',
+        crystalMembrane: 'rgba(127, 140, 141, 0.2)', cite: 'ch. 2 \u00b65',
+        quote: 'Serving the young masters at the courtyard.'
+      }
+    };
+
+    var turntableAnimId = null;
+    var apertureAnimId = null;
+
+    function render3DFigureView(found) {
+      if (apertureAnimId) { cancelAnimationFrame(apertureAnimId); apertureAnimId = null; }
+      if (turntableAnimId) { cancelAnimationFrame(turntableAnimId); turntableAnimId = null; }
+
+      if (found.img) {
+        var r = found.rank || 0, g = found.grade || '';
+        var barsHtml = '';
+        if (r > 0) {
+          barsHtml = '<div class="stage-3d-rank-sigil">';
+          for (var bi = 0; bi < r; bi++) {
+            barsHtml += '<span class="stage-3d-rank-bar"></span>';
+          }
+          barsHtml += '</div>';
+        }
+        var haloHtml = g ? '<div class="stage-3d-halo"></div>' : '';
+
+        cardMedia.innerHTML = '<div class="stage-3d-box" id="charStage3D">' +
+          '<div class="stage-3d-viewport">' +
+            '<div class="stage-3d-turntable" id="charTurntable">' +
+              '<div class="stage-3d-dais"></div>' +
+              haloHtml +
+              '<div class="stage-3d-standee">' +
+                '<img class="stage-3d-img" src="../../' + found.img + '" alt="' + found.t + ' 3D visual">' +
+                '<div class="stage-3d-sheen" id="charSheen"></div>' +
+              '</div>' +
+              barsHtml +
+            '</div>' +
+          '</div>' +
+          '<div class="stage-3d-bar">' +
+            '<span class="stage-3d-badge" id="charBadge">3D: 0&deg;</span>' +
+            '<button class="stage-3d-btn-auto" id="charAutoBtn" type="button" title="Toggle Auto-Orbit">&blacktriangleright; Orbit</button>' +
+          '</div>' +
+          '<div class="stage-3d-controls">' +
+            '<div class="stage-3d-hint">' +
+              '<span>Drag image to rotate 360&deg;</span>' +
+              '<span id="charHintAngle">Front</span>' +
+            '</div>' +
+            '<input type="range" class="stage-3d-slider" id="charSlider" min="0" max="360" value="0" aria-label="Rotate in 3D">' +
+            '<div class="stage-3d-presets">' +
+              '<button type="button" class="stage-3d-preset-btn active" data-deg="0">Front (0&deg;)</button>' +
+              '<button type="button" class="stage-3d-preset-btn" data-deg="90">Side (90&deg;)</button>' +
+              '<button type="button" class="stage-3d-preset-btn" data-deg="180">Back (180&deg;)</button>' +
+              '<button type="button" class="stage-3d-preset-btn" data-deg="315">3/4 (315&deg;)</button>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+
+        init3DTurntable(found);
+      } else {
+        cardMedia.innerHTML = '<div class="stage-3d-box" style="display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:12px;">Visual record in progress</div>';
+      }
+    }
+
+    function renderApertureView(found) {
+      if (turntableAnimId) { cancelAnimationFrame(turntableAnimId); turntableAnimId = null; }
+      if (apertureAnimId) { cancelAnimationFrame(apertureAnimId); apertureAnimId = null; }
+
+      var cData = CULTIVATION_DATA[found.s] || {
+        rank: found.rank || 0,
+        stage: found.rank ? ('Rank ' + found.rank) : 'Cultivator',
+        grade: found.grade ? ('Grade ' + found.grade) : 'Unrecorded',
+        seaPct: found.grade === 'A' ? 84 : (found.grade === 'B' ? 66 : (found.grade === 'C' ? 44 : 50)),
+        seaName: found.rank >= 3 ? 'Snow-Silver Primeval Sea' : (found.rank === 2 ? 'Steel-Iron Primeval Sea' : 'Copper-Green Primeval Sea'),
+        seaCol: found.rank >= 4 ? '#f1c40f' : (found.rank >= 3 ? '#dfe6e9' : (found.rank === 2 ? '#e67e22' : '#2ecc71')),
+        seaCol2: found.rank >= 4 ? '#d4ac0d' : (found.rank >= 3 ? '#b2bec3' : (found.rank === 2 ? '#d35400' : '#16a085')),
+        crystalMembrane: 'rgba(235, 175, 55, 0.5)',
+        cite: 'ch. ' + found.c
+      };
+
+      cardMedia.innerHTML = '<div class="stage-aperture-box">' +
+        '<canvas class="stage-aperture-canvas" id="apertureCanvas" width="340" height="230"></canvas>' +
+        '<div class="stage-aperture-overlay">' +
+          '<div class="aperture-overlay-left">' +
+            '<span class="aperture-overlay-name">' + cData.seaName + '</span>' +
+            '<span class="aperture-overlay-sub">' + cData.stage + ' &middot; ' + cData.grade + '</span>' +
+          '</div>' +
+          '<span class="aperture-overlay-badge">' + (cData.rank > 0 ? (cData.seaPct + '%') : '0%') + '</span>' +
+        '</div>' +
+      '</div>';
+
+      var cv = document.getElementById('apertureCanvas');
+      if (!cv || !cv.getContext) return;
+      var ctx = cv.getContext('2d');
+      var dpr = Math.min(2, window.devicePixelRatio || 1);
+      cv.width = 340 * dpr;
+      cv.height = 230 * dpr;
+
+      var t = 0;
+      var pct = cData.seaPct;
+      var isMortal = (cData.rank === 0 && pct === 0);
+
+      function drawApertureFrame() {
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.clearRect(0, 0, 340, 230);
+
+        var cx = 170, cy = 94, radius = 68;
+
+        var haloG = ctx.createRadialGradient(cx, cy, radius * 0.7, cx, cy, radius * 1.35);
+        haloG.addColorStop(0, cData.crystalMembrane);
+        haloG.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = haloG;
+        ctx.beginPath(); ctx.arc(cx, cy, radius * 1.35, 0, Math.PI * 2); ctx.fill();
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+        ctx.clip();
+
+        ctx.fillStyle = '#0a0b10';
+        ctx.fillRect(cx - radius, cy - radius, radius * 2, radius * 2);
+
+        if (!isMortal && pct > 0) {
+          var fillLevel = cy + radius - (radius * 2 * (pct / 100));
+          ctx.beginPath();
+          ctx.moveTo(cx - radius, cy + radius);
+          for (var x = cx - radius; x <= cx + radius; x += 3) {
+            var waveY = fillLevel + Math.sin((x * 0.045) + t * 0.05) * 4.5 + Math.cos((x * 0.025) - t * 0.03) * 2.5;
+            ctx.lineTo(x, waveY);
+          }
+          ctx.lineTo(cx + radius, cy + radius);
+          ctx.closePath();
+
+          var seaGrad = ctx.createLinearGradient(0, fillLevel, 0, cy + radius);
+          seaGrad.addColorStop(0, cData.seaCol);
+          seaGrad.addColorStop(1, cData.seaCol2);
+          ctx.fillStyle = seaGrad;
+          ctx.fill();
+
+          ctx.lineWidth = 1.8;
+          ctx.strokeStyle = '#ffffff';
+          ctx.globalAlpha = 0.6;
+          ctx.stroke();
+          ctx.globalAlpha = 1.0;
+
+          for (var p = 0; p < 8; p++) {
+            var px = cx - radius * 0.6 + ((p * 23 + t * 0.6) % (radius * 1.2));
+            var py = fillLevel + 12 - ((t * 0.8 + p * 15) % (radius * 1.1));
+            var pAlpha = Math.max(0, Math.sin((py - fillLevel) * 0.05));
+            ctx.fillStyle = cData.seaCol;
+            ctx.globalAlpha = pAlpha * 0.7;
+            ctx.beginPath(); ctx.arc(px, py, 1.8, 0, Math.PI * 2); ctx.fill();
+          }
+          ctx.globalAlpha = 1.0;
+        } else {
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
+          ctx.font = '11px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText('No Aperture Formed', cx, cy - 4);
+          ctx.fillStyle = 'rgba(201, 162, 39, 0.65)';
+          ctx.font = '9.5px sans-serif';
+          ctx.fillText('Mortal \u00b7 0% Primeval Sea', cx, cy + 14);
+        }
+
+        var sheenG = ctx.createLinearGradient(cx - radius * 0.8, cy - radius * 0.8, cx + radius * 0.5, cy + radius * 0.5);
+        sheenG.addColorStop(0, 'rgba(255, 255, 255, 0.35)');
+        sheenG.addColorStop(0.3, 'rgba(255, 255, 255, 0.05)');
+        sheenG.addColorStop(1, 'rgba(255, 255, 255, 0)');
+        ctx.fillStyle = sheenG;
+        ctx.beginPath();
+        ctx.ellipse(cx - radius * 0.25, cy - radius * 0.35, radius * 0.45, radius * 0.25, Math.PI * 0.25, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.restore();
+
+        ctx.strokeStyle = cData.crystalMembrane;
+        ctx.lineWidth = 2.4;
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+        ctx.stroke();
+
+        t += 1;
+        apertureAnimId = requestAnimationFrame(drawApertureFrame);
+      }
+      drawApertureFrame();
+    }
+
+    function init3DTurntable(found) {
+      if (turntableAnimId) {
+        cancelAnimationFrame(turntableAnimId);
+        turntableAnimId = null;
+      }
+
+      var stage = document.getElementById('charStage3D');
+      var turntable = document.getElementById('charTurntable');
+      var sheen = document.getElementById('charSheen');
+      var badge = document.getElementById('charBadge');
+      var autoBtn = document.getElementById('charAutoBtn');
+      var slider = document.getElementById('charSlider');
+      var hintAngle = document.getElementById('charHintAngle');
+      var presetBtns = stage ? stage.querySelectorAll('.stage-3d-preset-btn') : [];
+
+      if (!stage || !turntable) return;
+
+      var az = 0;
+      var pitch = 8;
+      var dragging = false;
+      var startX = 0, startY = 0, az0 = 0, pitch0 = 8;
+      var autoOrbit = false;
+
+      function updateTransform() {
+        turntable.style.transform = 'rotateX(' + pitch + 'deg) rotateY(' + az + 'deg)';
+        if (sheen) {
+          sheen.style.background = 'linear-gradient(' + (105 + az * 0.8) + 'deg, rgba(255,255,255,0) 25%, rgba(255,255,255,0.22) 50%, rgba(255,255,255,0) 75%)';
+        }
+        if (badge) badge.innerHTML = '3D: ' + Math.round(az) + '&deg;';
+        if (slider) slider.value = Math.round(az);
+
+        var label = 'Front';
+        if (az >= 45 && az < 135) label = 'Right';
+        else if (az >= 135 && az < 225) label = 'Back';
+        else if (az >= 225 && az < 315) label = 'Left';
+        if (hintAngle) hintAngle.textContent = label;
+
+        for (var p = 0; p < presetBtns.length; p++) {
+          var deg = parseInt(presetBtns[p].getAttribute('data-deg'), 10);
+          presetBtns[p].classList.toggle('active', Math.abs(deg - az) < 20);
+        }
+      }
+
+      function setAngle(newAz, newPitch) {
+        az = (newAz % 360 + 360) % 360;
+        if (newPitch !== undefined) pitch = Math.max(-15, Math.min(22, newPitch));
+        updateTransform();
+      }
+
+      stage.addEventListener('pointerdown', function (e) {
+        if (e.target.closest('.stage-3d-controls') || e.target.closest('.stage-3d-btn-auto')) return;
+        dragging = true;
+        startX = e.clientX;
+        startY = e.clientY;
+        az0 = az;
+        pitch0 = pitch;
+        stage.classList.add('is-dragging');
+        if (autoOrbit && autoBtn) {
+          autoOrbit = false;
+          autoBtn.innerHTML = '&blacktriangleright; Orbit';
+          autoBtn.classList.remove('active');
+        }
+        try { stage.setPointerCapture(e.pointerId); } catch (err) {}
+      });
+
+      window.addEventListener('pointermove', function (e) {
+        if (!dragging) return;
+        var dx = e.clientX - startX;
+        var dy = e.clientY - startY;
+        az = (az0 + dx * 0.75 + 3600) % 360;
+        pitch = Math.max(-15, Math.min(22, pitch0 - dy * 0.45));
+        updateTransform();
+      });
+
+      function stopDrag(e) {
+        if (!dragging) return;
+        dragging = false;
+        stage.classList.remove('is-dragging');
+        try { if (e && e.pointerId) stage.releasePointerCapture(e.pointerId); } catch (err) {}
+      }
+      window.addEventListener('pointerup', stopDrag);
+      window.addEventListener('pointercancel', stopDrag);
+
+      if (slider) {
+        slider.addEventListener('input', function () {
+          if (autoOrbit && autoBtn) {
+            autoOrbit = false;
+            autoBtn.innerHTML = '&blacktriangleright; Orbit';
+            autoBtn.classList.remove('active');
+          }
+          setAngle(parseInt(slider.value, 10));
+        });
+      }
+
+      for (var p = 0; p < presetBtns.length; p++) {
+        (function (btn) {
+          btn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            if (autoOrbit && autoBtn) {
+              autoOrbit = false;
+              autoBtn.innerHTML = '&blacktriangleright; Orbit';
+              autoBtn.classList.remove('active');
+            }
+            var deg = parseInt(btn.getAttribute('data-deg'), 10);
+            setAngle(deg, 8);
+          });
+        })(presetBtns[p]);
+      }
+
+      if (autoBtn) {
+        autoBtn.addEventListener('click', function (e) {
+          e.stopPropagation();
+          autoOrbit = !autoOrbit;
+          if (autoOrbit) {
+            autoBtn.innerHTML = '&par; Pause';
+            autoBtn.classList.add('active');
+          } else {
+            autoBtn.innerHTML = '&blacktriangleright; Orbit';
+            autoBtn.classList.remove('active');
+          }
+        });
+      }
+
+      function turntableLoop() {
+        if (autoOrbit && !dragging) {
+          az = (az + 0.45) % 360;
+          updateTransform();
+        }
+        turntableAnimId = requestAnimationFrame(turntableLoop);
+      }
+      turntableLoop();
+
+      updateTransform();
+    }
+
+    if (tabBtn3D) {
+      tabBtn3D.addEventListener('click', function () {
+        if (currentCardTab === '3d') return;
+        currentCardTab = '3d';
+        tabBtn3D.classList.add('active');
+        if (tabBtnAperture) tabBtnAperture.classList.remove('active');
+        if (selectedCultivator) render3DFigureView(selectedCultivator);
+      });
+    }
+
+    if (tabBtnAperture) {
+      tabBtnAperture.addEventListener('click', function () {
+        if (currentCardTab === 'aperture') return;
+        currentCardTab = 'aperture';
+        tabBtnAperture.classList.add('active');
+        if (tabBtn3D) tabBtn3D.classList.remove('active');
+        if (selectedCultivator) renderApertureView(selectedCultivator);
+      });
+    }
+
+    var btnZoomIn = document.getElementById('btnZoomIn');
+    var btnZoomOut = document.getElementById('btnZoomOut');
+    var btnZoomReset = document.getElementById('btnZoomReset');
+    if (btnZoomIn) {
+      btnZoomIn.addEventListener('click', function () {
+        if (window.RIWorld && window.RIWorld.zoomIn) window.RIWorld.zoomIn();
+      });
+    }
+    if (btnZoomOut) {
+      btnZoomOut.addEventListener('click', function () {
+        if (window.RIWorld && window.RIWorld.zoomOut) window.RIWorld.zoomOut();
+      });
+    }
+    if (btnZoomReset) {
+      btnZoomReset.addEventListener('click', function () {
+        if (window.RIWorld && window.RIWorld.reset) window.RIWorld.reset();
+        if (vantageBar) {
+          var vBtns = vantageBar.querySelectorAll('.fw-vantage-btn');
+          for (var k = 0; k < vBtns.length; k++) {
+            vBtns[k].classList.toggle('active', vBtns[k].getAttribute('data-vantage') === 'overview');
+          }
+        }
+      });
+    }
+
+    if (vantageBar) {
+      var vBtns = vantageBar.querySelectorAll('.fw-vantage-btn');
+      for (var vi = 0; vi < vBtns.length; vi++) {
+        (function (btn) {
+          btn.addEventListener('click', function () {
+            var vName = btn.getAttribute('data-vantage');
+            if (window.RIWorld && window.RIWorld.vantage) {
+              window.RIWorld.vantage(vName);
+            }
+            for (var k = 0; k < vBtns.length; k++) {
+              vBtns[k].classList.remove('active');
+            }
+            btn.classList.add('active');
+          });
+        })(vBtns[vi]);
+      }
+    }
+
+    function selectPerson(slug) {
+      var found = null;
+      for (var i = 0; i < cast.length; i++) {
+        if (cast[i].s === slug) { found = cast[i]; break; }
+      }
+      if (!found) return;
+      activeSlug = slug;
+      selectedCultivator = found;
+
+      if (window.RIWorld && window.RIWorld.focus) {
+        window.RIWorld.focus(found.x, found.z);
+      }
+
+      cardTitle.textContent = found.t;
+      var metaBits = ['Chapter ' + found.c];
+      if (found.rank) metaBits.push('Rank ' + found.rank);
+      if (found.grade) metaBits.push('Grade ' + found.grade);
+      if (found.kind === 'elder') metaBits.push('Clan Elder');
+      cardMeta.textContent = metaBits.join(' \u00b7 ');
+      cardDesc.textContent = found.desc || 'Standing in Gu Yue Village on Qing Mao Mountain.';
+      cardLink.href = '../' + found.s;
+
+      if (currentCardTab === 'aperture') {
+        renderApertureView(found);
+      } else {
+        render3DFigureView(found);
+      }
+
+      card.removeAttribute('hidden');
+
+      var btns = castGrid ? castGrid.querySelectorAll('.fw-cast-btn') : [];
+      for (var b = 0; b < btns.length; b++) {
+        btns[b].classList.toggle('active', btns[b].getAttribute('data-slug') === slug);
+      }
+    }
+
+    function clearSelection() {
+      if (turntableAnimId) {
+        cancelAnimationFrame(turntableAnimId);
+        turntableAnimId = null;
+      }
+      if (apertureAnimId) {
+        cancelAnimationFrame(apertureAnimId);
+        apertureAnimId = null;
+      }
+      activeSlug = null;
+      selectedCultivator = null;
+      if (card) card.setAttribute('hidden', '');
+      if (window.RIWorld && window.RIWorld.reset) {
+        window.RIWorld.reset();
+      }
+      var btns = castGrid ? castGrid.querySelectorAll('.fw-cast-btn') : [];
+      for (var b = 0; b < btns.length; b++) {
+        btns[b].classList.remove('active');
+      }
+      if (vantageBar) {
+        var vBtns = vantageBar.querySelectorAll('.fw-vantage-btn');
+        for (var k = 0; k < vBtns.length; k++) {
+          vBtns[k].classList.toggle('active', vBtns[k].getAttribute('data-vantage') === 'overview');
+        }
+      }
+    }
+
+    if (cardClose) cardClose.addEventListener('click', clearSelection);
+    if (cardReset) cardReset.addEventListener('click', clearSelection);
+    if (overviewBtn) overviewBtn.addEventListener('click', clearSelection);
+
+    if (castGrid) {
+      for (var i = 0; i < cast.length; i++) {
+        (function (c) {
+          var btn = document.createElement('button');
+          btn.className = 'fw-cast-btn';
+          btn.type = 'button';
+          btn.setAttribute('data-slug', c.s);
+          btn.setAttribute('data-c', c.c);
+          var label = c.t;
+          if (c.rank) label += ' (R' + c.rank + ')';
+          else if (c.grade) label += ' (' + c.grade + ')';
+          btn.textContent = label;
+          btn.addEventListener('click', function () {
+            selectPerson(c.s);
+          });
+          castGrid.appendChild(btn);
+        })(cast[i]);
+      }
+    }
+
+    if (box) {
+      box.addEventListener('click', function (e) {
+        var pin = e.target.closest('.world-figure');
+        if (pin) {
+          e.preventDefault();
+          var href = pin.getAttribute('href') || '';
+          var slug = href.replace(/^.*\//, '');
+          selectPerson(slug);
+        }
+      });
+    }
+
+    function apply(n) {
+      if (window.RIWorld) { window.RIWorld.setReach(n); }
+      out.textContent = 'chapter ' + n;
+      note.textContent = n >= total
+        ? 'The mists stand where the translation has reached. Drag back to watch the wiki grow.'
+        : 'The wiki as it stood at chapter ' + n + ' \u2014 what came later is gone from the frame.';
+      var all = box ? box.querySelectorAll('.world-pin') : [];
+      for (var i = 0; i < all.length; i++) {
+        var c = parseInt(all[i].getAttribute('data-c') || '0', 10);
+        all[i].classList.toggle('fw-out', c > n);
+      }
+      var btns = castGrid ? castGrid.querySelectorAll('.fw-cast-btn') : [];
+      for (var b = 0; b < btns.length; b++) {
+        var bc = parseInt(btns[b].getAttribute('data-c') || '0', 10);
+        btns[b].classList.toggle('fw-out', bc > n);
+      }
+      if (activeSlug) {
+        for (var j = 0; j < cast.length; j++) {
+          if (cast[j].s === activeSlug && cast[j].c > n) {
+            clearSelection();
+            break;
+          }
+        }
+      }
+    }
+
+    if (range) range.addEventListener('input', function () { apply(parseInt(range.value, 10)); });
+    apply(total);
+
+    try {
+      var params = new URLSearchParams(window.location.search);
+      var focus = params.get('focus');
+      if (focus) {
+        setTimeout(function () { selectPerson(focus); }, 350);
+      }
+    } catch (e) {}
+  })();
+</script>
+<!-- Webnovel Auth & Email Verification Modal -->
+<div class="auth-modal" id="authModal" hidden role="dialog" aria-modal="true" aria-labelledby="authModalTitle">
+  <div class="auth-modal-backdrop" id="authModalBackdrop"></div>
+  <div class="auth-modal-box">
+    <button type="button" class="auth-modal-close" id="authModalClose" aria-label="Close dialog">&times;</button>
+    
+    <!-- Step 1: Login / Sign Up Screen -->
+    <div id="authScreenMain">
+      <div class="auth-header">
+        <div class="auth-badge">Gu World Reader</div>
+        <h3 class="auth-title" id="authModalTitle">Sign in to Reverend Insanity</h3>
+        <p class="auth-sub">Keep your reading progress, bookmarks, and reader ratings synced across devices.</p>
+      </div>
+
+      <!-- Google OAuth Button -->
+      <button type="button" class="btn-google-login" id="googleLoginBtn">
+        <svg class="google-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+          <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.66v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.15z"/>
+          <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.34 24 12 24z"/>
+          <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
+          <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+        </svg>
+        <span>Continue with Google</span>
+      </button>
+
+      <div class="auth-divider">
+        <span>or continue with email</span>
+      </div>
+
+      <!-- Tabs: Sign In / Sign Up -->
+      <div class="auth-tabs" role="tablist">
+        <button type="button" class="auth-tab-btn active" id="tabSignInBtn" data-tab="signin" role="tab" aria-selected="true">Sign In</button>
+        <button type="button" class="auth-tab-btn" id="tabSignUpBtn" data-tab="signup" role="tab" aria-selected="false">Create Account</button>
+      </div>
+
+      <!-- Sign In Form -->
+      <form class="auth-form" id="signInForm">
+        <div class="auth-field">
+          <label for="signInEmail" class="auth-label">Email address</label>
+          <input type="email" id="signInEmail" class="auth-input" placeholder="reader@example.com" required autocomplete="email">
+        </div>
+        <div class="auth-field">
+          <div class="auth-label-row">
+            <label for="signInPassword" class="auth-label">Password</label>
+            <button type="button" class="auth-forgot-link" id="authForgotBtn">Forgot?</button>
+          </div>
+          <input type="password" id="signInPassword" class="auth-input" placeholder="Your password" required autocomplete="current-password">
+        </div>
+        <button type="submit" class="btn btn-primary auth-submit-btn" id="signInSubmitBtn">Sign In</button>
+        <p class="auth-status" id="signInStatus" hidden></p>
+      </form>
+
+      <!-- Sign Up Form (Triggers Email Verification) -->
+      <form class="auth-form" id="signUpForm" hidden>
+        <div class="auth-field">
+          <label for="signUpName" class="auth-label">Reader Name / Handle</label>
+          <input type="text" id="signUpName" class="auth-input" placeholder="e.g. SpectralSoul" required maxlength="30" autocomplete="nickname">
+        </div>
+        <div class="auth-field">
+          <label for="signUpEmail" class="auth-label">Email address</label>
+          <input type="email" id="signUpEmail" class="auth-input" placeholder="reader@example.com" required autocomplete="email">
+        </div>
+        <div class="auth-field">
+          <label for="signUpPassword" class="auth-label">Password <small class="muted">(min. 6 characters)</small></label>
+          <input type="password" id="signUpPassword" class="auth-input" placeholder="Create a password" required minlength="6" autocomplete="new-password">
+        </div>
+        <button type="submit" class="btn btn-primary auth-submit-btn" id="signUpSubmitBtn">Send Verification Code &rarr;</button>
+        <p class="auth-status" id="signUpStatus" hidden></p>
+      </form>
+    </div>
+
+    <!-- Step 2: Email Verification (OTP) Screen -->
+    <div id="authScreenVerify" hidden>
+      <div class="auth-header">
+        <div class="auth-badge">Email Verification</div>
+        <h3 class="auth-title">Verify Your Email</h3>
+        <p class="auth-sub">We sent a 6-digit verification code to <strong id="verifyEmailDisplay" class="text-gold">reader@example.com</strong></p>
+      </div>
+
+      <!-- Test Lab Mailbox Simulation Banner -->
+      <div class="test-mailbox-banner" id="testMailboxBanner">
+        <div class="tmb-icon">📬</div>
+        <div class="tmb-cnt">
+          <div class="tmb-title">Test Lab Mailbox Dispatcher:</div>
+          <div class="tmb-desc">Code sent: <span class="tmb-code-pill" id="tmbCodeDisplay">------</span> <button type="button" class="btn-autofill-otp" id="btnAutofillOtp">Click to auto-fill</button></div>
+        </div>
+      </div>
+
+      <form class="auth-form" id="verifyOtpForm">
+        <div class="otp-inputs-row" id="otpInputsRow">
+          <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-digit" data-idx="0" required autofocus>
+          <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-digit" data-idx="1" required>
+          <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-digit" data-idx="2" required>
+          <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-digit" data-idx="3" required>
+          <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-digit" data-idx="4" required>
+          <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-digit" data-idx="5" required>
+        </div>
+
+        <div class="otp-timer-row">
+          <span class="otp-timer-text" id="otpTimerText">Resend code in <span id="otpCountdown">45</span>s</span>
+          <button type="button" class="btn-resend-otp" id="btnResendOtp" hidden>Resend Code</button>
+          <button type="button" class="btn-change-email" id="btnChangeEmail">Change email</button>
+        </div>
+
+        <button type="submit" class="btn btn-primary auth-submit-btn" id="verifySubmitBtn">Verify Code &amp; Create Account</button>
+        <p class="auth-status" id="verifyStatus" hidden></p>
+      </form>
+    </div>
+
+  </div>
+</div>
+
+<!-- Webnovel Google Account Chooser Modal -->
+<div class="auth-modal" id="googleChooserModal" hidden role="dialog" aria-modal="true" aria-labelledby="googleChooserTitle">
+  <div class="auth-modal-backdrop" id="googleChooserBackdrop"></div>
+  <div class="auth-modal-box google-sheet-box">
+    <button type="button" class="auth-modal-close" id="googleChooserClose" aria-label="Close dialog">&times;</button>
+    <div class="google-sheet-header">
+      <svg class="google-icon" viewBox="0 0 24 24" width="28" height="28" aria-hidden="true">
+        <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.66v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.15z"/>
+        <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.34 24 12 24z"/>
+        <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
+        <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+      </svg>
+      <h3 class="google-sheet-title" id="googleChooserTitle">Sign in with Google</h3>
+      <p class="google-sheet-sub">to continue to <strong>Reverend Insanity Lab</strong></p>
+    </div>
+
+    <div class="google-account-list">
+      <button type="button" class="google-acc-item" data-name="Cultivator FY" data-email="cultivator.fy@gmail.com" data-avatar="F">
+        <div class="g-acc-avatar" style="background:#b8860b;">F</div>
+        <div class="g-acc-info">
+          <span class="g-acc-name">Cultivator FY</span>
+          <span class="g-acc-email">cultivator.fy@gmail.com</span>
+        </div>
+        <span class="g-acc-badge">Default</span>
+      </button>
+
+      <button type="button" class="google-acc-item" data-name="Bai Ning Bing" data-email="icemuscle.ice@gmail.com" data-avatar="B">
+        <div class="g-acc-avatar" style="background:#4a7a96;">B</div>
+        <div class="g-acc-info">
+          <span class="g-acc-name">Bai Ning Bing</span>
+          <span class="g-acc-email">icemuscle.ice@gmail.com</span>
+        </div>
+      </button>
+
+      <button type="button" class="google-acc-item" id="btnCustomGoogleAcc">
+        <div class="g-acc-avatar g-acc-plus">+</div>
+        <div class="g-acc-info">
+          <span class="g-acc-name">Use another Google account</span>
+          <span class="g-acc-email">Enter any email address</span>
+        </div>
+      </button>
+    </div>
+
+    <form id="customGoogleForm" hidden class="custom-google-form">
+      <input type="text" id="customGoogleName" class="auth-input" placeholder="Google Name" required value="Dao Master">
+      <input type="email" id="customGoogleEmail" class="auth-input" placeholder="name@gmail.com" required>
+      <button type="submit" class="btn btn-primary auth-submit-btn">Continue</button>
+    </form>
+
+    <div class="google-sheet-footer">
+      <small>To continue, Google will share your name, email address, and profile picture with Reverend Insanity Lab.</small>
+    </div>
+  </div>
+</div>
+
+<!-- Webnovel Compact Review Modal -->
+<div class="auth-modal" id="reviewModal" hidden role="dialog" aria-modal="true" aria-labelledby="reviewModalTitle">
+  <div class="auth-modal-backdrop" id="reviewModalBackdrop"></div>
+  <div class="auth-modal-box review-modal-box">
+    <button type="button" class="auth-modal-close" id="reviewModalClose" aria-label="Close dialog">&times;</button>
+    <div class="auth-header">
+      <div class="auth-badge">Webnovel Review</div>
+      <h3 class="auth-title" id="reviewModalTitle">Review Reverend Insanity</h3>
+      <p class="auth-sub" id="reviewModalUserLine">Publishing as <strong id="reviewUserNameDisplay">Reader</strong></p>
+    </div>
+
+    <form class="auth-form" id="reviewSubmitForm">
+      <!-- Overall Rating Stars -->
+      <div class="rating-picker-card">
+        <span class="rpc-label">Overall Rating:</span>
+        <div class="rpc-stars" id="rpcStars" role="radiogroup" aria-label="Overall 5 star rating">
+          <button type="button" class="star-btn" data-val="1" aria-label="1 star">&#9733;</button>
+          <button type="button" class="star-btn" data-val="2" aria-label="2 stars">&#9733;</button>
+          <button type="button" class="star-btn" data-val="3" aria-label="3 stars">&#9733;</button>
+          <button type="button" class="star-btn" data-val="4" aria-label="4 stars">&#9733;</button>
+          <button type="button" class="star-btn active" data-val="5" aria-label="5 stars">&#9733;</button>
+        </div>
+        <span class="rpc-score" id="rpcScoreDisplay">5.0 / 5.0</span>
+      </div>
+
+      <!-- 4 Webnovel Aspect Dimensions -->
+      <div class="aspect-grid">
+        <div class="aspect-row">
+          <span class="aspect-name">Story</span>
+          <select class="aspect-select" id="dimStory">
+            <option value="5.0" selected>5.0 ★ Masterpiece</option>
+            <option value="4.5">4.5 ★ Great</option>
+            <option value="4.0">4.0 ★ Good</option>
+            <option value="3.5">3.5 ★ Decent</option>
+            <option value="3.0">3.0 ★ Average</option>
+          </select>
+        </div>
+        <div class="aspect-row">
+          <span class="aspect-name">Characters</span>
+          <select class="aspect-select" id="dimCharacters">
+            <option value="5.0" selected>5.0 ★ Masterpiece</option>
+            <option value="4.5">4.5 ★ Great</option>
+            <option value="4.0">4.0 ★ Good</option>
+            <option value="3.5">3.5 ★ Decent</option>
+            <option value="3.0">3.0 ★ Average</option>
+          </select>
+        </div>
+        <div class="aspect-row">
+          <span class="aspect-name">World</span>
+          <select class="aspect-select" id="dimWorld">
+            <option value="5.0" selected>5.0 ★ Masterpiece</option>
+            <option value="4.5">4.5 ★ Great</option>
+            <option value="4.0">4.0 ★ Good</option>
+            <option value="3.5">3.5 ★ Decent</option>
+            <option value="3.0">3.0 ★ Average</option>
+          </select>
+        </div>
+        <div class="aspect-row">
+          <span class="aspect-name">Translation</span>
+          <select class="aspect-select" id="dimTranslation">
+            <option value="5.0" selected>5.0 ★ Masterpiece</option>
+            <option value="4.5">4.5 ★ Great</option>
+            <option value="4.0">4.0 ★ Good</option>
+            <option value="3.5">3.5 ★ Decent</option>
+            <option value="3.0">3.0 ★ Average</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Headline -->
+      <div class="auth-field">
+        <label for="reviewTitle" class="auth-label">Review Headline</label>
+        <input type="text" id="reviewTitle" class="auth-input" placeholder="e.g. Masterclass in ruthless pragmatism" required maxlength="100">
+      </div>
+
+      <!-- Body -->
+      <div class="auth-field">
+        <label for="reviewBody" class="auth-label">Detailed Review <small class="muted">(min. 10 chars)</small></label>
+        <textarea id="reviewBody" class="auth-input auth-textarea" rows="4" placeholder="Share your analysis of the schemes, cultivation system, and prose..." required minlength="10"></textarea>
+      </div>
+
+      <!-- Metadata & Options -->
+      <div class="review-meta-row">
+        <div class="rm-chapter">
+          <label for="reviewChapterSelect" class="rm-label">Current Chapter:</label>
+          <select id="reviewChapterSelect" class="rm-select">
+            <option value="Chapter 1">Chapter 1: The Fallen Demonic Path</option>
+            <option value="Chapter 2">Chapter 2: Past Reincarnation</option>
+            <option value="Chapter 3" selected>Chapter 3: Kindly Piss Off</option>
+            <option value="Chapter 4">Chapter 4: The Path of Blood</option>
+            <option value="Chapter 5">Chapter 5: Moonlight Gu</option>
+          </select>
+        </div>
+        <label class="rm-spoiler-label">
+          <input type="checkbox" id="reviewSpoilerCheck">
+          <span>Contains Spoilers</span>
+        </label>
+      </div>
+
+      <button type="submit" class="btn btn-primary auth-submit-btn" id="btnSubmitReview">Publish Review</button>
+      <p class="auth-status" id="reviewStatus" hidden></p>
+    </form>
+  </div>
+</div>
+
+</body>
+</html>
