@@ -463,6 +463,7 @@ class LabRequestHandler(http.server.SimpleHTTPRequestHandler):
             # If not authorized via header, check body fallback
             user_name = body.get("userName") or (user.get("name") if user else "Anonymous Reader")
             user_email = body.get("userEmail") or (user.get("email") if user else "reader@community.lab")
+            user_avatar = body.get("userAvatar") or (user.get("avatar") if user else "") or (user_name[0].upper() if user_name else "R")
             user_id = (user.get("id") if user else f"usr_guest_{uuid.uuid4().hex[:6]}")
             is_verified = (user.get("emailVerified", True) if user else True)
 
@@ -488,7 +489,7 @@ class LabRequestHandler(http.server.SimpleHTTPRequestHandler):
                 "userId": user_id,
                 "user": user_name,
                 "userName": user_name,
-                "userAvatar": (user_name[0].upper() if user_name else "R"),
+                "userAvatar": user_avatar,
                 "userEmail": user_email,
                 "userProvider": (user.get("provider", "email") if user else "email"),
                 "verified": is_verified,
