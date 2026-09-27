@@ -18,5 +18,15 @@
     "emailVerified": true,
     "createdAt": "2026-09-10T15:30:00Z",
     "avatarBg": "#4a7a96"
+  },
+  {
+    "id": "usr_1dfe2e50",
+    "name": "GreatLove",
+    "email": "greatlove@gu.com",
+    "password_hash": "95d30169a59c418b52013315fc81bc99fdf0a7b03a116f346ab628496f349ed5",
+    "provider": "email",
+    "emailVerified": true,
+    "createdAt": "2026-09-27T14:30:54Z",
+    "avatarBg": "#4a7a96"
   }
 ]

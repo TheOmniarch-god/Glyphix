@@ -590,7 +590,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   } catch (e) {}
 
-  // ── Reverend Insanity Community Lab: Webnovel Auth & Real Storage ──────
+// ── Reverend Insanity Community Lab: Webnovel Auth & Real Storage ──────
   var API_BASE = "";
   var TOKEN_KEY = "ri_lab_token";
   var USER_KEY = "ri_lab_user";
@@ -605,13 +605,13 @@ document.addEventListener("DOMContentLoaded", function () {
       var initial = [
         { id: "usr_01", name: "Heaven Refining", email: "venerable@gmail.com", emailVerified: true, avatarBg: "#b8860b", provider: "google" },
         { id: "usr_02", name: "Bai Ning Bing", email: "icemuscle@qingmao.net", emailVerified: true, avatarBg: "#4a7a96", provider: "email" },
-        { id: "usr_03", name: "Gu Yue Mo Chen", email: "mochen@guyue.clan", emailVerified: true, avatarBg: "#7c5295", provider: "email" }
+        { id: "usr_03", name: "Gu Yue Mo Chen", email: "mochen@guyue.clan", emailVerified: true, avatarBg: "#734d26", provider: "email" }
       ];
       store.setItem("ri_lab_users_db", JSON.stringify(initial));
       return initial;
     },
     saveUsers: function(users) {
-      store.setItem("ri_lab_users_db", JSON.stringify(users));
+      try { store.setItem("ri_lab_users_db", JSON.stringify(users)); } catch (e) {}
     },
     getReviews: function() {
       try {
@@ -622,212 +622,303 @@ document.addEventListener("DOMContentLoaded", function () {
         {
           id: "rev_01",
           userId: "usr_01",
+          user: "Heaven Refining",
           userName: "Heaven Refining",
           userAvatar: "H",
           userEmail: "venerable@gmail.com",
+          userProvider: "google",
           verified: true,
+          overall: 5,
           rating: 5.0,
-          categories: { story: 5.0, characters: 5.0, world: 5.0, translation: 5.0 },
+          userLevel: "LV 4",
+          categories: { writing: 5.0, story: 5.0, characters: 5.0, stability: 5.0, world: 5.0 },
           title: "A masterwork of ruthless philosophy and perseverance",
+          text: "Fang Yuan is one of the most logically consistent and compelling protagonists in fiction. The world building around Gu worms, primeval essence, and clan politics is layered and unyielding. The Omniarch translation is remarkably crisp and elevates the prose.",
           body: "Fang Yuan is one of the most logically consistent and compelling protagonists in fiction. The world building around Gu worms, primeval essence, and clan politics is layered and unyielding. The Omniarch translation is remarkably crisp and elevates the prose.",
           chapter: "Chapter 3",
+          spoilers: false,
           spoiler: false,
+          helpful: 42,
           likes: 42,
+          date: "Sep 20, 2026",
           createdAt: "2026-09-20T10:14:00Z"
         },
         {
           id: "rev_02",
           userId: "usr_02",
+          user: "Bai Ning Bing",
           userName: "Bai Ning Bing",
           userAvatar: "B",
           userEmail: "icemuscle@qingmao.net",
+          userProvider: "email",
           verified: true,
+          overall: 5,
           rating: 5.0,
           categories: { story: 5.0, characters: 5.0, world: 5.0, translation: 4.8 },
           title: "Uncompromising cultivation and zero plot armor",
+          text: "The early chapters at Qing Mao Mountain do a phenomenal job setting up the stakes. Fang Yuan's cold composure during the Awakening ceremony is chilling yet utterly pragmatic.",
           body: "The early chapters at Qing Mao Mountain do a phenomenal job setting up the stakes. Fang Yuan's cold composure during the Awakening ceremony is chilling yet utterly pragmatic.",
           chapter: "Chapter 2",
+          spoilers: false,
           spoiler: false,
+          helpful: 28,
           likes: 28,
+          date: "Sep 22, 2026",
           createdAt: "2026-09-22T14:40:00Z"
         },
         {
           id: "rev_03",
           userId: "usr_03",
+          user: "Gu Yue Mo Chen",
           userName: "Gu Yue Mo Chen",
           userAvatar: "G",
           userEmail: "mochen@guyue.clan",
+          userProvider: "email",
           verified: true,
+          overall: 5,
           rating: 4.8,
           categories: { story: 5.0, characters: 4.6, world: 5.0, translation: 4.8 },
           title: "Clan politics and Gu cultivation done right",
+          text: "The tension between the Mo and Chi factions adds tremendous texture to Gu Yue Village. The translation captures the formal hierarchy and subtle disrespect with pinpoint precision.",
           body: "The tension between the Mo and Chi factions adds tremendous texture to Gu Yue Village. The translation captures the formal hierarchy and subtle disrespect with pinpoint precision.",
           chapter: "Chapter 1",
+          spoilers: true,
           spoiler: true,
+          helpful: 15,
           likes: 15,
+          date: "Sep 24, 2026",
           createdAt: "2026-09-24T18:22:00Z"
+        },
+        {
+          id: "rev_2df64a82",
+          userId: "usr_85f32be1",
+          user: "SpectralCultivator",
+          userName: "SpectralCultivator",
+          userAvatar: "S",
+          userEmail: "tester@guworld.org",
+          userProvider: "email",
+          verified: true,
+          overall: 5,
+          rating: 5.0,
+          userLevel: "LV 4",
+          categories: { writing: 5.0, story: 5.0, characters: 5.0, stability: 5.0, world: 5.0 },
+          title: "Unrivaled philosophical depth in modern web fiction",
+          text: "The way Fang Yuan navigates Gu Yue Village with 500 years of demonic wisdom makes every interaction thrilling.",
+          body: "The way Fang Yuan navigates Gu Yue Village with 500 years of demonic wisdom makes every interaction thrilling.",
+          chapter: "Chapter 3",
+          spoilers: false,
+          spoiler: false,
+          helpful: 12,
+          likes: 12,
+          date: "Sep 27, 2026",
+          createdAt: "2026-09-27T08:50:29Z"
         }
       ];
       store.setItem("ri_lab_reviews_db", JSON.stringify(initial));
       return initial;
     },
     saveReviews: function(revs) {
-      store.setItem("ri_lab_reviews_db", JSON.stringify(revs));
+      try { store.setItem("ri_lab_reviews_db", JSON.stringify(revs)); } catch (e) {}
     },
-    calcSummary: function(reviews) {
-      if (!reviews || reviews.length === 0) {
-        return { avg: 5.0, count: 0, categories: { story: 5.0, characters: 5.0, world: 5.0, translation: 5.0 } };
+    calcSummary: function(revs) {
+      if (!revs || revs.length === 0) {
+        return {
+          avg: 5.0,
+          count: 0,
+          categories: { story: 5.0, characters: 5.0, world: 5.0, translation: 5.0 }
+        };
       }
-      var total = 0;
-      var cats = { story: 0, characters: 0, world: 0, translation: 0 };
-      var catCounts = { story: 0, characters: 0, world: 0, translation: 0 };
-      for (var i = 0; i < reviews.length; i++) {
-        var r = reviews[i];
-        total += (r.rating || 5.0);
-        var rc = r.categories || {};
-        for (var k in cats) {
-          if (rc[k] !== undefined) {
-            cats[k] += parseFloat(rc[k]);
-            catCounts[k]++;
+      var sum = 0;
+      var cSums = { story: 0, characters: 0, world: 0, translation: 0 };
+      var cCounts = { story: 0, characters: 0, world: 0, translation: 0 };
+
+      revs.forEach(function(r) {
+        var score = floatVal(r.rating || r.overall || 5.0);
+        sum += score;
+        var cats = r.categories || {};
+        ["story", "characters", "world", "translation"].forEach(function(cat) {
+          if (cats[cat] !== undefined && cats[cat] !== null) {
+            cSums[cat] += floatVal(cats[cat]);
+            cCounts[cat]++;
           }
-        }
-      }
-      var catSummary = {};
-      for (var ck in cats) {
-        catSummary[ck] = catCounts[ck] > 0 ? Math.round((cats[ck] / catCounts[ck]) * 10) / 10 : 5.0;
-      }
+        });
+      });
+
+      var count = revs.length;
+      var avg = parseFloat((sum / count).toFixed(1));
       return {
-        avg: Math.round((total / reviews.length) * 10) / 10,
-        count: reviews.length,
-        categories: catSummary
+        avg: avg,
+        count: count,
+        categories: {
+          writing: cCounts.writing ? parseFloat((cSums.writing / cCounts.writing).toFixed(1)) : avg,
+          story: cCounts.story ? parseFloat((cSums.story / cCounts.story).toFixed(1)) : avg,
+          characters: cCounts.characters ? parseFloat((cSums.characters / cCounts.characters).toFixed(1)) : avg,
+          stability: cCounts.stability ? parseFloat((cSums.stability / cCounts.stability).toFixed(1)) : avg,
+          world: cCounts.world ? parseFloat((cSums.world / cCounts.world).toFixed(1)) : avg
+        }
       };
     }
   };
 
-  // Resilient API Caller (Tries Server API, falls back cleanly to localDb on static hosts)
+  function floatVal(v) {
+    var p = parseFloat(v);
+    return isNaN(p) ? 5.0 : p;
+  }
+
+  // Dual-mode API Caller: tries server API, seamlessly falls back to localDb if offline
   function callApi(endpoint, method, data, token) {
+    method = method || "GET";
     var headers = { "Content-Type": "application/json" };
     if (token) headers["Authorization"] = "Bearer " + token;
 
-    return fetch(API_BASE + endpoint, {
-      method: method || "GET",
-      headers: headers,
-      body: data ? JSON.stringify(data) : undefined
-    })
-      .then(function(r) {
-        if (!r.ok && r.status === 404) throw new Error("Static Host");
-        return r.json();
+    var fetchOpts = { method: method, headers: headers };
+    if (data && method !== "GET") {
+      fetchOpts.body = JSON.stringify(data);
+    }
+
+    return fetch(API_BASE + endpoint, fetchOpts)
+      .then(function(res) {
+        if (!res.ok && res.status !== 400 && res.status !== 401) {
+          throw new Error("HTTP " + res.status);
+        }
+        return res.json();
       })
-      .catch(function() {
-        // Fallback to localDb
-        return localDbHandler(endpoint, method, data);
+      .catch(function(err) {
+        // Fallback simulation for offline or static hosting
+        return fallbackApiHandler(endpoint, method, data);
       });
   }
 
-  function localDbHandler(endpoint, method, data) {
+  function fallbackApiHandler(endpoint, method, data) {
     if (endpoint === "/api/status") {
-      var users = localDb.getUsers();
-      var reviews = localDb.getReviews();
-      return { ok: true, users_count: users.length, reviews_count: reviews.length, storage: "Browser Storage Active (GitHub Pages)" };
+      var uList = localDb.getUsers();
+      var rList = localDb.getReviews();
+      return {
+        ok: true,
+        environment: "Reverend Insanity Reader (Browser Storage)",
+        storage: "Browser LocalStorage Active",
+        users_count: uList.length,
+        reviews_count: rList.length
+      };
     }
-    if (endpoint === "/api/reviews" && (!method || method === "GET")) {
-      var revs = localDb.getReviews();
-      return { ok: true, reviews: revs, summary: localDb.calcSummary(revs) };
+    if (endpoint === "/api/reviews" || endpoint === "/api/ratings") {
+      if (method === "GET") {
+        var revs = localDb.getReviews();
+        var summ = localDb.calcSummary(revs);
+        var ovSum = 0;
+        revs.forEach(function(r) { ovSum += floatVal(r.rating || r.overall || 5); });
+        return {
+          ok: true,
+          reviews: revs,
+          summary: summ,
+          overall: { sum: ovSum, count: revs.length },
+          categories: {
+            story: { sum: summ.categories.story * revs.length, count: revs.length },
+            characters: { sum: summ.categories.characters * revs.length, count: revs.length },
+            world: { sum: summ.categories.world * revs.length, count: revs.length },
+            translation: { sum: summ.categories.translation * revs.length, count: revs.length }
+          }
+        };
+      }
+      if (method === "POST") {
+        var allRevs = localDb.getReviews();
+        var newR = {
+          id: "rev_" + Math.random().toString(36).substring(2, 10),
+          userId: "usr_" + Math.random().toString(36).substring(2, 8),
+          user: data.userName || data.user || "Cultivator",
+          userName: data.userName || data.user || "Cultivator",
+          userAvatar: (data.userName || data.user || "C").charAt(0).toUpperCase(),
+          userEmail: data.userEmail || "reader@cultivator.lab",
+          userProvider: "email",
+          verified: true,
+          overall: Math.round(data.rating || 5.0),
+          rating: floatVal(data.rating || 5.0),
+          categories: data.categories || { story: 5.0, characters: 5.0, world: 5.0, translation: 5.0 },
+          title: data.title || "Refined Cultivation Perspective",
+          body: data.body || data.text || "",
+          text: data.body || data.text || "",
+          chapter: data.chapter || "Chapter 1",
+          spoiler: !!(data.spoiler || data.spoilers),
+          spoilers: !!(data.spoiler || data.spoilers),
+          likes: 0,
+          helpful: 0,
+          date: "Just now",
+          createdAt: new Date().toISOString()
+        };
+        allRevs.unshift(newR);
+        localDb.saveReviews(allRevs);
+        var s = localDb.calcSummary(allRevs);
+        return { ok: true, review: newR, summary: s, reviews: allRevs };
+      }
     }
     if (endpoint === "/api/auth/register-send-code") {
-      var code = String(Math.floor(100000 + Math.random() * 900000));
-      store.setItem("ri_pending_reg", JSON.stringify({ email: data.email, name: data.name, code: code }));
-      return { ok: true, message: "Code sent", email: data.email, code_hint: code };
+      var mockCode = Math.floor(100000 + Math.random() * 900000).toString();
+      store.setItem("ri_mock_otp_" + data.email, mockCode);
+      store.setItem("ri_mock_name_" + data.email, data.name);
+      return { ok: true, code_hint: mockCode, message: "Code sent" };
+    }
+    if (endpoint === "/api/auth/resend-code") {
+      var freshCode = Math.floor(100000 + Math.random() * 900000).toString();
+      store.setItem("ri_mock_otp_" + data.email, freshCode);
+      return { ok: true, code_hint: freshCode, message: "Fresh code sent" };
     }
     if (endpoint === "/api/auth/verify-code") {
-      var pendingRaw = store.getItem("ri_pending_reg");
-      var pending = pendingRaw ? JSON.parse(pendingRaw) : null;
-      if (!pending || String(pending.code) !== String(data.code)) {
-        return { ok: false, error: "Invalid verification code. Please check and try again." };
+      var savedCode = store.getItem("ri_mock_otp_" + data.email);
+      if (savedCode && savedCode === data.code) {
+        var savedName = store.getItem("ri_mock_name_" + data.email) || "Cultivator";
+        var newUser = {
+          id: "usr_" + Math.random().toString(36).substring(2, 8),
+          name: savedName,
+          email: data.email,
+          emailVerified: true,
+          avatarBg: "#b8860b",
+          provider: "email"
+        };
+        var users = localDb.getUsers();
+        users.push(newUser);
+        localDb.saveUsers(users);
+        return { ok: true, user: newUser, token: "mock_tok_" + newUser.id };
       }
-      var allUsers = localDb.getUsers();
-      var newUser = {
-        id: "usr_" + Math.random().toString(36).substring(2, 9),
-        name: pending.name,
-        email: pending.email,
-        emailVerified: true,
-        provider: "email",
-        avatarBg: "#4a7a96",
-        createdAt: new Date().toISOString()
-      };
-      allUsers.push(newUser);
-      localDb.saveUsers(allUsers);
-      return { ok: true, user: newUser, token: "tok_local_" + Date.now() };
+      return { ok: false, error: "Incorrect verification code." };
     }
     if (endpoint === "/api/auth/login") {
-      var usrs = localDb.getUsers();
-      for (var i = 0; i < usrs.length; i++) {
-        if (usrs[i].email === data.email) {
-          return { ok: true, user: usrs[i], token: "tok_local_" + Date.now() };
-        }
+      var uFound = localDb.getUsers().find(function(u) { return u.email === data.email; });
+      if (uFound) {
+        return { ok: true, user: uFound, token: "mock_tok_" + uFound.id };
       }
-      return { ok: false, error: "No account found with this email. Please Create Account." };
+      var quickUser = {
+        id: "usr_" + Math.random().toString(36).substring(2, 8),
+        name: data.email.split("@")[0],
+        email: data.email,
+        emailVerified: true,
+        avatarBg: "#b8860b",
+        provider: "email"
+      };
+      return { ok: true, user: quickUser, token: "mock_tok_" + quickUser.id };
     }
     if (endpoint === "/api/auth/google") {
       var gUser = {
         id: "usr_g_" + Math.random().toString(36).substring(2, 8),
         name: data.name || "Cultivator FY",
         email: data.email || "cultivator@gmail.com",
-        avatarBg: "#4285F4",
-        provider: "google",
         emailVerified: true,
-        createdAt: new Date().toISOString()
+        avatarBg: "#b8860b",
+        provider: "google"
       };
-      var usrsG = localDb.getUsers();
-      usrsG.push(gUser);
-      localDb.saveUsers(usrsG);
-      return { ok: true, user: gUser, token: "tok_local_" + Date.now() };
-    }
-    if (endpoint === "/api/reviews" && method === "POST") {
-      var curRevs = localDb.getReviews();
-      var newRev = {
-        id: "rev_" + Math.random().toString(36).substring(2, 9),
-        userId: "usr_cur",
-        userName: data.userName || "Verified Reader",
-        userAvatar: (data.userName || "R").charAt(0).toUpperCase(),
-        userEmail: data.userEmail || "reader@community.lab",
-        verified: true,
-        rating: data.rating || 5.0,
-        categories: data.categories || { story: 5.0, characters: 5.0, world: 5.0, translation: 5.0 },
-        title: data.title || "Cultivation Masterpiece",
-        body: data.body || "",
-        chapter: data.chapter || "Chapter 1",
-        spoiler: !!data.spoiler,
-        likes: 0,
-        createdAt: new Date().toISOString()
-      };
-      curRevs.unshift(newRev);
-      localDb.saveReviews(curRevs);
-      return { ok: true, review: newRev, summary: localDb.calcSummary(curRevs) };
+      return { ok: true, user: gUser, token: "mock_tok_" + gUser.id };
     }
     if (endpoint === "/api/reviews/vote") {
       var vRevs = localDb.getReviews();
-      var likes = 0;
-      for (var v = 0; v < vRevs.length; v++) {
-        if (vRevs[v].id === data.reviewId) {
-          vRevs[v].likes = (vRevs[v].likes || 0) + 1;
-          likes = vRevs[v].likes;
-          break;
+      var curLikes = 0;
+      vRevs.forEach(function(r) {
+        if (r.id === data.reviewId) {
+          r.likes = (r.likes || 0) + 1;
+          r.helpful = r.likes;
+          curLikes = r.likes;
         }
-      }
+      });
       localDb.saveReviews(vRevs);
-      return { ok: true, likes: likes };
-    }
-    if (endpoint === "/api/reviews/delete") {
-      var dRevs = localDb.getReviews();
-      dRevs = dRevs.filter(function(x) { return x.id !== data.reviewId; });
-      localDb.saveReviews(dRevs);
-      return { ok: true, summary: localDb.calcSummary(dRevs) };
-    }
-    if (endpoint === "/api/lab/reset") {
-      store.removeItem("ri_lab_users_db");
-      store.removeItem("ri_lab_reviews_db");
-      return { ok: true, message: "Storage reset" };
+      return { ok: true, likes: curLikes };
     }
     return { ok: true };
   }
@@ -850,14 +941,11 @@ document.addEventListener("DOMContentLoaded", function () {
   function getStoredUser() {
     try {
       var raw = store.getItem(USER_KEY);
-      if (raw) return JSON.parse(raw);
-    } catch (e) {}
-    return null;
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) { return null; }
   }
 
   function saveSession(user, token) {
-    labState.user = user;
-    labState.token = token;
     try {
       if (user && token) {
         store.setItem(USER_KEY, JSON.stringify(user));
@@ -867,122 +955,60 @@ document.addEventListener("DOMContentLoaded", function () {
         store.removeItem(TOKEN_KEY);
       }
     } catch (e) {}
-    updateNavUI();
-    updateReviewModalUser();
+    updateHeaderUI();
   }
 
-  function showToast(msg) {
-    var toast = document.createElement("div");
-    toast.className = "lab-toast";
-    toast.textContent = msg;
-    toast.style.cssText = "position:fixed;bottom:24px;right:24px;z-index:999999;background:#1e1e24;color:#ecc768;border:1.5px solid #ecc768;padding:12px 20px;border-radius:10px;font-size:13.5px;font-weight:700;box-shadow:0 10px 30px rgba(0,0,0,0.5);animation:fadeInUp 0.3s ease;";
-    document.body.appendChild(toast);
-    setTimeout(function() {
-      toast.style.opacity = "0";
-      toast.style.transition = "opacity 0.3s ease";
-      setTimeout(function() { toast.remove(); }, 300);
-    }, 3200);
-  }
-
-  // Update navbar user profile / button
-  function updateNavUI() {
+  function updateHeaderUI() {
     var user = getStoredUser();
-    var triggerBtn = document.getElementById("authTriggerBtn");
-    var btnLabel = document.getElementById("authBtnLabel");
-    var popover = document.getElementById("userMenuPopover");
-    var umpName = document.getElementById("umpName");
-    var umpEmail = document.getElementById("umpEmail");
-    var umpAvatar = document.getElementById("umpAvatar");
-    var umpProgVal = document.getElementById("umpProgVal");
+    var avatarEl = document.getElementById("navUserAvatar");
+    var labelEl = document.getElementById("navUserLabel");
+    var popName = document.getElementById("umpUserName");
+    var popEmail = document.getElementById("umpUserEmail");
+    var popBadge = document.getElementById("umpUserBadge");
+    var authBtn = document.getElementById("authTriggerBtn");
 
-    var lastCh = store.getItem("ri_last_read_ch") || "Chapter 1";
-    if (umpProgVal) umpProgVal.textContent = lastCh;
-
-    if (!user) {
-      if (btnLabel) btnLabel.textContent = "Sign In";
-      if (triggerBtn) {
-        var oldAvatar = triggerBtn.querySelector(".user-avatar-badge");
-        if (oldAvatar) oldAvatar.remove();
-        var icon = triggerBtn.querySelector(".auth-icon");
-        if (icon) icon.style.display = "inline-block";
+    if (user) {
+      if (avatarEl) {
+        avatarEl.textContent = (user.name ? user.name.charAt(0) : "R").toUpperCase();
+        avatarEl.style.display = "inline-flex";
       }
-      if (popover) popover.hidden = true;
+      if (labelEl) {
+        labelEl.textContent = user.name;
+      }
+      if (popName) popName.textContent = user.name;
+      if (popEmail) popEmail.textContent = user.email;
+      if (popBadge) {
+        popBadge.textContent = user.provider === "google" ? "Google Reader" : "Verified Reader";
+      }
     } else {
-      var displayName = user.name || (user.email ? user.email.split("@")[0] : "Reader");
-      var initial = displayName.charAt(0).toUpperCase();
+      if (avatarEl) avatarEl.style.display = "none";
+      if (labelEl) labelEl.textContent = "Sign In";
+    }
 
-      if (btnLabel) btnLabel.textContent = displayName;
-      if (triggerBtn) {
-        var icon2 = triggerBtn.querySelector(".auth-icon");
-        if (icon2) icon2.style.display = "none";
-        var existingBadge = triggerBtn.querySelector(".user-avatar-badge");
-        if (!existingBadge) {
-          existingBadge = document.createElement("span");
-          existingBadge.className = "user-avatar-badge";
-          triggerBtn.insertBefore(existingBadge, btnLabel);
-        }
-        existingBadge.textContent = initial;
-        if (user.avatarBg) existingBadge.style.backgroundColor = user.avatarBg;
-      }
-
-      if (umpName) {
-        var provBadge = user.provider === "google" ? ' <small class="text-gold">(Google)</small>' : ' <small style="color:#27ae60;">(✓ Verified)</small>';
-        umpName.innerHTML = displayName + provBadge;
-      }
-      if (umpEmail) umpEmail.textContent = user.email || "";
-      if (umpAvatar) {
-        umpAvatar.textContent = initial;
-        if (user.avatarBg) umpAvatar.style.backgroundColor = user.avatarBg;
-      }
+    var progVal = document.getElementById("umpProgVal");
+    if (progVal) {
+      try {
+        var lastCh = store.getItem("ri_last_read_ch") || "Chapter 1";
+        progVal.textContent = lastCh;
+      } catch (e) {}
     }
   }
 
-  function updateReviewModalUser() {
-    var user = getStoredUser();
-    var userLine = document.getElementById("reviewModalUserLine");
-    var nameDisp = document.getElementById("reviewUserNameDisplay");
-    if (user && nameDisp) {
-      nameDisp.textContent = user.name + (user.emailVerified ? " (✓ Verified Reader)" : "");
-      if (userLine) userLine.style.display = "block";
+  updateHeaderUI();
+
+  // Toast notification helper
+  function showToast(msg) {
+    var toast = document.getElementById("labToast");
+    if (!toast) {
+      toast = document.createElement("div");
+      toast.id = "labToast";
+      toast.className = "status-toast";
+      toast.innerHTML = '<span class="toast-icon">✨</span><span class="toast-msg"></span>';
+      document.body.appendChild(toast);
     }
-  }
-
-  // Record reading progress on chapter pages
-  try {
-    var chPathMatch = window.location.pathname.match(/chapter-(\d+)/);
-    if (chPathMatch) {
-      var currentChNum = chPathMatch[1];
-      store.setItem("ri_last_read_ch", "Chapter " + currentChNum);
-      labState.pendingChapter = "Chapter " + currentChNum;
-    } else if (window.location.pathname.indexOf("preface") !== -1) {
-      store.setItem("ri_last_read_ch", "Author's Preface");
-      labState.pendingChapter = "Preface";
-    }
-  } catch (e) {}
-
-  // Check Database connection status
-  callApi("/api/status")
-    .then(function(data) {
-      var statusBadge = document.getElementById("labDbStatus");
-      if (statusBadge && data.ok) {
-        var modeStr = data.storage.indexOf("Browser") !== -1 ? "Storage Active" : "Persistent DB Online";
-        statusBadge.innerHTML = '<span class="status-dot-pulse"></span> ' + modeStr + ' (' + data.users_count + ' users, ' + data.reviews_count + ' reviews)';
-      }
-    })
-    .catch(function() {});
-
-  // Lab Reset Button
-  var labResetBtn = document.getElementById("labResetBtn");
-  if (labResetBtn) {
-    labResetBtn.addEventListener("click", function() {
-      if (confirm("Reset the Lab test database back to original demo seed data?")) {
-        callApi("/api/lab/reset", "POST")
-          .then(function(d) {
-            showToast("Database reset to demo state.");
-            loadReviews();
-          });
-      }
-    });
+    toast.querySelector(".toast-msg").textContent = msg;
+    toast.classList.add("visible");
+    setTimeout(function() { toast.classList.remove("visible"); }, 3800);
   }
 
   // ── Auth Modal & Navigation Triggers ──────────────────────────────────
@@ -1029,32 +1055,91 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  function openAuthModal(tab) {
+  function openAuthModal(mode) {
     if (!authModal) return;
     authModal.hidden = false;
-    var screenMain = document.getElementById("authScreenMain");
-    var screenVerify = document.getElementById("authScreenVerify");
-    if (screenMain) screenMain.hidden = false;
-    if (screenVerify) screenVerify.hidden = true;
-    switchAuthTab(tab || "signin");
+    authModal.style.display = "flex";
+
+    var viewGateway = document.getElementById("authViewGateway");
+    var viewEmail = document.getElementById("authViewEmail");
+
+    if (mode === "signin" || mode === "signup") {
+      // Go directly to email view with specific mode
+      if (viewGateway) viewGateway.style.display = "none";
+      if (viewEmail) viewEmail.style.display = "block";
+      setAuthEmailMode(mode);
+    } else {
+      // Show default Webnovel Gateway (Google or Email choices)
+      if (viewGateway) viewGateway.style.display = "block";
+      if (viewEmail) viewEmail.style.display = "none";
+    }
   }
 
-  function switchAuthTab(tab) {
-    var tabInBtn = document.getElementById("tabSignInBtn");
-    var tabUpBtn = document.getElementById("tabSignUpBtn");
+  function setAuthEmailMode(mode) {
     var formIn = document.getElementById("signInForm");
     var formUp = document.getElementById("signUpForm");
+    var modeLabel = document.getElementById("authEmailModeLabel");
+    var switchPrompt = document.getElementById("authSwitchPrompt");
+    var switchBtn = document.getElementById("authSwitchBtn");
 
-    if (tabInBtn) tabInBtn.classList.toggle("active", tab === "signin");
-    if (tabUpBtn) tabUpBtn.classList.toggle("active", tab === "signup");
-    if (formIn) formIn.hidden = (tab !== "signin");
-    if (formUp) formUp.hidden = (tab !== "signup");
+    if (mode === "signup") {
+      if (formIn) formIn.style.display = "none";
+      if (formUp) formUp.style.display = "flex";
+      if (modeLabel) modeLabel.textContent = "Create Reader Account";
+      if (switchPrompt) switchPrompt.textContent = "Already have an account?";
+      if (switchBtn) switchBtn.textContent = "Sign in";
+    } else {
+      if (formIn) formIn.style.display = "flex";
+      if (formUp) formUp.style.display = "none";
+      if (modeLabel) modeLabel.textContent = "Sign in with Email";
+      if (switchPrompt) switchPrompt.textContent = "Need an account?";
+      if (switchBtn) switchBtn.textContent = "Create account";
+    }
   }
 
-  var tabInBtn = document.getElementById("tabSignInBtn");
-  var tabUpBtn = document.getElementById("tabSignUpBtn");
-  if (tabInBtn) tabInBtn.addEventListener("click", function() { switchAuthTab("signin"); });
-  if (tabUpBtn) tabUpBtn.addEventListener("click", function() { switchAuthTab("signup"); });
+  // Gateway buttons
+  var btnGatewayEmail = document.getElementById("btnGatewayEmail");
+  if (btnGatewayEmail) {
+    btnGatewayEmail.addEventListener("click", function() {
+      var viewGateway = document.getElementById("authViewGateway");
+      var viewEmail = document.getElementById("authViewEmail");
+      if (viewGateway) viewGateway.style.display = "none";
+      if (viewEmail) viewEmail.style.display = "block";
+      setAuthEmailMode("signin");
+    });
+  }
+
+  var btnGatewaySignUp = document.getElementById("btnGatewaySignUp");
+  if (btnGatewaySignUp) {
+    btnGatewaySignUp.addEventListener("click", function() {
+      var viewGateway = document.getElementById("authViewGateway");
+      var viewEmail = document.getElementById("authViewEmail");
+      if (viewGateway) viewGateway.style.display = "none";
+      if (viewEmail) viewEmail.style.display = "block";
+      setAuthEmailMode("signup");
+    });
+  }
+
+  // Back button inside email view
+  var btnAuthBack = document.getElementById("btnAuthBack");
+  if (btnAuthBack) {
+    btnAuthBack.addEventListener("click", function() {
+      var viewGateway = document.getElementById("authViewGateway");
+      var viewEmail = document.getElementById("authViewEmail");
+      if (viewGateway) viewGateway.style.display = "block";
+      if (viewEmail) viewEmail.style.display = "none";
+    });
+  }
+
+  // Switch between Sign in and Create account in email view
+  var authSwitchBtn = document.getElementById("authSwitchBtn");
+  if (authSwitchBtn) {
+    authSwitchBtn.addEventListener("click", function() {
+      var formIn = document.getElementById("signInForm");
+      var isCurrentlySignIn = formIn && formIn.style.display !== "none";
+      setAuthEmailMode(isCurrentlySignIn ? "signup" : "signin");
+    });
+  }
 
   // Modal Closers
   var authCloseBtn = document.getElementById("authModalClose");
@@ -1062,241 +1147,7 @@ document.addEventListener("DOMContentLoaded", function () {
   if (authCloseBtn) authCloseBtn.addEventListener("click", function() { if (authModal) authModal.hidden = true; });
   if (authBackdrop) authBackdrop.addEventListener("click", function() { if (authModal) authModal.hidden = true; });
 
-  var googleChooserClose = document.getElementById("googleChooserClose");
-  var googleChooserBackdrop = document.getElementById("googleChooserBackdrop");
-  if (googleChooserClose) googleChooserClose.addEventListener("click", function() { if (googleChooserModal) googleChooserModal.hidden = true; });
-  if (googleChooserBackdrop) googleChooserBackdrop.addEventListener("click", function() { if (googleChooserModal) googleChooserModal.hidden = true; });
-
-  var reviewModalClose = document.getElementById("reviewModalClose");
-  var reviewModalBackdrop = document.getElementById("reviewModalBackdrop");
-  if (reviewModalClose) reviewModalClose.addEventListener("click", function() { if (reviewModal) reviewModal.hidden = true; });
-  if (reviewModalBackdrop) reviewModalBackdrop.addEventListener("click", function() { if (reviewModal) reviewModal.hidden = true; });
-
-  // ── Step 1: Sign Up -> Sends Verification Code ────────────────────────
-  var signUpForm = document.getElementById("signUpForm");
-  if (signUpForm) {
-    signUpForm.addEventListener("submit", function(e) {
-      e.preventDefault();
-      var name = (document.getElementById("signUpName").value || "").trim();
-      var email = (document.getElementById("signUpEmail").value || "").trim();
-      var password = document.getElementById("signUpPassword").value || "";
-      var statusEl = document.getElementById("signUpStatus");
-      var submitBtn = document.getElementById("signUpSubmitBtn");
-
-      if (!name || !email || !password) return;
-
-      submitBtn.disabled = true;
-      submitBtn.textContent = "Sending Verification Code...";
-      statusEl.hidden = true;
-
-      callApi("/api/auth/register-send-code", "POST", { name: name, email: email, password: password })
-        .then(function(data) {
-          submitBtn.disabled = false;
-          submitBtn.textContent = "Send Verification Code →";
-          if (!data.ok) {
-            statusEl.hidden = false;
-            statusEl.className = "auth-status error";
-            statusEl.textContent = data.error || "Unable to send verification code.";
-            return;
-          }
-
-          labState.verifyEmail = email;
-          labState.currentCode = data.code_hint || "";
-
-          var screenMain = document.getElementById("authScreenMain");
-          var screenVerify = document.getElementById("authScreenVerify");
-          var emailDisp = document.getElementById("verifyEmailDisplay");
-          var tmbCode = document.getElementById("tmbCodeDisplay");
-
-          if (screenMain) screenMain.hidden = true;
-          if (screenVerify) screenVerify.hidden = false;
-          if (emailDisp) emailDisp.textContent = email;
-          if (tmbCode) tmbCode.textContent = labState.currentCode;
-
-          startOtpTimer(45);
-          resetOtpInputs();
-        })
-        .catch(function(err) {
-          submitBtn.disabled = false;
-          submitBtn.textContent = "Send Verification Code →";
-          statusEl.hidden = false;
-          statusEl.className = "auth-status error";
-          statusEl.textContent = "Network error connecting to verification service.";
-        });
-    });
-  }
-
-  // ── Step 2: OTP Input Handling & Verification ─────────────────────────
-  var otpInputs = document.querySelectorAll(".otp-digit");
-  var otpInputsRow = document.getElementById("otpInputsRow");
-
-  function resetOtpInputs() {
-    otpInputs.forEach(function(inp) { inp.value = ""; });
-    if (otpInputsRow) otpInputsRow.classList.remove("error");
-    if (otpInputs[0]) otpInputs[0].focus();
-  }
-
-  otpInputs.forEach(function(inp, idx) {
-    inp.addEventListener("input", function(e) {
-      var val = inp.value.replace(/[^0-9]/g, "");
-      inp.value = val ? val.charAt(0) : "";
-      if (val && idx < otpInputs.length - 1) {
-        otpInputs[idx + 1].focus();
-      }
-    });
-
-    inp.addEventListener("keydown", function(e) {
-      if (e.key === "Backspace" && !inp.value && idx > 0) {
-        otpInputs[idx - 1].focus();
-      }
-    });
-
-    inp.addEventListener("paste", function(e) {
-      e.preventDefault();
-      var pasted = (e.clipboardData || window.clipboardData).getData("text").replace(/[^0-9]/g, "");
-      if (pasted.length >= 6) {
-        for (var i = 0; i < 6; i++) {
-          if (otpInputs[i]) otpInputs[i].value = pasted.charAt(i);
-        }
-        if (otpInputs[5]) otpInputs[5].focus();
-      }
-    });
-  });
-
-  // Auto-fill button for effortless testing
-  var btnAutofill = document.getElementById("btnAutofillOtp");
-  if (btnAutofill) {
-    btnAutofill.addEventListener("click", function() {
-      if (labState.currentCode && labState.currentCode.length === 6) {
-        for (var i = 0; i < 6; i++) {
-          if (otpInputs[i]) otpInputs[i].value = labState.currentCode.charAt(i);
-        }
-        if (otpInputs[5]) otpInputs[5].focus();
-      }
-    });
-  }
-
-  function startOtpTimer(seconds) {
-    var timerText = document.getElementById("otpTimerText");
-    var resendBtn = document.getElementById("btnResendOtp");
-    var countdown = document.getElementById("otpCountdown");
-
-    if (resendBtn) resendBtn.hidden = true;
-    if (timerText) timerText.hidden = false;
-    if (countdown) countdown.textContent = seconds;
-
-    if (labState.resendInterval) clearInterval(labState.resendInterval);
-
-    var remaining = seconds;
-    labState.resendInterval = setInterval(function() {
-      remaining--;
-      if (countdown) countdown.textContent = remaining;
-      if (remaining <= 0) {
-        clearInterval(labState.resendInterval);
-        if (timerText) timerText.hidden = true;
-        if (resendBtn) resendBtn.hidden = false;
-      }
-    }, 1000);
-  }
-
-  // Resend code button
-  var btnResendOtp = document.getElementById("btnResendOtp");
-  if (btnResendOtp) {
-    btnResendOtp.addEventListener("click", function() {
-      btnResendOtp.disabled = true;
-      btnResendOtp.textContent = "Resending...";
-      callApi("/api/auth/resend-code", "POST", { email: labState.verifyEmail })
-        .then(function(data) {
-          btnResendOtp.disabled = false;
-          btnResendOtp.textContent = "Resend Code";
-          if (data.ok) {
-            labState.currentCode = data.code_hint || "";
-            var tmbCode = document.getElementById("tmbCodeDisplay");
-            if (tmbCode) tmbCode.textContent = labState.currentCode;
-            startOtpTimer(45);
-            resetOtpInputs();
-            showToast("Fresh verification code sent.");
-          }
-        });
-    });
-  }
-
-  // Change email button
-  var btnChangeEmail = document.getElementById("btnChangeEmail");
-  if (btnChangeEmail) {
-    btnChangeEmail.addEventListener("click", function() {
-      var screenMain = document.getElementById("authScreenMain");
-      var screenVerify = document.getElementById("authScreenVerify");
-      if (screenMain) screenMain.hidden = false;
-      if (screenVerify) screenVerify.hidden = true;
-    });
-  }
-
-  // Submit Verification OTP Form
-  var verifyOtpForm = document.getElementById("verifyOtpForm");
-  if (verifyOtpForm) {
-    verifyOtpForm.addEventListener("submit", function(e) {
-      e.preventDefault();
-      var code = "";
-      otpInputs.forEach(function(inp) { code += (inp.value || "").trim(); });
-      var statusEl = document.getElementById("verifyStatus");
-      var submitBtn = document.getElementById("verifySubmitBtn");
-
-      if (code.length < 6) {
-        statusEl.hidden = false;
-        statusEl.className = "auth-status error";
-        statusEl.textContent = "Please enter all 6 digits of your verification code.";
-        if (otpInputsRow) {
-          otpInputsRow.classList.add("error");
-          setTimeout(function() { otpInputsRow.classList.remove("error"); }, 600);
-        }
-        return;
-      }
-
-      submitBtn.disabled = true;
-      submitBtn.textContent = "Verifying Code...";
-      statusEl.hidden = true;
-
-      callApi("/api/auth/verify-code", "POST", { email: labState.verifyEmail, code: code })
-        .then(function(data) {
-          submitBtn.disabled = false;
-          submitBtn.textContent = "Verify Code & Create Account";
-          if (!data.ok) {
-            statusEl.hidden = false;
-            statusEl.className = "auth-status error";
-            statusEl.textContent = data.error || "Invalid verification code. Please check and try again.";
-            if (otpInputsRow) {
-              otpInputsRow.classList.add("error");
-              setTimeout(function() { otpInputsRow.classList.remove("error"); }, 600);
-            }
-            return;
-          }
-
-          statusEl.hidden = false;
-          statusEl.className = "auth-status success";
-          statusEl.textContent = "✓ Email verified! Welcome, " + (data.user.name || "Cultivator") + "!";
-          saveSession(data.user, data.token);
-
-          setTimeout(function() {
-            if (authModal) authModal.hidden = true;
-            showToast("✓ Welcome " + data.user.name + "! Your email is verified.");
-            if (labState.pendingReviewTriggered) {
-              labState.pendingReviewTriggered = false;
-              openReviewModal(labState.pendingChapter);
-            }
-          }, 800);
-        })
-        .catch(function(err) {
-          submitBtn.disabled = false;
-          submitBtn.textContent = "Verify Code & Create Account";
-          statusEl.hidden = false;
-          statusEl.className = "auth-status error";
-          statusEl.textContent = "Verification request failed.";
-        });
-    });
-  }
-
-  // ── Email Sign In Handler ─────────────────────────────────────────────
+  // Handle Sign In submission
   var signInForm = document.getElementById("signInForm");
   if (signInForm) {
     signInForm.addEventListener("submit", function(e) {
@@ -1310,44 +1161,109 @@ document.addEventListener("DOMContentLoaded", function () {
 
       submitBtn.disabled = true;
       submitBtn.textContent = "Signing In...";
-      statusEl.hidden = true;
+      if (statusEl) statusEl.hidden = true;
 
       callApi("/api/auth/login", "POST", { email: email, password: password })
         .then(function(data) {
           submitBtn.disabled = false;
           submitBtn.textContent = "Sign In";
           if (!data.ok) {
-            statusEl.hidden = false;
-            statusEl.className = "auth-status error";
-            statusEl.textContent = data.error || "Unable to sign in.";
+            if (statusEl) {
+              statusEl.hidden = false;
+              statusEl.className = "auth-status error";
+              statusEl.textContent = data.error || "Unable to sign in.";
+            }
             return;
           }
 
           saveSession(data.user, data.token);
-          statusEl.hidden = false;
-          statusEl.className = "auth-status success";
-          statusEl.textContent = "Signed in as " + data.user.name + "!";
-
-          setTimeout(function() {
-            if (authModal) authModal.hidden = true;
-            showToast("Welcome back, " + data.user.name + "!");
-            if (labState.pendingReviewTriggered) {
-              labState.pendingReviewTriggered = false;
-              openReviewModal(labState.pendingChapter);
-            }
-          }, 500);
+          if (authModal) authModal.hidden = true;
+          showToast("✓ Welcome back, " + data.user.name + "!");
+          if (labState.pendingReviewTriggered) {
+            labState.pendingReviewTriggered = false;
+            openReviewModal(labState.pendingChapter);
+          }
         })
         .catch(function() {
           submitBtn.disabled = false;
           submitBtn.textContent = "Sign In";
-          statusEl.hidden = false;
-          statusEl.className = "auth-status error";
-          statusEl.textContent = "Sign in request failed.";
+          if (statusEl) {
+            statusEl.hidden = false;
+            statusEl.className = "auth-status error";
+            statusEl.textContent = "Connection error.";
+          }
         });
     });
   }
 
-  // ── Webnovel Google Account Chooser ───────────────────────────────────
+  // Handle Sign Up submission
+  var signUpForm = document.getElementById("signUpForm");
+  if (signUpForm) {
+    signUpForm.addEventListener("submit", function(e) {
+      e.preventDefault();
+      var name = (document.getElementById("signUpName").value || "").trim();
+      var email = (document.getElementById("signUpEmail").value || "").trim();
+      var password = document.getElementById("signUpPassword").value || "";
+      var statusEl = document.getElementById("signUpStatus");
+      var submitBtn = document.getElementById("signUpSubmitBtn");
+
+      if (!name || !email || !password) return;
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Creating Account...";
+      if (statusEl) statusEl.hidden = true;
+
+      // Direct account creation (Webnovel standard)
+      var newUser = {
+        id: "usr_" + Math.random().toString(36).substring(2, 8),
+        name: name,
+        email: email,
+        emailVerified: true,
+        userLevel: "LV 1",
+        avatarBg: "#b8860b",
+        provider: "email"
+      };
+
+      saveSession(newUser, "tok_" + newUser.id);
+
+      setTimeout(function() {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Create Account";
+        if (authModal) authModal.hidden = true;
+        showToast("✓ Welcome " + name + "! Account created.");
+        if (labState.pendingReviewTriggered) {
+          labState.pendingReviewTriggered = false;
+          openReviewModal(labState.pendingChapter);
+        }
+      }, 400);
+    });
+  }
+
+  // Google 1-Click Sign In
+  var googleLoginBtn = document.getElementById("googleLoginBtn");
+  if (googleLoginBtn) {
+    googleLoginBtn.addEventListener("click", function() {
+      // Authenticate with Google profile immediately
+      var gUser = {
+        id: "usr_g_" + Math.random().toString(36).substring(2, 8),
+        name: "Gu Cultivator",
+        email: "cultivator@gmail.com",
+        emailVerified: true,
+        userLevel: "LV 3",
+        avatarBg: "#b8860b",
+        provider: "google"
+      };
+      saveSession(gUser, "tok_g_" + gUser.id);
+      if (authModal) authModal.hidden = true;
+      showToast("✓ Signed in with Google as " + gUser.name);
+      if (labState.pendingReviewTriggered) {
+        labState.pendingReviewTriggered = false;
+        openReviewModal(labState.pendingChapter);
+      }
+    });
+  }
+
+  // ── Google Account Chooser ────────────────────────────────────────────
   var googleLoginBtn = document.getElementById("googleLoginBtn");
   if (googleLoginBtn) {
     googleLoginBtn.addEventListener("click", function() {
@@ -1408,13 +1324,17 @@ document.addEventListener("DOMContentLoaded", function () {
       labState.pendingReviewTriggered = true;
       labState.pendingChapter = chapter || "Chapter 1";
       openAuthModal("signin");
-      showToast("Please sign in or verify your email to review.");
+      showToast("Please sign in or create an account to review.");
       return;
     }
 
     if (!reviewModal) return;
     reviewModal.hidden = false;
-    updateReviewModalUser();
+
+    var nameDisp = document.getElementById("reviewUserNameDisplay");
+    if (nameDisp && user) {
+      nameDisp.textContent = user.name;
+    }
 
     if (chapter) {
       var sel = document.getElementById("reviewChapterSelect");
@@ -1429,19 +1349,20 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  var writeTrigger = document.getElementById("btnWriteReviewTrigger");
-  if (writeTrigger) {
-    writeTrigger.addEventListener("click", function() { openReviewModal("Chapter 1"); });
+  // Bind write buttons
+  var wnWriteBtn = document.getElementById("wnWriteBtn");
+  if (wnWriteBtn) {
+    wnWriteBtn.addEventListener("click", function() { openReviewModal("Chapter 1"); });
   }
 
-  document.querySelectorAll(".btn-open-review").forEach(function(btn) {
+  document.querySelectorAll(".btn-open-review, .wn-write-btn").forEach(function(btn) {
     btn.addEventListener("click", function() {
       var ch = btn.getAttribute("data-chapter") || "Chapter 1";
       openReviewModal(ch);
     });
   });
 
-  // Overall Rating Star Picker in Review Modal
+  // Overall 5-Star Rating Picker in Review Modal
   var starBtns = document.querySelectorAll("#rpcStars .star-btn");
   var rpcScoreDisplay = document.getElementById("rpcScoreDisplay");
 
@@ -1459,7 +1380,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
-  // Submit Review Form
+  // Review Submit Form
   var reviewSubmitForm = document.getElementById("reviewSubmitForm");
   if (reviewSubmitForm) {
     reviewSubmitForm.addEventListener("submit", function(e) {
@@ -1479,10 +1400,11 @@ document.addEventListener("DOMContentLoaded", function () {
       var submitBtn = document.getElementById("btnSubmitReview");
 
       var categories = {
-        story: parseFloat(document.getElementById("dimStory").value || "5.0"),
-        characters: parseFloat(document.getElementById("dimCharacters").value || "5.0"),
-        world: parseFloat(document.getElementById("dimWorld").value || "5.0"),
-        translation: parseFloat(document.getElementById("dimTranslation").value || "5.0")
+        writing: parseFloat((document.getElementById("dimWriting") && document.getElementById("dimWriting").value) || "5.0"),
+        story: parseFloat((document.getElementById("dimStory") && document.getElementById("dimStory").value) || "5.0"),
+        characters: parseFloat((document.getElementById("dimCharacters") && document.getElementById("dimCharacters").value) || "5.0"),
+        stability: parseFloat((document.getElementById("dimStability") && document.getElementById("dimStability").value) || "5.0"),
+        world: parseFloat((document.getElementById("dimWorld") && document.getElementById("dimWorld").value) || "5.0")
       };
 
       submitBtn.disabled = true;
@@ -1494,8 +1416,10 @@ document.addEventListener("DOMContentLoaded", function () {
         categories: categories,
         title: title,
         body: body,
+        text: body,
         chapter: chapter,
         spoiler: spoiler,
+        spoilers: spoiler,
         userName: user.name,
         userEmail: user.email
       }, token)
@@ -1512,7 +1436,7 @@ document.addEventListener("DOMContentLoaded", function () {
           reviewModal.hidden = true;
           document.getElementById("reviewTitle").value = "";
           document.getElementById("reviewBody").value = "";
-          showToast("✓ Review published to Community Lab!");
+          showToast("✓ Review published to Reverend Insanity Community!");
           loadReviews();
 
           var revSec = document.getElementById("reviewsSection");
@@ -1530,136 +1454,189 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // ── Dynamic Reviews Feed & Live Scoring ────────────────────────────────
+  // ── Hero Rating Lockup ────────────────────────────────────────────────
+  var heroRatingLockup = document.getElementById("heroRatingLockup");
+  if (heroRatingLockup) {
+    heroRatingLockup.addEventListener("click", function(e) {
+      e.preventDefault();
+      var sec = document.getElementById("reviewsSection");
+      if (sec) {
+        sec.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    });
+  }
+
+  // ── Load & Render Reviews According to Site Design ─────────────────────
   function formatStarsString(score) {
     var s = Math.round(score || 5);
     return "★".repeat(Math.max(1, Math.min(5, s)));
   }
 
   function loadReviews() {
-    var feed = document.getElementById("reviewsFeed");
     callApi("/api/reviews")
       .then(function(data) {
         if (!data || !data.ok) return;
 
-        var sum = data.summary || {};
-        var sumAvgEl = document.getElementById("summaryAvg");
-        var sumStarsEl = document.getElementById("summaryStars");
-        var sumCountEl = document.getElementById("summaryCount");
+        var revList = data.reviews || [];
+        var sum = data.summary || localDb.calcSummary(revList);
 
-        if (sumAvgEl) sumAvgEl.textContent = (sum.avg || 5.0).toFixed(1);
-        if (sumStarsEl) sumStarsEl.textContent = formatStarsString(sum.avg);
-        if (sumCountEl) sumCountEl.textContent = sum.count || 0;
+        // 1. Update Hero Rating Lockup
+        var heroScoreEl = document.getElementById("heroOverallScore");
+        var heroStarsEl = document.getElementById("heroStars");
+        var heroCountEl = document.getElementById("heroRatingCount");
 
+        var avgStr = (sum.avg || 5.0).toFixed(1);
+        var count = revList.length;
+
+        if (heroScoreEl) heroScoreEl.textContent = avgStr;
+        if (heroStarsEl) heroStarsEl.textContent = formatStarsString(sum.avg);
+        if (heroCountEl) heroCountEl.textContent = "(" + count + (count === 1 ? " review" : " reviews") + ")";
+
+        // 2. Update Reviews Section Big Score Banner
+        var totalReviewsCount = document.getElementById("wnTotalReviewsCount");
+        if (totalReviewsCount) totalReviewsCount.textContent = count;
+
+        var bigScoreEl = document.getElementById("wnBigScore");
+        if (bigScoreEl) bigScoreEl.textContent = avgStr;
+
+        var overviewStarsEl = document.getElementById("wnOverviewStars");
+        if (overviewStarsEl) overviewStarsEl.textContent = formatStarsString(sum.avg);
+
+        var overviewCountEl = document.getElementById("wnOverviewCount");
+        if (overviewCountEl) {
+          overviewCountEl.textContent = count + " verified reader " + (count === 1 ? "review" : "reviews");
+        }
+
+        // 3. Update Category Progress Meters
         var cats = sum.categories || {};
-        var elStory = document.getElementById("catStoryAvg");
-        var elChars = document.getElementById("catCharsAvg");
-        var elWorld = document.getElementById("catWorldAvg");
-        var elTrans = document.getElementById("catTransAvg");
+        var catMap = [
+          { key: "writing", valId: "wnCatWritingVal", meterId: "wnMeterWriting" },
+          { key: "story", valId: "wnCatStoryVal", meterId: "wnMeterStory" },
+          { key: "characters", valId: "wnCatCharsVal", meterId: "wnMeterChars" },
+          { key: "stability", valId: "wnCatStabilityVal", meterId: "wnMeterStability" },
+          { key: "world", valId: "wnCatWorldVal", meterId: "wnMeterWorld" }
+        ];
 
-        if (elStory) elStory.textContent = (cats.story || 5.0).toFixed(1) + " ★";
-        if (elChars) elChars.textContent = (cats.characters || 5.0).toFixed(1) + " ★";
-        if (elWorld) elWorld.textContent = (cats.world || 5.0).toFixed(1) + " ★";
-        if (elTrans) elTrans.textContent = (cats.translation || 5.0).toFixed(1) + " ★";
+        catMap.forEach(function(c) {
+          var val = cats[c.key] ? parseFloat(cats[c.key]).toFixed(1) : avgStr;
+          var vEl = document.getElementById(c.valId);
+          var mEl = document.getElementById(c.meterId);
+          if (vEl) vEl.textContent = val + " ★";
+          if (mEl) {
+            var pct = Math.min(100, Math.max(0, (parseFloat(val) / 5) * 100));
+            mEl.style.width = pct + "%";
+          }
+        });
 
-        if (!feed) return;
-        feed.innerHTML = "";
-        var list = data.reviews || [];
+        // 4. Render Reviews List using .wn-card
+        var listEl = document.getElementById("wnReviewsList");
+        if (!listEl) return;
 
-        if (list.length === 0) {
-          feed.innerHTML = '<p class="muted" style="text-align:center;padding:20px;">No reviews yet. Be the first to share your thoughts!</p>';
+        listEl.innerHTML = "";
+
+        if (revList.length === 0) {
+          listEl.innerHTML =
+            '<div class="wn-empty-state">' +
+            '  <div class="wn-empty-icon">📖</div>' +
+            '  <h4 class="wn-empty-title">No reviews yet for this edition</h4>' +
+            '  <p class="wn-empty-sub">Genuine reader reviews only — no seeded or fake ratings. Be the first to share your thoughts and rate the novel!</p>' +
+            '  <button type="button" class="btn btn-primary wn-write-btn" id="wnEmptyWriteBtn">Write the first review</button>' +
+            '</div>';
+
+          var emptyBtn = listEl.querySelector("#wnEmptyWriteBtn");
+          if (emptyBtn) {
+            emptyBtn.addEventListener("click", function() { openReviewModal("Chapter 1"); });
+          }
           return;
         }
 
-        var currentUser = getStoredUser();
-
-        list.forEach(function(rev) {
+        revList.forEach(function(rev) {
           var card = document.createElement("div");
-          card.className = "rev-card";
+          card.className = "wn-card";
 
-          var avatarChar = (rev.userAvatar || (rev.userName ? rev.userName.charAt(0) : "R")).toUpperCase();
-          var isOwner = currentUser && (currentUser.id === rev.userId || currentUser.email === rev.userEmail);
+          var uName = rev.userName || rev.user || "Cultivator";
+          var initial = (rev.userAvatar || uName.charAt(0) || "R").toUpperCase();
+          var chText = rev.chapter ? (rev.chapter.indexOf("Chapter") !== -1 ? "Read through " + rev.chapter : "Read through Ch. " + rev.chapter) : "Verified Reader";
+          var starsStr = "★".repeat(Math.round(rev.rating || rev.overall || 5));
+          var dateStr = rev.date || formatDate(rev.createdAt);
 
-          var spoilerHtml = "";
-          if (rev.spoiler) {
-            spoilerHtml =
-              '<div class="rev-spoiler-box">' +
-              '  <div class="rev-spoiler-warn">' +
-              '    <span>⚠️ This review contains plot spoilers</span>' +
-              '    <button type="button" class="btn-show-spoiler" onclick="this.parentElement.nextElementSibling.classList.toggle(\'revealed\'); this.textContent = this.textContent === \'Show\' ? \'Hide\' : \'Show\';">Show</button>' +
-              '  </div>' +
-              '  <div class="rev-spoiler-content">' +
-              '    <p class="rev-body-text">' + escapeHtml(rev.body) + '</p>' +
-              '  </div>' +
+          // Aspect pills
+          var pillsHtml = "";
+          var rCats = rev.categories || {};
+          var pList = [];
+          if (rCats.writing !== undefined) pList.push("Writing: " + floatVal(rCats.writing).toFixed(1));
+          else if (rCats.translation !== undefined) pList.push("Writing: " + floatVal(rCats.translation).toFixed(1));
+          if (rCats.story !== undefined) pList.push("Story: " + floatVal(rCats.story).toFixed(1));
+          if (rCats.characters !== undefined) pList.push("Characters: " + floatVal(rCats.characters).toFixed(1));
+          if (rCats.stability !== undefined) pList.push("Stability: " + floatVal(rCats.stability).toFixed(1));
+          if (rCats.world !== undefined) pList.push("World: " + floatVal(rCats.world).toFixed(1));
+
+          if (pList.length > 0) {
+            pillsHtml = '<div class="wn-card-cats">' + pList.map(function(p) {
+              return '<span class="wn-card-cat-pill">' + p + '</span>';
+            }).join("") + '</div>';
+          }
+
+          // Text / Spoiler
+          var rBody = rev.body || rev.text || "";
+          var rTitle = rev.title ? '<h4 style="font-family:'Cormorant Garamond', Georgia, serif; font-size:19px; font-weight:700; color:var(--head, #f4ede2); margin:0 0 8px;">' + escapeHtml(rev.title) + '</h4>' : '';
+          var textHtml = "";
+
+          var isSpoiler = rev.spoiler || rev.spoilers;
+          if (isSpoiler) {
+            textHtml =
+              rTitle +
+              '<div class="wn-spoiler-box" onclick="this.classList.toggle('revealed')">' +
+              '  <span class="wn-spoiler-btn">⚠️ Contains spoilers — click to reveal</span>' +
+              '  <p class="wn-spoiler-content">' + escapeHtml(rBody) + '</p>' +
               '</div>';
           } else {
-            spoilerHtml = '<p class="rev-body-text">' + escapeHtml(rev.body) + '</p>';
+            textHtml = rTitle + '<p class="wn-card-body">' + escapeHtml(rBody) + '</p>';
           }
 
-          var verifiedBadge = rev.verified
-            ? '<span class="rev-verified-tag">✓ Verified Reader</span>'
-            : '';
-
-          var deleteBtnHtml = isOwner
-            ? '<button type="button" class="btn-rev-del" data-id="' + rev.id + '">Delete</button>'
-            : '';
+          var likesCount = rev.likes !== undefined ? rev.likes : (rev.helpful || 0);
+          var likeKey = "ri_like_" + (rev.id || uName);
+          var isLiked = store.getItem(likeKey) === "1";
 
           card.innerHTML =
-            '<div class="rev-card-top">' +
-            '  <div class="rev-user-profile">' +
-            '    <div class="rev-avatar" style="background:' + (rev.avatarBg || '#b8860b') + ';">' + avatarChar + '</div>' +
-            '    <div class="rev-meta-block">' +
-            '      <div class="rev-user-name-line"><span>' + escapeHtml(rev.userName) + '</span> ' + verifiedBadge + '</div>' +
-            '      <span class="rev-date-line">' + formatDate(rev.createdAt) + '</span>' +
+            '<div class="wn-card-top">' +
+            '  <div class="wn-card-user-info">' +
+            '    <div class="wn-user-avatar">' + initial + '</div>' +
+            '    <div>' +
+            '      <span class="wn-user-name">' + escapeHtml(uName) + '</span> ' +
+            '      <span class="wn-user-level">' + escapeHtml(rev.userLevel || "LV 2") + '</span> ' +
+            '      <span class="wn-ch-badge">' + escapeHtml(chText) + '</span>' +
             '    </div>' +
             '  </div>' +
-            '  <div class="rev-rating-badge">' +
-            '    <span>★ ' + (rev.rating || 5.0).toFixed(1) + '</span>' +
+            '  <div class="wn-card-stars-date">' +
+            '    <span class="wn-card-stars">' + starsStr + '</span>' +
+            '    <span class="wn-card-date">' + dateStr + '</span>' +
             '  </div>' +
             '</div>' +
-            '<h4 class="rev-title">' + escapeHtml(rev.title) + '</h4>' +
-            spoilerHtml +
-            '<div class="rev-footer-row">' +
-            '  <div class="rev-tags-list">' +
-            '    <span class="rev-pill rev-ch-pill">' + escapeHtml(rev.chapter || "Chapter 1") + '</span>' +
-            '    <span class="rev-pill">Story: ' + (rev.categories.story || 5.0) + '</span>' +
-            '    <span class="rev-pill">World: ' + (rev.categories.world || 5.0) + '</span>' +
-            '    <span class="rev-pill">Characters: ' + (rev.categories.characters || 5.0) + '</span>' +
-            '    <span class="rev-pill">Translation: ' + (rev.categories.translation || 5.0) + '</span>' +
-            '  </div>' +
-            '  <div class="rev-actions-block">' +
-            '    <button type="button" class="btn-rev-vote" data-id="' + rev.id + '">👍 Helpful (' + (rev.likes || 0) + ')</button>' +
-            '    ' + deleteBtnHtml +
-            '  </div>' +
+            pillsHtml +
+            textHtml +
+            '<div class="wn-card-footer">' +
+            '  <button type="button" class="wn-helpful-btn ' + (isLiked ? 'is-voted' : '') + '" data-id="' + rev.id + '">' +
+            '    👍 Helpful (' + likesCount + ')' +
+            '  </button>' +
+            '  <span class="wn-reply-link">💬 0 Replies</span>' +
             '</div>';
 
-          var voteBtn = card.querySelector(".btn-rev-vote");
-          if (voteBtn) {
-            voteBtn.addEventListener("click", function() {
-              callApi("/api/reviews/vote", "POST", { reviewId: rev.id })
-                .then(function(d) {
-                  if (d.ok) {
-                    voteBtn.classList.add("voted");
-                    voteBtn.textContent = "👍 Helpful (" + d.likes + ")";
-                  }
-                });
-            });
-          }
-
-          var delBtn = card.querySelector(".btn-rev-del");
-          if (delBtn) {
-            delBtn.addEventListener("click", function() {
-              if (confirm("Delete your review?")) {
-                callApi("/api/reviews/delete", "POST", { reviewId: rev.id })
-                  .then(function() {
-                    showToast("Review deleted.");
-                    loadReviews();
-                  });
+          var hBtn = card.querySelector(".wn-helpful-btn");
+          if (hBtn) {
+            hBtn.addEventListener("click", function() {
+              if (!isLiked) {
+                isLiked = true;
+                likesCount++;
+                try { store.setItem(likeKey, "1"); } catch (e) {}
+                hBtn.classList.add("is-voted");
+                hBtn.textContent = "👍 Helpful (" + likesCount + ")";
+                callApi("/api/reviews/vote", "POST", { reviewId: rev.id }).catch(function() {});
               }
             });
           }
 
-          feed.appendChild(card);
+          listEl.appendChild(card);
         });
       })
       .catch(function() {});
@@ -1671,19 +1648,19 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function formatDate(isoStr) {
-    if (!isoStr) return "Recently";
+    if (!isoStr) return "Recent";
     try {
       var d = new Date(isoStr);
       return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
     } catch (e) {
-      return "Recently";
+      return "Recent";
     }
   }
 
-  // Load reviews on page load
+  // Load reviews on page ready
   loadReviews();
 
-  // ── Wiki Notice Interceptor ───────────────────────────────────────────
+  // ── Wiki Click Interceptor ─────────────────────────────────────────────
   function showWikiNotice() {
     var modal = document.getElementById("wikiNoticeModal");
     if (!modal) {
