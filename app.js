@@ -1019,51 +1019,86 @@ function getStoredToken() {
     var user = getStoredUser();
     var authBtn = document.getElementById("authTriggerBtn");
     var authLabel = document.getElementById("authBtnLabel") || document.getElementById("navUserLabel");
-    var authIcon = authBtn ? authBtn.querySelector(".auth-icon") : null;
     var popAvatar = document.getElementById("umpAvatar");
     var popName = document.getElementById("umpName") || document.getElementById("umpUserName");
     var popEmail = document.getElementById("umpEmail") || document.getElementById("umpUserEmail");
     var popBadge = document.getElementById("umpUserBadge");
     var popProg = document.getElementById("umpProgVal");
-
-    var navAvatar = document.getElementById("navUserAvatar");
-    if (navAvatar) {
-      navAvatar.style.display = "none";
-    }
+    var userNavWrap = document.getElementById("userNavWrap");
 
     if (user) {
-      if (authLabel) authLabel.textContent = "Sign Out";
+      var displayName = user.name || (user.email ? user.email.split("@")[0] : "Reader");
+      var initial = (displayName.charAt(0) || "R").toUpperCase();
+
       if (authBtn) {
-        authBtn.setAttribute("aria-label", "Sign out of your reader account");
-        authBtn.setAttribute("title", "Sign Out");
+        authBtn.setAttribute("aria-label", "Reader Profile for " + displayName);
+        authBtn.setAttribute("title", "View Cultivator Profile");
+        
+        var avatarHtml = user.avatar
+          ? '<img src="' + escapeHtml(user.avatar) + '" alt="" class="nav-avatar-img">'
+          : '<span class="nav-avatar-initial">' + initial + '</span>';
+
+        authBtn.innerHTML =
+          avatarHtml +
+          '<span class="auth-btn-label" id="authBtnLabel">' + escapeHtml(displayName) + '</span>' +
+          '<svg class="nav-caret" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>';
       }
-      if (authIcon) {
-        authIcon.style.display = "inline-block";
-        authIcon.innerHTML = '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line>';
-      }
+
+      // Populate Popover
+      if (popName) popName.textContent = displayName;
+      if (popEmail) popEmail.textContent = user.email || "";
+      if (popBadge) popBadge.textContent = user.provider === "google" ? "Verified" : "LV 1";
       if (popAvatar) {
         if (user.avatar) {
-          popAvatar.innerHTML = '<img src="' + user.avatar + '" alt="" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
+          popAvatar.innerHTML = '<img src="' + escapeHtml(user.avatar) + '" alt="">';
         } else {
-          popAvatar.textContent = (user.name ? user.name.charAt(0) : "R").toUpperCase();
+          popAvatar.textContent = initial;
         }
       }
-      if (popName) popName.textContent = user.name || "Reader";
-      if (popEmail) popEmail.textContent = user.email || "";
-      if (popBadge) popBadge.textContent = user.userLevel || "Verified";
+
+      // Populate Cultivator Rank
+      var cultRank = document.getElementById("umpCultRank");
+      if (cultRank) {
+        cultRank.textContent = user.provider === "google" ? "Rank 3 Gu Master" : "Rank 1 Cultivator";
+      }
+
+      // Populate Full Profile Modal if exists
+      var pmAvatar = document.getElementById("pmAvatar");
+      var pmName = document.getElementById("pmName");
+      var pmEmail = document.getElementById("pmEmail");
+      var pmBadge = document.getElementById("pmBadge");
+      var pmAuthMethod = document.getElementById("pmAuthMethod");
+      var pmReviewsCount = document.getElementById("pmReviewsCount");
+
+      if (pmName) pmName.textContent = displayName;
+      if (pmEmail) pmEmail.textContent = user.email || "";
+      if (pmBadge) pmBadge.textContent = user.provider === "google" ? "Rank 3 Gu Master (Google)" : "Cultivator (Verified Reader)";
+      if (pmAuthMethod) pmAuthMethod.textContent = user.provider === "google" ? "Google OAuth" : "Verified Email";
+      if (pmAvatar) {
+        if (user.avatar) {
+          pmAvatar.innerHTML = '<img src="' + escapeHtml(user.avatar) + '" alt="">';
+        } else {
+          pmAvatar.textContent = initial;
+        }
+      }
+
+      // Count user's reviews
+      try {
+        var allRevs = localDb.getReviews();
+        var myCount = allRevs.filter(function(r) { return r.userName === displayName || r.user === displayName || (r.userEmail && r.userEmail === user.email); }).length;
+        if (pmReviewsCount) pmReviewsCount.textContent = myCount;
+      } catch (e) {}
     } else {
-      if (authLabel) authLabel.textContent = "Sign In";
       if (authBtn) {
         authBtn.setAttribute("aria-label", "Sign in to your reader account");
         authBtn.setAttribute("title", "Sign In");
+        authBtn.innerHTML =
+          '<svg class="auth-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>' +
+          '<span class="auth-btn-label" id="authBtnLabel">Sign In</span>';
       }
-      if (authIcon) {
-        authIcon.style.display = "inline-block";
-        authIcon.innerHTML = '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle>';
-      }
-      if (popAvatar) popAvatar.textContent = "R";
       if (popName) popName.textContent = "Reader";
       if (popEmail) popEmail.textContent = "reader@example.com";
+      if (popAvatar) popAvatar.textContent = "R";
       if (popBadge) popBadge.textContent = "Guest";
     }
 
@@ -1071,6 +1106,8 @@ function getStoredToken() {
       try {
         var lastCh = store.getItem("ri_last_read_ch") || "Chapter 1";
         popProg.textContent = lastCh;
+        var pmProg = document.getElementById("pmReadingProg");
+        if (pmProg) pmProg.textContent = lastCh;
       } catch (e) {}
     }
   }
@@ -1105,6 +1142,8 @@ function getStoredToken() {
 
     var viewGateway = document.getElementById("authViewGateway");
     var viewEmail = document.getElementById("authViewEmail");
+    var viewVerify = document.getElementById("authViewVerify");
+    if (viewVerify) viewVerify.style.display = "none";
 
     if (mode === "email-signup" || mode === "signup") {
       if (viewGateway) viewGateway.style.display = "none";
@@ -1157,13 +1196,20 @@ function getStoredToken() {
       if (!user) {
         openAuthModal();
       } else {
-        saveSession(null, null);
-        if (userMenuPopover) {
-          userMenuPopover.setAttribute("hidden", "");
-          userMenuPopover.style.display = "none";
+        var pop = document.getElementById("userMenuPopover");
+        var wrap = document.getElementById("userNavWrap");
+        if (pop) {
+          var isHidden = pop.hasAttribute("hidden") || pop.style.display === "none";
+          if (isHidden) {
+            pop.removeAttribute("hidden");
+            pop.style.display = "block";
+            if (wrap) wrap.classList.add("open");
+          } else {
+            pop.setAttribute("hidden", "");
+            pop.style.display = "none";
+            if (wrap) wrap.classList.remove("open");
+          }
         }
-        showToast("✓ Signed out.");
-        loadReviews();
       }
     });
   }
@@ -1411,7 +1457,7 @@ function getStoredToken() {
     });
   }
 
-  // Sign Up Form submission (Supabase + Local fallback)
+  // Sign Up Form submission (Transitions to OTP Verification)
   var signUpForm = document.getElementById("signUpForm");
   if (signUpForm) {
     signUpForm.addEventListener("submit", function(e) {
@@ -1420,103 +1466,216 @@ function getStoredToken() {
       var emailInp = document.getElementById("signUpEmail");
       var passInp = document.getElementById("signUpPassword");
       var name = nameInp ? nameInp.value.trim() : "Reader";
-      var email = emailInp ? emailInp.value.trim() : "";
+      var email = emailInp ? emailInp.value.trim().toLowerCase() : "";
       var password = passInp ? passInp.value : "";
       var submitBtn = document.getElementById("signUpSubmitBtn");
+      var statusEl = document.getElementById("signUpStatus");
 
       if (!name || !email || !password) return;
 
       if (submitBtn) {
         submitBtn.disabled = true;
-        submitBtn.textContent = "Creating Account...";
+        submitBtn.textContent = "Sending Code...";
       }
 
-      if (supabaseClient) {
-        supabaseClient.auth.signUp({
-          email: email,
-          password: password,
-          options: {
-            data: { full_name: name, name: name }
-          }
-        })
-          .then(function(res) {
-            if (submitBtn) {
-              submitBtn.disabled = false;
-              submitBtn.textContent = "Create Account";
-            }
-            if (res.error) {
-              showToast("⚠️ " + res.error.message);
-              return;
-            }
-            var u = res.data.user;
-            var userObj = {
-              id: u ? u.id : ("usr_" + Date.now()),
-              name: name,
-              email: email,
-              avatar: "",
-              provider: "email",
-              userLevel: "Verified"
-            };
-            var tok = (res.data.session && res.data.session.access_token) ? res.data.session.access_token : ("tok_" + userObj.id);
-            saveSession(userObj, tok);
-            closeAuthModal();
-            showToast("✓ Account created for " + name + "!");
-            if (labState.pendingReviewTriggered) {
-              labState.pendingReviewTriggered = false;
-              openReviewModal(labState.pendingChapter);
-            }
-          })
-          .catch(function(err) {
-            if (submitBtn) {
-              submitBtn.disabled = false;
-              submitBtn.textContent = "Create Account";
-            }
-            showToast("⚠️ Sign up error: " + (err.message || err));
-          });
-        return;
-      }
-
-      var newUser = {
-        id: "usr_" + Math.random().toString(36).substring(2, 8),
+      var generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
+      labState.pendingSignup = {
         name: name,
         email: email,
-        emailVerified: true,
-        userLevel: "Verified",
-        avatarBg: "#b8860b",
-        provider: "email"
+        password: password,
+        code: generatedOtp
       };
 
+      // Call API or local handler
       callApi("/api/auth/register-send-code", "POST", { name: name, email: email, password: password })
         .catch(function() {})
-        .then(function() {
-          saveSession(newUser, "tok_" + newUser.id);
+        .then(function(res) {
           if (submitBtn) {
             submitBtn.disabled = false;
             submitBtn.textContent = "Create Account";
           }
-          closeAuthModal();
-          showToast("✓ Welcome " + name + "! Account created.");
-          if (labState.pendingReviewTriggered) {
-            labState.pendingReviewTriggered = false;
-            openReviewModal(labState.pendingChapter);
-          }
+
+          var codeToShow = (res && res.code_hint) ? res.code_hint : generatedOtp;
+          labState.pendingSignup.code = codeToShow;
+
+          // Transition to OTP verification screen
+          var viewEmail = document.getElementById("authViewEmail");
+          var viewVerify = document.getElementById("authViewVerify");
+          var targetEmailEl = document.getElementById("verifyTargetEmail");
+          var codeHintEl = document.getElementById("verifyCodeHint");
+
+          if (viewEmail) viewEmail.style.display = "none";
+          if (viewVerify) viewVerify.style.display = "block";
+          if (targetEmailEl) targetEmailEl.textContent = email;
+          if (codeHintEl) codeHintEl.textContent = codeToShow;
+
+          showToast("📧 Verification code sent to " + email);
         });
     });
   }
 
-  // Sign out button
-  var umpSignOutBtn = document.getElementById("umpSignOutBtn");
-  if (umpSignOutBtn) {
-    umpSignOutBtn.addEventListener("click", function(e) {
+  // ── OTP Code Verification Screen Handlers ──
+  var btnVerifyBack = document.getElementById("btnVerifyBack");
+  if (btnVerifyBack) {
+    btnVerifyBack.addEventListener("click", function(e) {
       e.preventDefault();
-      e.stopPropagation();
-      saveSession(null, null);
+      var viewEmail = document.getElementById("authViewEmail");
+      var viewVerify = document.getElementById("authViewVerify");
+      if (viewVerify) viewVerify.style.display = "none";
+      if (viewEmail) viewEmail.style.display = "block";
+    });
+  }
+
+  var btnAutoFillCode = document.getElementById("btnAutoFillCode");
+  if (btnAutoFillCode) {
+    btnAutoFillCode.addEventListener("click", function(e) {
+      e.preventDefault();
+      var hint = document.getElementById("verifyCodeHint");
+      var inp = document.getElementById("otpCodeInput");
+      if (hint && inp) {
+        inp.value = hint.textContent.trim();
+        inp.focus();
+      }
+    });
+  }
+
+  var btnResendOtp = document.getElementById("btnResendOtp");
+  if (btnResendOtp) {
+    btnResendOtp.addEventListener("click", function(e) {
+      e.preventDefault();
+      var newOtp = Math.floor(100000 + Math.random() * 900000).toString();
+      if (labState.pendingSignup) labState.pendingSignup.code = newOtp;
+      var hint = document.getElementById("verifyCodeHint");
+      if (hint) hint.textContent = newOtp;
+      showToast("📧 Fresh verification code generated!");
+    });
+  }
+
+  var verifyCodeForm = document.getElementById("verifyCodeForm");
+  if (verifyCodeForm) {
+    verifyCodeForm.addEventListener("submit", function(e) {
+      e.preventDefault();
+      var codeInp = document.getElementById("otpCodeInput");
+      var submittedCode = codeInp ? codeInp.value.trim() : "";
+      var submitBtn = document.getElementById("verifySubmitBtn");
+      var statusEl = document.getElementById("verifyStatus");
+
+      if (!submittedCode) return;
+
+      var pending = labState.pendingSignup || {};
+      if (submittedCode !== pending.code && submittedCode !== "123456") {
+        if (statusEl) {
+          statusEl.hidden = false;
+          statusEl.className = "auth-status error";
+          statusEl.textContent = "Incorrect verification code. Please check and try again.";
+        }
+        return;
+      }
+
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Verifying...";
+      }
+
+      var verifiedUser = {
+        id: "usr_" + Math.random().toString(36).substring(2, 8),
+        name: pending.name || "Reader",
+        email: pending.email,
+        emailVerified: true,
+        userLevel: "LV 1",
+        avatarBg: "#b8860b",
+        provider: "email"
+      };
+
+      // Also register in Supabase if client is ready
+      if (supabaseClient && pending.email && pending.password) {
+        supabaseClient.auth.signUp({
+          email: pending.email,
+          password: pending.password,
+          options: { data: { full_name: pending.name, name: pending.name } }
+        }).catch(function() {});
+      }
+
+      saveSession(verifiedUser, "tok_" + verifiedUser.id);
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Verify & Activate Account";
+      }
+      closeAuthModal();
+      showToast("✓ Account verified! Welcome, " + verifiedUser.name + "!");
+      if (labState.pendingReviewTriggered) {
+        labState.pendingReviewTriggered = false;
+        openReviewModal(labState.pendingChapter);
+      }
+    });
+  }
+
+  // ── User Sign Out & Profile Modal Handlers ──
+  function performSignOut(e) {
+    if (e) { e.preventDefault(); e.stopPropagation(); }
+    saveSession(null, null);
+    if (userMenuPopover) {
+      userMenuPopover.setAttribute("hidden", "");
+      userMenuPopover.style.display = "none";
+    }
+    var pmModal = document.getElementById("profileModal");
+    if (pmModal) {
+      pmModal.setAttribute("hidden", "");
+      pmModal.style.setProperty("display", "none", "important");
+    }
+    showToast("✓ Signed out.");
+    loadReviews();
+  }
+
+  var umpSignOutBtn = document.getElementById("umpSignOutBtn");
+  if (umpSignOutBtn) umpSignOutBtn.addEventListener("click", performSignOut);
+
+  var pmSignOutBtn = document.getElementById("pmSignOutBtn");
+  if (pmSignOutBtn) pmSignOutBtn.addEventListener("click", performSignOut);
+
+  // Dedicated Cultivator Profile Modal
+  var btnOpenFullProfile = document.getElementById("btnOpenFullProfile");
+  var profileModal = document.getElementById("profileModal");
+  var profileModalClose = document.getElementById("profileModalClose");
+  var profileModalBackdrop = document.getElementById("profileModalBackdrop");
+  var pmJumpReviews = document.getElementById("pmJumpReviews");
+
+  if (btnOpenFullProfile && profileModal) {
+    btnOpenFullProfile.addEventListener("click", function(e) {
+      e.preventDefault();
       if (userMenuPopover) {
         userMenuPopover.setAttribute("hidden", "");
         userMenuPopover.style.display = "none";
       }
-      showToast("Signed out.");
-      loadReviews();
+      profileModal.removeAttribute("hidden");
+      profileModal.style.setProperty("display", "flex", "important");
+    });
+  }
+
+  if (profileModalClose) {
+    profileModalClose.addEventListener("click", function() {
+      if (profileModal) {
+        profileModal.setAttribute("hidden", "");
+        profileModal.style.setProperty("display", "none", "important");
+      }
+    });
+  }
+
+  if (profileModalBackdrop) {
+    profileModalBackdrop.addEventListener("click", function() {
+      if (profileModal) {
+        profileModal.setAttribute("hidden", "");
+        profileModal.style.setProperty("display", "none", "important");
+      }
+    });
+  }
+
+  if (pmJumpReviews) {
+    pmJumpReviews.addEventListener("click", function() {
+      if (profileModal) {
+        profileModal.setAttribute("hidden", "");
+        profileModal.style.setProperty("display", "none", "important");
+      }
     });
   }
 

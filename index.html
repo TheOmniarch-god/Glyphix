@@ -54,7 +54,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Noto+Sans+SC:wght@400&family=Playfair+Display:ital,wght@0,700;0,800;1,400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=20260927-c102a">
+<link rel="stylesheet" href="style.css?v=20260927-d150f">
 <link rel="icon" href="favicon.ico" sizes="32x32">
 <link rel="icon" href="icon-48.png" type="image/png" sizes="48x48">
 <link rel="icon" href="icon-192.png" type="image/png" sizes="192x192">
@@ -112,20 +112,27 @@
               <div class="ump-header">
                 <div class="ump-avatar" id="umpAvatar">R</div>
                 <div class="ump-info">
-                  <span class="ump-name" id="umpName">Reader</span>
+                  <div class="ump-name-row">
+                    <span class="ump-name" id="umpName">Reader</span>
+                    <span class="ump-badge" id="umpUserBadge">Verified</span>
+                  </div>
                   <span class="ump-email" id="umpEmail">reader@example.com</span>
                 </div>
               </div>
               <div class="ump-divider"></div>
               <div class="ump-progress" id="umpProgressBox">
-                <span class="ump-prog-label">Reading Progress</span>
+                <div class="ump-prog-header">
+                  <span class="ump-prog-label">Reading Journey</span>
+                  <span class="ump-cult-level" id="umpCultRank">Rank 3 Gu Master</span>
+                </div>
                 <span class="ump-prog-val" id="umpProgVal">Chapter 1</span>
+                <a href="#chapters" class="ump-resume-link" id="umpResumeLink">Continue Reading &rarr;</a>
               </div>
               <div class="ump-divider"></div>
               <ul class="ump-list">
-                <li><a href="#reviewsSection" class="ump-link" id="umpReviewsLink">My Reviews &amp; Ratings</a></li>
-                <li><a href="#chapters" class="ump-link">All Chapters</a></li>
-                <li><button type="button" class="ump-signout-btn" id="umpSignOutBtn">Sign Out</button></li>
+                <li><a href="#reviewsSection" class="ump-link" id="umpReviewsLink"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> My Community Reviews</a></li>
+                <li><button type="button" class="ump-link" id="btnOpenFullProfile"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="4"/><path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg> View Cultivator Profile</button></li>
+                <li class="ump-signout-row"><button type="button" class="ump-signout-btn" id="umpSignOutBtn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> Sign Out</button></li>
               </ul>
             </div>
           </div>
@@ -524,6 +531,79 @@
       </div>
     </div>
 
+    <!-- View 3: 6-Digit OTP Email Verification Screen -->
+    <div id="authViewVerify" class="wn-auth-view" style="display: none;">
+      <div class="wn-auth-nav-top">
+        <button type="button" class="btn-back-nav" id="btnVerifyBack" aria-label="Go back">&larr; Back</button>
+        <span class="wn-auth-mode-label">Verify Your Email</span>
+      </div>
+
+      <div class="wn-verify-intro">
+        <p class="auth-sub" style="margin-bottom: 6px;">We sent a 6-digit verification code to:</p>
+        <p class="wn-verify-email text-gold" id="verifyTargetEmail">reader@example.com</p>
+        <div class="wn-code-pill" id="verifyCodeHintBox">
+          <span class="wn-code-pill-label">Dispatch Code:</span>
+          <span class="wn-code-pill-val" id="verifyCodeHint">123456</span>
+          <button type="button" class="wn-copy-code-btn" id="btnAutoFillCode">Auto-fill</button>
+        </div>
+      </div>
+
+      <form class="wn-form" id="verifyCodeForm">
+        <div class="auth-field">
+          <label for="otpCodeInput" class="auth-label">6-Digit Verification Code</label>
+          <input type="text" id="otpCodeInput" class="auth-input otp-input" placeholder="&bull; &bull; &bull; &bull; &bull; &bull;" maxlength="6" pattern="[0-9]{6}" inputmode="numeric" required autocomplete="one-time-code">
+        </div>
+        <button type="submit" class="btn btn-primary auth-submit-btn" id="verifySubmitBtn">Verify &amp; Activate Account</button>
+        <p class="auth-status" id="verifyStatus" hidden></p>
+      </form>
+
+      <div class="wn-auth-switch">
+        <span id="resendCountdown">Didn't receive code?</span>
+        <button type="button" class="wn-link-btn" id="btnResendOtp">Resend code</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ============ CULTIVATOR PROFILE MODAL ============ -->
+<div class="auth-modal" id="profileModal" hidden role="dialog" aria-modal="true" aria-labelledby="profileModalTitle">
+  <div class="auth-modal-backdrop" id="profileModalBackdrop"></div>
+  <div class="auth-modal-box wn-passport-card profile-card-box">
+    <button type="button" class="auth-modal-close" id="profileModalClose" aria-label="Close dialog">&times;</button>
+    <div class="profile-modal-head">
+      <div class="profile-modal-avatar" id="pmAvatar">R</div>
+      <div class="profile-modal-meta">
+        <h3 class="profile-modal-name" id="pmName">Reader</h3>
+        <p class="profile-modal-email" id="pmEmail">reader@example.com</p>
+        <span class="profile-modal-badge" id="pmBadge">Rank 3 Gu Master</span>
+      </div>
+    </div>
+
+    <div class="profile-stats-grid">
+      <div class="p-stat-card">
+        <span class="p-stat-num" id="pmReadingProg">Chapter 1</span>
+        <span class="p-stat-label">Reading Bookmark</span>
+      </div>
+      <div class="p-stat-card">
+        <span class="p-stat-num" id="pmReviewsCount">1</span>
+        <span class="p-stat-label">Reviews Published</span>
+      </div>
+      <div class="p-stat-card">
+        <span class="p-stat-num" id="pmAuthMethod">Google</span>
+        <span class="p-stat-label">Auth Method</span>
+      </div>
+      <div class="p-stat-card">
+        <span class="p-stat-num" id="pmStatus">Active</span>
+        <span class="p-stat-label">Reader Status</span>
+      </div>
+    </div>
+
+    <div class="profile-actions">
+      <a href="#reviewsSection" class="btn btn-secondary profile-action-btn" id="pmJumpReviews">My Community Reviews</a>
+      <button type="button" class="btn btn-outline-danger profile-action-btn" id="pmSignOutBtn">Sign Out of Account</button>
+    </div>
   </div>
 </div>
 
@@ -645,7 +725,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="config.js?v=20260927-c102a"></script>
-<script src="app.js?v=20260927-c102a"></script>
+<script src="config.js?v=20260927-d150f"></script>
+<script src="app.js?v=20260927-d150f"></script>
 </body>
 </html>

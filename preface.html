@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Noto+Sans+SC:wght@400&family=Playfair+Display:ital,wght@0,700;0,800;1,400&family=Spectral:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=20260927-c102a">
+<link rel="stylesheet" href="style.css?v=20260927-d150f">
 <link rel="icon" href="favicon.ico" sizes="32x32">
 <link rel="icon" href="icon-48.png" type="image/png" sizes="48x48">
 <link rel="icon" href="icon-192.png" type="image/png" sizes="192x192">
@@ -59,31 +59,38 @@
     </a>
     <div class="nav-actions">
       <div class="user-nav-wrap" id="userNavWrap">
-        <button type="button" class="btn-auth-trigger" id="authTriggerBtn" aria-label="Sign in to your reader account">
-          <svg class="auth-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-          <span class="auth-btn-label" id="authBtnLabel">Sign In</span>
-        </button>
-        <div class="user-menu-popover" id="userMenuPopover" hidden>
-          <div class="ump-header">
-            <div class="ump-avatar" id="umpAvatar">R</div>
-            <div class="ump-info">
-              <span class="ump-name" id="umpName">Reader</span>
-              <span class="ump-email" id="umpEmail">reader@example.com</span>
+            <button type="button" class="btn-auth-trigger" id="authTriggerBtn" aria-label="Sign in to your reader account">
+              <svg class="auth-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+              <span class="auth-btn-label" id="authBtnLabel">Sign In</span>
+            </button>
+            <div class="user-menu-popover" id="userMenuPopover" hidden>
+              <div class="ump-header">
+                <div class="ump-avatar" id="umpAvatar">R</div>
+                <div class="ump-info">
+                  <div class="ump-name-row">
+                    <span class="ump-name" id="umpName">Reader</span>
+                    <span class="ump-badge" id="umpUserBadge">Verified</span>
+                  </div>
+                  <span class="ump-email" id="umpEmail">reader@example.com</span>
+                </div>
+              </div>
+              <div class="ump-divider"></div>
+              <div class="ump-progress" id="umpProgressBox">
+                <div class="ump-prog-header">
+                  <span class="ump-prog-label">Reading Journey</span>
+                  <span class="ump-cult-level" id="umpCultRank">Rank 3 Gu Master</span>
+                </div>
+                <span class="ump-prog-val" id="umpProgVal">Chapter 1</span>
+                <a href="#chapters" class="ump-resume-link" id="umpResumeLink">Continue Reading &rarr;</a>
+              </div>
+              <div class="ump-divider"></div>
+              <ul class="ump-list">
+                <li><a href="#reviewsSection" class="ump-link" id="umpReviewsLink"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> My Community Reviews</a></li>
+                <li><button type="button" class="ump-link" id="btnOpenFullProfile"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="4"/><path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg> View Cultivator Profile</button></li>
+                <li class="ump-signout-row"><button type="button" class="ump-signout-btn" id="umpSignOutBtn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> Sign Out</button></li>
+              </ul>
             </div>
           </div>
-          <div class="ump-divider"></div>
-          <div class="ump-progress" id="umpProgressBox">
-            <span class="ump-prog-label">Reading Progress</span>
-            <span class="ump-prog-val" id="umpProgVal">Chapter 1</span>
-          </div>
-          <div class="ump-divider"></div>
-          <ul class="ump-list">
-            <li><a href="./#reviewsSection" class="ump-link" id="umpReviewsLink">My Reviews &amp; Ratings</a></li>
-            <li><a href="./#chapters" class="ump-link">All Chapters</a></li>
-            <li><button type="button" class="ump-signout-btn" id="umpSignOutBtn">Sign Out</button></li>
-          </ul>
-        </div>
-      </div>
       <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme" title="Toggle theme">
         <svg class="icon-moon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
         <svg class="icon-sun" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
@@ -341,6 +348,79 @@
       </div>
     </div>
 
+<!-- View 3: 6-Digit OTP Email Verification Screen -->
+    <div id="authViewVerify" class="wn-auth-view" style="display: none;">
+      <div class="wn-auth-nav-top">
+        <button type="button" class="btn-back-nav" id="btnVerifyBack" aria-label="Go back">&larr; Back</button>
+        <span class="wn-auth-mode-label">Verify Your Email</span>
+      </div>
+
+      <div class="wn-verify-intro">
+        <p class="auth-sub" style="margin-bottom: 6px;">We sent a 6-digit verification code to:</p>
+        <p class="wn-verify-email text-gold" id="verifyTargetEmail">reader@example.com</p>
+        <div class="wn-code-pill" id="verifyCodeHintBox">
+          <span class="wn-code-pill-label">Dispatch Code:</span>
+          <span class="wn-code-pill-val" id="verifyCodeHint">123456</span>
+          <button type="button" class="wn-copy-code-btn" id="btnAutoFillCode">Auto-fill</button>
+        </div>
+      </div>
+
+      <form class="wn-form" id="verifyCodeForm">
+        <div class="auth-field">
+          <label for="otpCodeInput" class="auth-label">6-Digit Verification Code</label>
+          <input type="text" id="otpCodeInput" class="auth-input otp-input" placeholder="&bull; &bull; &bull; &bull; &bull; &bull;" maxlength="6" pattern="[0-9]{6}" inputmode="numeric" required autocomplete="one-time-code">
+        </div>
+        <button type="submit" class="btn btn-primary auth-submit-btn" id="verifySubmitBtn">Verify &amp; Activate Account</button>
+        <p class="auth-status" id="verifyStatus" hidden></p>
+      </form>
+
+      <div class="wn-auth-switch">
+        <span id="resendCountdown">Didn't receive code?</span>
+        <button type="button" class="wn-link-btn" id="btnResendOtp">Resend code</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ============ CULTIVATOR PROFILE MODAL ============ -->
+<div class="auth-modal" id="profileModal" hidden role="dialog" aria-modal="true" aria-labelledby="profileModalTitle">
+  <div class="auth-modal-backdrop" id="profileModalBackdrop"></div>
+  <div class="auth-modal-box wn-passport-card profile-card-box">
+    <button type="button" class="auth-modal-close" id="profileModalClose" aria-label="Close dialog">&times;</button>
+    <div class="profile-modal-head">
+      <div class="profile-modal-avatar" id="pmAvatar">R</div>
+      <div class="profile-modal-meta">
+        <h3 class="profile-modal-name" id="pmName">Reader</h3>
+        <p class="profile-modal-email" id="pmEmail">reader@example.com</p>
+        <span class="profile-modal-badge" id="pmBadge">Rank 3 Gu Master</span>
+      </div>
+    </div>
+
+    <div class="profile-stats-grid">
+      <div class="p-stat-card">
+        <span class="p-stat-num" id="pmReadingProg">Chapter 1</span>
+        <span class="p-stat-label">Reading Bookmark</span>
+      </div>
+      <div class="p-stat-card">
+        <span class="p-stat-num" id="pmReviewsCount">1</span>
+        <span class="p-stat-label">Reviews Published</span>
+      </div>
+      <div class="p-stat-card">
+        <span class="p-stat-num" id="pmAuthMethod">Google</span>
+        <span class="p-stat-label">Auth Method</span>
+      </div>
+      <div class="p-stat-card">
+        <span class="p-stat-num" id="pmStatus">Active</span>
+        <span class="p-stat-label">Reader Status</span>
+      </div>
+    </div>
+
+    <div class="profile-actions">
+      <a href="#reviewsSection" class="btn btn-secondary profile-action-btn" id="pmJumpReviews">My Community Reviews</a>
+      <button type="button" class="btn btn-outline-danger profile-action-btn" id="pmSignOutBtn">Sign Out of Account</button>
+    </div>
   </div>
 </div>
 
@@ -462,7 +542,133 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="config.js?v=20260927-c102a"></script>
-<script src="app.js?v=20260927-c102a"></script>
+<script src="config.js?v=20260927-d150f"></script>
+<script src="app.js?v=20260927-d150f"></script>
+</body>
+</html>
+
+  </div>
+</div>
+
+<!-- ============ WEBNOVEL COMPACT REVIEW MODAL ============ -->
+<div class="auth-modal" id="reviewModal" hidden role="dialog" aria-modal="true" aria-labelledby="reviewModalTitle">
+  <div class="auth-modal-backdrop" id="reviewModalBackdrop"></div>
+  <div class="auth-modal-box review-modal-box">
+    <button type="button" class="auth-modal-close" id="reviewModalClose" aria-label="Close dialog">&times;</button>
+    <div class="auth-header">
+      <div class="auth-badge">Webnovel Review</div>
+      <h3 class="auth-title" id="reviewModalTitle">Review Reverend Insanity</h3>
+      <p class="auth-sub" id="reviewModalUserLine">Publishing as <strong id="reviewUserNameDisplay" class="text-gold">Reader</strong></p>
+    </div>
+
+    <form class="auth-form" id="reviewSubmitForm">
+      <!-- 5-Star Overall Rating Picker -->
+      <div class="rating-picker-card">
+        <span class="rpc-label">Overall Rating:</span>
+        <div class="rpc-stars" id="rpcStars" role="radiogroup" aria-label="Overall 5 star rating">
+          <button type="button" class="star-btn" data-val="1" aria-label="1 star">&#9733;</button>
+          <button type="button" class="star-btn" data-val="2" aria-label="2 stars">&#9733;</button>
+          <button type="button" class="star-btn" data-val="3" aria-label="3 stars">&#9733;</button>
+          <button type="button" class="star-btn" data-val="4" aria-label="4 stars">&#9733;</button>
+          <button type="button" class="star-btn active" data-val="5" aria-label="5 stars">&#9733;</button>
+        </div>
+        <span class="rpc-score" id="rpcScoreDisplay">5.0 / 5.0</span>
+      </div>
+
+      <!-- 5 Canonical Webnovel Dimensions -->
+      <div class="aspect-grid" style="grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));">
+        <div class="aspect-row">
+          <span class="aspect-name">Writing Quality</span>
+          <select class="aspect-select" id="dimWriting">
+            <option value="5.0" selected>5.0 ★ Masterpiece</option>
+            <option value="4.5">4.5 ★ Great</option>
+            <option value="4.0">4.0 ★ Good</option>
+            <option value="3.5">3.5 ★ Decent</option>
+            <option value="3.0">3.0 ★ Average</option>
+          </select>
+        </div>
+        <div class="aspect-row">
+          <span class="aspect-name">Story Development</span>
+          <select class="aspect-select" id="dimStory">
+            <option value="5.0" selected>5.0 ★ Masterpiece</option>
+            <option value="4.5">4.5 ★ Great</option>
+            <option value="4.0">4.0 ★ Good</option>
+            <option value="3.5">3.5 ★ Decent</option>
+            <option value="3.0">3.0 ★ Average</option>
+          </select>
+        </div>
+        <div class="aspect-row">
+          <span class="aspect-name">Character Design</span>
+          <select class="aspect-select" id="dimCharacters">
+            <option value="5.0" selected>5.0 ★ Masterpiece</option>
+            <option value="4.5">4.5 ★ Great</option>
+            <option value="4.0">4.0 ★ Good</option>
+            <option value="3.5">3.5 ★ Decent</option>
+            <option value="3.0">3.0 ★ Average</option>
+          </select>
+        </div>
+        <div class="aspect-row">
+          <span class="aspect-name">Updating Stability</span>
+          <select class="aspect-select" id="dimStability">
+            <option value="5.0" selected>5.0 ★ Masterpiece</option>
+            <option value="4.5">4.5 ★ Great</option>
+            <option value="4.0">4.0 ★ Good</option>
+            <option value="3.5">3.5 ★ Decent</option>
+            <option value="3.0">3.0 ★ Average</option>
+          </select>
+        </div>
+        <div class="aspect-row">
+          <span class="aspect-name">World Background</span>
+          <select class="aspect-select" id="dimWorld">
+            <option value="5.0" selected>5.0 ★ Masterpiece</option>
+            <option value="4.5">4.5 ★ Great</option>
+            <option value="4.0">4.0 ★ Good</option>
+            <option value="3.5">3.5 ★ Decent</option>
+            <option value="3.0">3.0 ★ Average</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Headline -->
+      <div class="auth-field">
+        <label for="reviewTitle" class="auth-label">Review Headline</label>
+        <input type="text" id="reviewTitle" class="auth-input" placeholder="e.g. Masterclass in ruthless pragmatism" required maxlength="100">
+      </div>
+
+      <!-- Body -->
+      <div class="auth-field">
+        <label for="reviewBody" class="auth-label">Detailed Review <small class="text-gold">(min. 10 chars)</small></label>
+        <textarea id="reviewBody" class="auth-input auth-textarea" rows="4" placeholder="Share your analysis of the schemes, cultivation system, and prose..." required minlength="10"></textarea>
+      </div>
+
+      <!-- Metadata & Options -->
+      <div class="review-meta-row">
+        <div class="rm-chapter">
+          <label for="reviewChapterSelect" class="rm-label">Chapter:</label>
+          <select id="reviewChapterSelect" class="rm-select">
+            <option value="Chapter 1">Chapter 1</option>
+            <option value="Chapter 2">Chapter 2</option>
+            <option value="Chapter 3" selected>Chapter 3</option>
+            <option value="Chapter 4">Chapter 4</option>
+            <option value="Book 1 (Chapters 1–199)">Book 1</option>
+            <option value="Book 2 (Chapters 200–405)">Book 2</option>
+            <option value="Completed (Chapter 2,334)">Completed</option>
+          </select>
+        </div>
+        <label class="rm-spoiler-label">
+          <input type="checkbox" id="reviewSpoilerCheck">
+          <span>Contains Spoilers</span>
+        </label>
+      </div>
+
+      <button type="submit" class="btn btn-primary auth-submit-btn" id="btnSubmitReview">Publish Review</button>
+      <p class="auth-status" id="reviewStatus" hidden></p>
+    </form>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js?v=20260927-d150f"></script>
+<script src="app.js?v=20260927-d150f"></script>
 </body>
 </html>
