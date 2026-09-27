@@ -826,6 +826,27 @@ document.addEventListener("DOMContentLoaded", function () {
       }
       if (method === "POST") {
         var allRevs = localDb.getReviews();
+        var targetId = data.reviewId;
+        var existingIdx = -1;
+        if (targetId) {
+          existingIdx = allRevs.findIndex(function(r) { return r.id === targetId; });
+        } else if (data.userEmail) {
+          existingIdx = allRevs.findIndex(function(r) { return r.userEmail === data.userEmail; });
+        }
+
+        if (existingIdx !== -1) {
+          var ex = allRevs[existingIdx];
+          if (data.rating !== undefined) ex.rating = floatVal(data.rating);
+          if (data.title) ex.title = data.title;
+          if (data.body || data.text) { ex.body = data.body || data.text; ex.text = ex.body; }
+          if (data.userAvatar) ex.userAvatar = data.userAvatar;
+          if (data.userName) { ex.userName = data.userName; ex.user = data.userName; }
+          if (data.spoiler !== undefined) ex.spoiler = !!data.spoiler;
+          ex.date = "Edited just now";
+          localDb.saveReviews(allRevs);
+          return { ok: true, message: "Review updated", review: ex, summary: localDb.calcSummary(allRevs) };
+        }
+
         var newR = {
           id: "rev_" + Math.random().toString(36).substring(2, 10),
           userId: "usr_" + Math.random().toString(36).substring(2, 8),
@@ -911,7 +932,29 @@ document.addEventListener("DOMContentLoaded", function () {
       };
       return { ok: true, user: gUser, token: "mock_tok_" + gUser.id };
     }
-    if (endpoint === "/api/reviews/vote") {
+    
+    if (endpoint === "/api/reviews/reply" && method === "POST") {
+      var rRevs = localDb.getReviews();
+      var foundRev = null;
+      rRevs.forEach(function(r) {
+        if (r.id === data.reviewId) {
+          if (!r.replies) r.replies = [];
+          var newRep = {
+            id: "rep_" + Math.random().toString(36).substring(2, 9),
+            author: data.userName || "Reader",
+            avatar: data.userAvatar || "",
+            text: data.text || "",
+            time: "Just now"
+          };
+          r.replies.push(newRep);
+          foundRev = r;
+        }
+      });
+      if (foundRev) localDb.saveReviews(rRevs);
+      return { ok: true };
+    }
+
+  if (endpoint === "/api/reviews/vote") {
       var vRevs = localDb.getReviews();
       var curLikes = 0;
       vRevs.forEach(function(r) {
@@ -965,7 +1008,6 @@ document.addEventListener("DOMContentLoaded", function () {
       userLevel: "Verified"
     };
     saveSession(userObj, token);
-    showToast("✓ Signed in as " + realName);
   }
 
   if (supabaseClient) {
@@ -1051,7 +1093,7 @@ function getStoredToken() {
       // Populate Popover
       if (popName) popName.textContent = displayName;
       if (popEmail) popEmail.textContent = user.email || "";
-      if (popBadge) popBadge.textContent = user.provider === "google" ? "Verified" : "LV 1";
+      if (popBadge) popBadge.textContent = "Verified";
       if (popAvatar) {
         if (user.avatar) {
           popAvatar.innerHTML = '<img src="' + escapeHtml(user.avatar) + '" alt="">';
@@ -1063,7 +1105,7 @@ function getStoredToken() {
       // Populate Cultivator Rank
       var cultRank = document.getElementById("umpCultRank");
       if (cultRank) {
-        cultRank.textContent = user.provider === "google" ? "Rank 3 Gu Master" : "Rank 1 Cultivator";
+        cultRank.textContent = "Verified Reader";
       }
 
       // Populate Full Profile Modal if exists
@@ -1076,7 +1118,7 @@ function getStoredToken() {
 
       if (pmName) pmName.textContent = displayName;
       if (pmEmail) pmEmail.textContent = user.email || "";
-      if (pmBadge) pmBadge.textContent = user.provider === "google" ? "Rank 3 Gu Master (Google)" : "Cultivator (Verified Reader)";
+      if (pmBadge) pmBadge.textContent = "✓ Verified Reader";
       if (pmAuthMethod) pmAuthMethod.textContent = user.provider === "google" ? "Google OAuth" : "Verified Email";
       if (pmAvatar) {
         if (user.avatar) {
@@ -1675,13 +1717,22 @@ function getStoredToken() {
   }
 
   // ── Webnovel Review Modal ─────────────────────────────────────────────
+    // Helper to find the current user's review
+  function findMyReview(revList, user) {
+    if (!user || !revList) return null;
+    return revList.find(function(r) {
+      return (r.userEmail && user.email && r.userEmail === user.email) ||
+             (r.userName && user.name && r.userName === user.name) ||
+             (r.userId && user.id && r.userId === user.id);
+    });
+  }
+
   function openReviewModal(chapter) {
     var user = getStoredUser();
     if (!user) {
       labState.pendingReviewTriggered = true;
       labState.pendingChapter = chapter || "Novel Review";
       openAuthModal("signin");
-      showToast("Please sign in or create an account to review.");
       return;
     }
 
@@ -1696,6 +1747,45 @@ function getStoredToken() {
 
     var statusEl = document.getElementById("reviewStatus");
     if (statusEl) statusEl.hidden = true;
+
+    // Check if user already published a review
+    var myRev = labState.userReview || null;
+    var titleInp = document.getElementById("reviewTitle");
+    var bodyInp = document.getElementById("reviewBody");
+    var spoilerCheck = document.getElementById("reviewSpoilerCheck");
+    var submitBtn = document.getElementById("btnSubmitReview");
+    var modalTitle = document.getElementById("reviewModalTitle");
+
+    if (myRev) {
+      labState.editingReviewId = myRev.id;
+      if (modalTitle) modalTitle.textContent = "Edit Your Review";
+      if (titleInp) titleInp.value = myRev.title || "";
+      if (bodyInp) bodyInp.value = myRev.body || myRev.text || "";
+      if (spoilerCheck) spoilerCheck.checked = !!(myRev.spoiler || myRev.spoilers);
+      if (submitBtn) submitBtn.textContent = "Save Changes";
+
+      var rVal = myRev.rating || myRev.overall || 5;
+      labState.currentRating = rVal;
+      document.querySelectorAll("#rpcStars .star-btn").forEach(function(b) {
+        var bVal = parseInt(b.getAttribute("data-val"), 10);
+        b.classList.toggle("active", bVal <= rVal);
+      });
+      var rpcScoreDisplay = document.getElementById("rpcScoreDisplay");
+      if (rpcScoreDisplay) rpcScoreDisplay.textContent = rVal.toFixed(1) + " / 5.0";
+    } else {
+      labState.editingReviewId = null;
+      if (modalTitle) modalTitle.textContent = "Rate & Review Reverend Insanity";
+      if (titleInp) titleInp.value = "";
+      if (bodyInp) bodyInp.value = "";
+      if (spoilerCheck) spoilerCheck.checked = false;
+      if (submitBtn) submitBtn.textContent = "Publish Review";
+      labState.currentRating = 5;
+      document.querySelectorAll("#rpcStars .star-btn").forEach(function(b) {
+        b.classList.add("active");
+      });
+      var rpcScoreDisplay = document.getElementById("rpcScoreDisplay");
+      if (rpcScoreDisplay) rpcScoreDisplay.textContent = "5.0 / 5.0";
+    }
   }
 
   function closeReviewModal() {
@@ -1706,19 +1796,13 @@ function getStoredToken() {
 
   // Bind universal modal close buttons for review modal
   var reviewModalClose = document.getElementById("reviewModalClose");
-  if (reviewModalClose) {
-    reviewModalClose.addEventListener("click", closeReviewModal);
-  }
+  if (reviewModalClose) reviewModalClose.addEventListener("click", closeReviewModal);
 
   var reviewModalBackdrop = document.getElementById("reviewModalBackdrop");
-  if (reviewModalBackdrop) {
-    reviewModalBackdrop.addEventListener("click", closeReviewModal);
-  }
+  if (reviewModalBackdrop) reviewModalBackdrop.addEventListener("click", closeReviewModal);
 
   var reviewModalCancelBtn = document.getElementById("reviewModalCancelBtn");
-  if (reviewModalCancelBtn) {
-    reviewModalCancelBtn.addEventListener("click", closeReviewModal);
-  }
+  if (reviewModalCancelBtn) reviewModalCancelBtn.addEventListener("click", closeReviewModal);
 
   // Bind write buttons across the page
   var wnWriteBtn = document.getElementById("wnWriteBtn");
@@ -1728,8 +1812,7 @@ function getStoredToken() {
 
   document.querySelectorAll(".btn-open-review, .wn-write-btn").forEach(function(btn) {
     btn.addEventListener("click", function() {
-      var ch = btn.getAttribute("data-chapter") || "Novel Review";
-      openReviewModal(ch);
+      openReviewModal("Novel Review");
     });
   });
 
@@ -1751,7 +1834,7 @@ function getStoredToken() {
     });
   });
 
-  // Review Submit Form (Normal clean book review)
+  // Review Submit Form (One review per reader: edits or creates in-place)
   var reviewSubmitForm = document.getElementById("reviewSubmitForm");
   if (reviewSubmitForm) {
     reviewSubmitForm.addEventListener("submit", function(e) {
@@ -1769,23 +1852,15 @@ function getStoredToken() {
       var statusEl = document.getElementById("reviewStatus");
       var submitBtn = document.getElementById("btnSubmitReview");
 
-      var categories = {
-        writing: labState.currentRating,
-        story: labState.currentRating,
-        characters: labState.currentRating,
-        stability: 5.0,
-        world: labState.currentRating
-      };
-
       if (submitBtn) {
         submitBtn.disabled = true;
-        submitBtn.textContent = "Publishing Review...";
+        submitBtn.textContent = labState.editingReviewId ? "Saving..." : "Publishing Review...";
       }
       if (statusEl) statusEl.hidden = true;
 
       callApi("/api/reviews", "POST", {
+        reviewId: labState.editingReviewId || undefined,
         rating: labState.currentRating,
-        categories: categories,
         title: title,
         body: body,
         text: body,
@@ -1799,7 +1874,7 @@ function getStoredToken() {
         .then(function(data) {
           if (submitBtn) {
             submitBtn.disabled = false;
-            submitBtn.textContent = "Publish Review";
+            submitBtn.textContent = labState.editingReviewId ? "Save Changes" : "Publish Review";
           }
           if (!data.ok) {
             if (statusEl) {
@@ -1811,9 +1886,7 @@ function getStoredToken() {
           }
 
           closeReviewModal();
-          document.getElementById("reviewTitle").value = "";
-          document.getElementById("reviewBody").value = "";
-          showToast("✓ Review published to Reverend Insanity Community!");
+          showToast(labState.editingReviewId ? "✓ Review updated successfully!" : "✓ Review published to Reverend Insanity Community!");
           loadReviews();
 
           var revSec = document.getElementById("reviewsSection");
@@ -1824,12 +1897,12 @@ function getStoredToken() {
         .catch(function() {
           if (submitBtn) {
             submitBtn.disabled = false;
-            submitBtn.textContent = "Publish Review";
+            submitBtn.textContent = labState.editingReviewId ? "Save Changes" : "Publish Review";
           }
           if (statusEl) {
             statusEl.hidden = false;
             statusEl.className = "auth-status error";
-            statusEl.textContent = "Error publishing review.";
+            statusEl.textContent = "Error saving review.";
           }
         });
     });
@@ -1847,10 +1920,10 @@ function getStoredToken() {
     });
   }
 
-  // Helper function to build a single review card
-  function createReviewCard(rev) {
+  // Helper function to build a single review card with functional replies & edit option
+  function createReviewCard(rev, isMyReview) {
     var card = document.createElement("div");
-    card.className = "wn-card";
+    card.className = "wn-card" + (isMyReview ? " wn-my-card" : "");
 
     var uName = rev.userName || rev.user || "Reader";
     var avatarSrc = rev.userAvatar || "";
@@ -1865,7 +1938,7 @@ function getStoredToken() {
     var starsStr = "★".repeat(Math.round(rev.rating || rev.overall || 5));
     var dateStr = rev.date || formatDate(rev.createdAt);
 
-    // Text / Spoiler (Clean, NO danger warning emoji)
+    // Text / Spoiler
     var rBody = rev.body || rev.text || "";
     var rTitle = rev.title ? '<h4 class="wn-card-title">' + escapeHtml(rev.title) + '</h4>' : '';
     var textHtml = "";
@@ -1886,7 +1959,13 @@ function getStoredToken() {
     var likeKey = "ri_like_" + (rev.id || uName);
     var isLiked = store.getItem(likeKey) === "1";
 
-    // Clean normal card header: Verified Reader, NO fake LV2 or gamified badges
+    var myBadgeHtml = isMyReview
+      ? '<span class="wn-my-review-badge">★ Your Review</span><button type="button" class="wn-edit-review-btn" id="btnEditCardReview_' + rev.id + '">Edit</button>'
+      : '';
+
+    var replies = rev.replies || [];
+    var replyLabel = replies.length === 1 ? "💬 1 Reply" : "💬 " + replies.length + " Replies";
+
     card.innerHTML =
       '<div class="wn-card-top">' +
       '  <div class="wn-card-user-info">' +
@@ -1894,6 +1973,7 @@ function getStoredToken() {
       '    <div>' +
       '      <span class="wn-user-name">' + escapeHtml(uName) + '</span> ' +
       '      <span class="wn-verified-badge" style="font-size:10.5px; font-weight:700; color:#27ae60; background:rgba(39,174,96,0.12); padding:1px 6px; border-radius:99px; margin-left:4px;">✓ Verified Reader</span>' +
+      myBadgeHtml +
       '    </div>' +
       '  </div>' +
       '  <div class="wn-card-stars-date">' +
@@ -1906,9 +1986,19 @@ function getStoredToken() {
       '  <button type="button" class="wn-helpful-btn ' + (isLiked ? 'is-voted' : '') + '" data-id="' + rev.id + '">' +
       '    👍 Helpful (' + likesCount + ')' +
       '  </button>' +
-      '  <span class="wn-reply-link">💬 0 Replies</span>' +
+      '  <button type="button" class="wn-reply-toggle-btn" data-id="' + rev.id + '" style="background:none; border:none; cursor:pointer; font-size:13px; color:var(--muted, #6e675c); font-weight:600; padding:4px 8px; border-radius:6px;">' +
+      replyLabel +
+      '  </button>' +
+      '</div>' +
+      '<div class="wn-replies-wrap" id="repliesWrap_' + rev.id + '" style="display: none;">' +
+      '  <div class="wn-replies-list" id="repliesList_' + rev.id + '"></div>' +
+      '  <div class="wn-reply-input-box">' +
+      '    <input type="text" class="wn-reply-input" id="replyInput_' + rev.id + '" placeholder="Write a reply...">' +
+      '    <button type="button" class="wn-reply-send-btn" data-id="' + rev.id + '">Post</button>' +
+      '  </div>' +
       '</div>';
 
+    // Helpful button
     var hBtn = card.querySelector(".wn-helpful-btn");
     if (hBtn) {
       hBtn.addEventListener("click", function() {
@@ -1923,6 +2013,92 @@ function getStoredToken() {
       });
     }
 
+    // Edit button on card
+    var editBtn = card.querySelector("#btnEditCardReview_" + rev.id);
+    if (editBtn) {
+      editBtn.addEventListener("click", function() {
+        openReviewModal("Novel Review");
+      });
+    }
+
+    // Toggle Replies
+    var repToggleBtn = card.querySelector(".wn-reply-toggle-btn");
+    var repWrap = card.querySelector("#repliesWrap_" + rev.id);
+    var repList = card.querySelector("#repliesList_" + rev.id);
+    var repInput = card.querySelector("#replyInput_" + rev.id);
+    var repSendBtn = card.querySelector(".wn-reply-send-btn");
+
+    function renderRepliesList() {
+      if (!repList) return;
+      repList.innerHTML = "";
+      if (replies.length === 0) {
+        repList.innerHTML = '<p style="font-size:12px; color:var(--muted); margin:4px 0 8px; font-style:italic;">No replies yet. Start the conversation!</p>';
+        return;
+      }
+      replies.forEach(function(rep) {
+        var repDiv = document.createElement("div");
+        repDiv.className = "wn-reply-item";
+        var aSrc = rep.avatar || "";
+        var aHtml = (aSrc && (aSrc.startsWith("http") || aSrc.startsWith("data:") || aSrc.indexOf(".png") !== -1 || aSrc.indexOf(".jpg") !== -1 || aSrc.indexOf(".webp") !== -1))
+          ? '<img src="' + escapeHtml(aSrc) + '" class="wn-reply-avatar" alt="">'
+          : '<div class="wn-reply-initial">' + escapeHtml((rep.author || "R").charAt(0).toUpperCase()) + '</div>';
+
+        repDiv.innerHTML =
+          aHtml +
+          '<div class="wn-reply-content">' +
+          '  <div class="wn-reply-meta">' +
+          '    <span class="wn-reply-author">' + escapeHtml(rep.author || "Reader") + '</span>' +
+          '    <span class="wn-reply-time">' + escapeHtml(rep.time || "Recent") + '</span>' +
+          '  </div>' +
+          '  <p class="wn-reply-text">' + escapeHtml(rep.text || "") + '</p>' +
+          '</div>';
+        repList.appendChild(repDiv);
+      });
+    }
+
+    if (repToggleBtn && repWrap) {
+      repToggleBtn.addEventListener("click", function() {
+        var isOpen = repWrap.style.display !== "none";
+        repWrap.style.display = isOpen ? "none" : "block";
+        if (!isOpen) {
+          renderRepliesList();
+          if (repInput) repInput.focus();
+        }
+      });
+    }
+
+    if (repSendBtn && repInput) {
+      repSendBtn.addEventListener("click", function() {
+        var u = getStoredUser();
+        if (!u) {
+          openAuthModal("signin");
+          return;
+        }
+        var txt = (repInput.value || "").trim();
+        if (!txt) return;
+
+        var newRep = {
+          id: "rep_" + Date.now(),
+          author: u.name || "Reader",
+          avatar: u.avatar || "",
+          text: txt,
+          time: "Just now"
+        };
+        replies.push(newRep);
+        rev.replies = replies;
+        repInput.value = "";
+        renderRepliesList();
+        repToggleBtn.textContent = "💬 " + (replies.length === 1 ? "1 Reply" : replies.length + " Replies");
+
+        callApi("/api/reviews/reply", "POST", {
+          reviewId: rev.id,
+          text: txt,
+          userName: u.name || "Reader",
+          userAvatar: u.avatar || ""
+        }).catch(function() {});
+      });
+    }
+
     return card;
   }
 
@@ -1932,12 +2108,17 @@ function getStoredToken() {
   var allReviewsBackdrop = document.getElementById("allReviewsBackdrop");
   var allReviewsScrollList = document.getElementById("allReviewsScrollList");
 
-  function openAllReviewsModal(revList) {
+  function openAllReviewsModal(revList, currentUser) {
     if (!allReviewsModal || !allReviewsScrollList) return;
     allReviewsScrollList.innerHTML = "";
 
     (revList || []).forEach(function(rev) {
-      allReviewsScrollList.appendChild(createReviewCard(rev));
+      var isMyRev = currentUser && (
+        (rev.userEmail && currentUser.email && rev.userEmail === currentUser.email) ||
+        (rev.userName && currentUser.name && rev.userName === currentUser.name) ||
+        (rev.userId && currentUser.id && rev.userId === currentUser.id)
+      );
+      allReviewsScrollList.appendChild(createReviewCard(rev, isMyRev));
     });
 
     allReviewsModal.removeAttribute("hidden");
@@ -1955,7 +2136,7 @@ function getStoredToken() {
   if (allReviewsClose) allReviewsClose.addEventListener("click", closeAllReviewsModal);
   if (allReviewsBackdrop) allReviewsBackdrop.addEventListener("click", closeAllReviewsModal);
 
-  // ── Load Reviews (Capped at 4 on homepage to keep layout tight) ─────────
+  // ── Load Reviews (One review per reader, synced Google avatar, functional replies)
   function loadReviews() {
     var listEl = document.getElementById("wnReviewsList");
     if (!listEl) return;
@@ -1965,6 +2146,38 @@ function getStoredToken() {
         if (!data || !data.ok) return;
 
         var revList = data.reviews || [];
+        var currentUser = getStoredUser();
+
+        // Check if current user has an existing review
+        var myRev = findMyReview(revList, currentUser);
+        labState.userReview = myRev;
+
+        // If user is logged in with a Google photo, automatically sync their avatar on their review
+        if (currentUser && currentUser.avatar && myRev && myRev.userAvatar !== currentUser.avatar) {
+          myRev.userAvatar = currentUser.avatar;
+          callApi("/api/reviews", "POST", {
+            reviewId: myRev.id,
+            userAvatar: currentUser.avatar,
+            userName: currentUser.name
+          }).catch(function() {});
+        }
+
+        // If user already reviewed, put their review at the VERY TOP and update write buttons
+        var writeBtns = document.querySelectorAll(".wn-write-btn, #wnWriteBtn");
+        if (myRev) {
+          var myIdx = revList.indexOf(myRev);
+          if (myIdx > 0) {
+            revList.splice(myIdx, 1);
+            revList.unshift(myRev);
+          }
+          writeBtns.forEach(function(b) {
+            b.innerHTML = "✏️ Edit Your Review";
+          });
+        } else {
+          writeBtns.forEach(function(b) {
+            b.innerHTML = "Rate & Review Novel";
+          });
+        }
 
         // Update hero rating lockup
         var heroScore = document.getElementById("heroRatingScore");
@@ -2000,7 +2213,12 @@ function getStoredToken() {
         var subset = revList.slice(0, visibleLimit);
 
         subset.forEach(function(rev) {
-          listEl.appendChild(createReviewCard(rev));
+          var isMy = currentUser && (
+            (rev.userEmail && currentUser.email && rev.userEmail === currentUser.email) ||
+            (rev.userName && currentUser.name && rev.userName === currentUser.name) ||
+            (rev.userId && currentUser.id && rev.userId === currentUser.id)
+          );
+          listEl.appendChild(createReviewCard(rev, isMy));
         });
 
         // If more reviews exist, show modal opener and link to dedicated reviews page
@@ -2019,13 +2237,14 @@ function getStoredToken() {
           var openAllBtn = moreBox.querySelector("#btnOpenAllReviewsModal");
           if (openAllBtn) {
             openAllBtn.addEventListener("click", function() {
-              openAllReviewsModal(revList);
+              openAllReviewsModal(revList, currentUser);
             });
           }
         }
       })
       .catch(function() {});
   }
+
 
   // ── Dragonholic Slide-Out Reader Drawer ────────────────────────────────
   var readerDrawer = document.getElementById("readerDrawer");

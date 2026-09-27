@@ -1,5 +1,35 @@
 [
   {
+    "id": "rev_3a78bfb9",
+    "userId": "usr_guest_03d3e6",
+    "user": "The Omniarch",
+    "userName": "The Omniarch",
+    "userAvatar": "https://lh3.googleusercontent.com/a/ACg8ocL...",
+    "userEmail": "theomniarch6@gmail.com",
+    "userProvider": "email",
+    "verified": true,
+    "rating": 5.0,
+    "overall": 5,
+    "categories": {
+      "writing": 5.0,
+      "story": 5.0,
+      "characters": 5.0,
+      "stability": 5.0,
+      "world": 5.0
+    },
+    "userLevel": "LV 2",
+    "title": "Unrivaled philosophical depth",
+    "body": "The schemes and perseverance in this translation are transcendent.",
+    "text": "The schemes and perseverance in this translation are transcendent.",
+    "chapter": "Novel Review",
+    "spoiler": false,
+    "spoilers": false,
+    "likes": 0,
+    "helpful": 0,
+    "date": "Just now",
+    "createdAt": "2026-09-27T20:07:45Z"
+  },
+  {
     "id": "rev_ce276dad",
     "userId": "usr_guest_847eed",
     "user": "Fang Yuan Cultivator",

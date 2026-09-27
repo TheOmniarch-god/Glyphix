@@ -8435,3 +8435,219 @@ a.fc.on:hover { box-shadow: 0 0 0 2px rgba(143,29,29,.35); }
   color: #ecc768 !important;
   border: 1.5px solid rgba(255, 255, 255, 0.18) !important;
 }
+
+
+/* ============================================================
+   HERO RESUME BUTTON FIX (GOLD GRADIENT & HIGH CONTRAST)
+   ============================================================ */
+:root {
+  --accent: #d4a347;
+}
+
+.btn.btn-resumed,
+.cta-row .btn.btn-resumed,
+a.btn.btn-primary.btn-resumed {
+  background: linear-gradient(135deg, #d4a347 0%, #b8860b 100%) !important;
+  color: #0b0c10 !important;
+  font-weight: 700 !important;
+  border: 1.5px solid #d4a347 !important;
+  box-shadow: 0 4px 18px rgba(212, 163, 71, 0.35) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.btn.btn-resumed:hover,
+.cta-row .btn.btn-resumed:hover,
+a.btn.btn-primary.btn-resumed:hover {
+  background: linear-gradient(135deg, #e8b958 0%, #c89518 100%) !important;
+  color: #0b0c10 !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 24px rgba(212, 163, 71, 0.45) !important;
+}
+
+[data-theme="obsidian"] .btn.btn-resumed,
+[data-theme="obsidian"] .cta-row .btn.btn-resumed,
+[data-theme="obsidian"] a.btn.btn-primary.btn-resumed {
+  background: linear-gradient(135deg, #ecc768 0%, #c49216 100%) !important;
+  color: #0a0b0e !important;
+  font-weight: 800 !important;
+  border: 1.5px solid #ecc768 !important;
+  box-shadow: 0 4px 20px rgba(236, 199, 104, 0.45) !important;
+}
+
+[data-theme="obsidian"] .btn.btn-resumed:hover,
+[data-theme="obsidian"] .cta-row .btn.btn-resumed:hover,
+[data-theme="obsidian"] a.btn.btn-primary.btn-resumed:hover {
+  background: linear-gradient(135deg, #ffd77a 0%, #d4a328 100%) !important;
+  color: #0a0b0e !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 28px rgba(236, 199, 104, 0.55) !important;
+}
+
+/* ============================================================
+   INTERACTIVE REVIEW REPLIES & USER REVIEW BADGE
+   ============================================================ */
+.wn-my-review-badge {
+  font-size: 11px;
+  font-weight: 800;
+  color: #b8860b;
+  background: rgba(212, 163, 71, 0.15);
+  border: 1px solid rgba(212, 163, 71, 0.4);
+  padding: 2px 8px;
+  border-radius: 99px;
+  margin-left: 6px;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+[data-theme="obsidian"] .wn-my-review-badge {
+  color: #ecc768;
+  background: rgba(212, 163, 71, 0.18);
+  border-color: rgba(212, 163, 71, 0.5);
+}
+
+.wn-edit-review-btn {
+  background: none;
+  border: 1px solid var(--gold, #d4a347);
+  color: var(--gold, #b38628);
+  border-radius: 6px;
+  padding: 2px 8px;
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-left: 8px;
+  transition: all 0.15s ease;
+}
+
+.wn-edit-review-btn:hover {
+  background: var(--gold, #d4a347);
+  color: #0b0c10;
+}
+
+.wn-replies-wrap {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--line, #e2d7c9);
+}
+
+[data-theme="obsidian"] .wn-replies-wrap {
+  border-top-color: rgba(255, 255, 255, 0.1);
+}
+
+.wn-reply-item {
+  display: flex;
+  gap: 10px;
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.025);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+
+[data-theme="obsidian"] .wn-reply-item {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.wn-reply-avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 1px solid var(--gold, #d4a347);
+}
+
+.wn-reply-initial {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--gold, #d4a347);
+  color: #0b0c10;
+  font-size: 11px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.wn-reply-content {
+  flex: 1;
+}
+
+.wn-reply-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 3px;
+}
+
+.wn-reply-author {
+  font-weight: 700;
+  color: var(--head, #1c1813);
+  font-size: 12.5px;
+}
+
+[data-theme="obsidian"] .wn-reply-author {
+  color: #f4ede2;
+}
+
+.wn-reply-time {
+  font-size: 11px;
+  color: var(--muted, #6e675c);
+}
+
+.wn-reply-text {
+  margin: 0;
+  line-height: 1.45;
+  color: var(--ink, #2c261e);
+}
+
+[data-theme="obsidian"] .wn-reply-text {
+  color: #d4cfc7;
+}
+
+.wn-reply-input-box {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.wn-reply-input {
+  flex: 1;
+  background: var(--card, #ffffff);
+  border: 1.5px solid var(--line, #dcd4c7);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 13px;
+  color: var(--ink, #1c1813);
+}
+
+[data-theme="obsidian"] .wn-reply-input {
+  background: #0d0e12;
+  border-color: rgba(255, 255, 255, 0.16);
+  color: #f2ede4;
+}
+
+.wn-reply-input:focus {
+  border-color: var(--gold, #d4a347);
+  outline: none;
+}
+
+.wn-reply-send-btn {
+  background: var(--gold, #d4a347);
+  color: #0b0c10;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.wn-reply-send-btn:hover {
+  background: #ecc768;
+  transform: translateY(-1px);
+}

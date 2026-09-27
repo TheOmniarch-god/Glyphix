@@ -479,11 +479,35 @@ class LabRequestHandler(http.server.SimpleHTTPRequestHandler):
             chapter = body.get("chapter", "").strip() or "Chapter 1"
             spoiler = bool(body.get("spoiler", False))
 
+            reviews = read_json(REVIEWS_FILE, [])
+            rev_id = body.get("reviewId")
+            existing_rev = None
+            if rev_id:
+                for r in reviews:
+                    if r.get("id") == rev_id:
+                        existing_rev = r
+                        break
+            if not existing_rev and user_email:
+                for r in reviews:
+                    if r.get("userEmail") == user_email:
+                        existing_rev = r
+                        break
+
+            if existing_rev:
+                if body.get("rating"): existing_rev["rating"] = rating; existing_rev["overall"] = round(rating)
+                if title: existing_rev["title"] = title
+                if review_text: existing_rev["body"] = review_text; existing_rev["text"] = review_text
+                if user_avatar: existing_rev["userAvatar"] = user_avatar
+                if user_name: existing_rev["userName"] = user_name; existing_rev["user"] = user_name
+                existing_rev["date"] = "Edited just now"
+                write_json(REVIEWS_FILE, reviews)
+                summary = calculate_summary(reviews)
+                self.send_json({"ok": True, "message": "Review updated successfully!", "review": existing_rev, "summary": summary})
+                return
+
             if not review_text or len(review_text) < 10:
                 self.send_json({"ok": False, "error": "Please write at least 10 characters for your review."}, status=400)
                 return
-
-            reviews = read_json(REVIEWS_FILE, [])
             new_rev = {
                 "id": f"rev_{uuid.uuid4().hex[:8]}",
                 "userId": user_id,
@@ -502,8 +526,7 @@ class LabRequestHandler(http.server.SimpleHTTPRequestHandler):
                     "stability": float(cats.get("stability", 5.0)),
                     "world": float(cats.get("world", 5.0)),
                 },
-                "userLevel": "LV 2",
-                "title": title,
+                                "title": title,
                 "body": review_text,
                 "text": review_text,
                 "chapter": chapter,
@@ -528,6 +551,36 @@ class LabRequestHandler(http.server.SimpleHTTPRequestHandler):
             return
 
         # 8. UPVOTE / LIKE REVIEW
+                # 8. REPLY TO REVIEW
+        if self.path == "/api/reviews/reply":
+            rev_id = body.get("reviewId")
+            text = (body.get("text") or "").strip()
+            author = (body.get("userName") or "Reader").strip()
+            avatar = body.get("userAvatar") or ""
+
+            if not text:
+                self.send_json({"ok": False, "error": "Reply text cannot be empty."}, status=400)
+                return
+
+            reviews = read_json(REVIEWS_FILE, [])
+            new_rep = {
+                "id": f"rep_{uuid.uuid4().hex[:8]}",
+                "author": author,
+                "avatar": avatar,
+                "text": text,
+                "time": "Just now",
+                "createdAt": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+            }
+            for r in reviews:
+                if r.get("id") == rev_id:
+                    if "replies" not in r:
+                        r["replies"] = []
+                    r["replies"].append(new_rep)
+                    break
+            write_json(REVIEWS_FILE, reviews)
+            self.send_json({"ok": True, "reply": new_rep})
+            return
+
         if self.path == "/api/reviews/vote":
             rev_id = body.get("reviewId")
             reviews = read_json(REVIEWS_FILE, [])
