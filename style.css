@@ -7511,3 +7511,23 @@ a.fc.on:hover { box-shadow: 0 0 0 2px rgba(143,29,29,.35); }
 .user-nav-wrap.open .nav-caret {
   transform: rotate(180deg);
 }
+
+.normal-review-box {
+  max-width: 440px !important;
+  padding: 38px 28px 26px !important;
+}
+
+.normal-review-box .auth-field {
+  margin-bottom: 12px;
+}
+
+.normal-review-box .auth-textarea {
+  min-height: 90px;
+  max-height: 160px;
+  resize: vertical;
+}
+
+.wn-verified-badge {
+  display: inline-block;
+  vertical-align: middle;
+}

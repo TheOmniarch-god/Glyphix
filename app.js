@@ -1742,7 +1742,7 @@ function getStoredToken() {
     });
   });
 
-  // Review Submit Form
+  // Review Submit Form (Normal clean book review)
   var reviewSubmitForm = document.getElementById("reviewSubmitForm");
   if (reviewSubmitForm) {
     reviewSubmitForm.addEventListener("submit", function(e) {
@@ -1756,22 +1756,23 @@ function getStoredToken() {
 
       var title = (document.getElementById("reviewTitle").value || "").trim();
       var body = (document.getElementById("reviewBody").value || "").trim();
-      var chapter = document.getElementById("reviewChapterSelect").value || "Chapter 1";
-      var spoiler = document.getElementById("reviewSpoilerCheck").checked;
+      var spoiler = document.getElementById("reviewSpoilerCheck") ? document.getElementById("reviewSpoilerCheck").checked : false;
       var statusEl = document.getElementById("reviewStatus");
       var submitBtn = document.getElementById("btnSubmitReview");
 
       var categories = {
-        writing: parseFloat((document.getElementById("dimWriting") && document.getElementById("dimWriting").value) || "5.0"),
-        story: parseFloat((document.getElementById("dimStory") && document.getElementById("dimStory").value) || "5.0"),
-        characters: parseFloat((document.getElementById("dimCharacters") && document.getElementById("dimCharacters").value) || "5.0"),
-        stability: parseFloat((document.getElementById("dimStability") && document.getElementById("dimStability").value) || "5.0"),
-        world: parseFloat((document.getElementById("dimWorld") && document.getElementById("dimWorld").value) || "5.0")
+        writing: labState.currentRating,
+        story: labState.currentRating,
+        characters: labState.currentRating,
+        stability: 5.0,
+        world: labState.currentRating
       };
 
-      submitBtn.disabled = true;
-      submitBtn.textContent = "Publishing Review...";
-      statusEl.hidden = true;
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Publishing Review...";
+      }
+      if (statusEl) statusEl.hidden = true;
 
       callApi("/api/reviews", "POST", {
         rating: labState.currentRating,
@@ -1779,23 +1780,30 @@ function getStoredToken() {
         title: title,
         body: body,
         text: body,
-        chapter: chapter,
+        chapter: "Novel Review",
         spoiler: spoiler,
         spoilers: spoiler,
-        userName: user.name,
-        userEmail: user.email
+        userName: user.name || "Reader",
+        userEmail: user.email || ""
       }, token)
         .then(function(data) {
-          submitBtn.disabled = false;
-          submitBtn.textContent = "Publish Review";
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Publish Review";
+          }
           if (!data.ok) {
-            statusEl.hidden = false;
-            statusEl.className = "auth-status error";
-            statusEl.textContent = data.error || "Failed to publish review.";
+            if (statusEl) {
+              statusEl.hidden = false;
+              statusEl.className = "auth-status error";
+              statusEl.textContent = data.error || "Failed to publish review.";
+            }
             return;
           }
 
-          reviewModal.hidden = true;
+          if (reviewModal) {
+            reviewModal.setAttribute("hidden", "");
+            reviewModal.style.setProperty("display", "none", "important");
+          }
           document.getElementById("reviewTitle").value = "";
           document.getElementById("reviewBody").value = "";
           showToast("✓ Review published to Reverend Insanity Community!");
@@ -1807,11 +1815,15 @@ function getStoredToken() {
           }
         })
         .catch(function() {
-          submitBtn.disabled = false;
-          submitBtn.textContent = "Publish Review";
-          statusEl.hidden = false;
-          statusEl.className = "auth-status error";
-          statusEl.textContent = "Error publishing review.";
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Publish Review";
+          }
+          if (statusEl) {
+            statusEl.hidden = false;
+            statusEl.className = "auth-status error";
+            statusEl.textContent = "Error publishing review.";
+          }
         });
     });
   }
@@ -1835,171 +1847,136 @@ function getStoredToken() {
   }
 
   function loadReviews() {
+    var listEl = document.getElementById("wnReviewsList");
+    if (!listEl) return;
+
     callApi("/api/reviews")
       .then(function(data) {
         if (!data || !data.ok) return;
 
         var revList = data.reviews || [];
-        var sum = data.summary || localDb.calcSummary(revList);
 
-        // 1. Update Hero Rating Lockup
-        var heroScoreEl = document.getElementById("heroOverallScore");
-        var heroStarsEl = document.getElementById("heroStars");
-        var heroCountEl = document.getElementById("heroRatingCount");
-
-        var avgStr = (sum.avg || 5.0).toFixed(1);
-        var count = revList.length;
-
-        if (heroScoreEl) heroScoreEl.textContent = avgStr;
-        if (heroStarsEl) heroStarsEl.textContent = formatStarsString(sum.avg);
-        if (heroCountEl) heroCountEl.textContent = "(" + count + (count === 1 ? " review" : " reviews") + ")";
-
-        // 2. Update Reviews Section Big Score Banner
-        var totalReviewsCount = document.getElementById("wnTotalReviewsCount");
-        if (totalReviewsCount) totalReviewsCount.textContent = count;
-
-        var bigScoreEl = document.getElementById("wnBigScore");
-        if (bigScoreEl) bigScoreEl.textContent = avgStr;
-
-        var overviewStarsEl = document.getElementById("wnOverviewStars");
-        if (overviewStarsEl) overviewStarsEl.textContent = formatStarsString(sum.avg);
-
-        var overviewCountEl = document.getElementById("wnOverviewCount");
-        if (overviewCountEl) {
-          overviewCountEl.textContent = count + " verified reader " + (count === 1 ? "review" : "reviews");
-        }
-
-        // 3. Update Category Progress Meters
-        var cats = sum.categories || {};
-        var catMap = [
-          { key: "writing", valId: "wnCatWritingVal", meterId: "wnMeterWriting" },
-          { key: "story", valId: "wnCatStoryVal", meterId: "wnMeterStory" },
-          { key: "characters", valId: "wnCatCharsVal", meterId: "wnMeterChars" },
-          { key: "stability", valId: "wnCatStabilityVal", meterId: "wnMeterStability" },
-          { key: "world", valId: "wnCatWorldVal", meterId: "wnMeterWorld" }
-        ];
-
-        catMap.forEach(function(c) {
-          var val = cats[c.key] ? parseFloat(cats[c.key]).toFixed(1) : avgStr;
-          var vEl = document.getElementById(c.valId);
-          var mEl = document.getElementById(c.meterId);
-          if (vEl) vEl.textContent = val + " ★";
-          if (mEl) {
-            var pct = Math.min(100, Math.max(0, (parseFloat(val) / 5) * 100));
-            mEl.style.width = pct + "%";
+        // Update hero rating lockup
+        var heroScore = document.getElementById("heroRatingScore");
+        var heroCount = document.getElementById("heroRatingCount");
+        var heroStars = document.getElementById("heroRatingStars");
+        if (data.summary) {
+          if (heroScore) heroScore.textContent = data.summary.avg.toFixed(1);
+          if (heroCount) heroCount.textContent = data.summary.count + (data.summary.count === 1 ? " review" : " reviews");
+          if (heroStars) {
+            var fullStars = Math.round(data.summary.avg);
+            heroStars.textContent = "★".repeat(fullStars) + "☆".repeat(Math.max(0, 5 - fullStars));
           }
-        });
-
-        // 4. Render Reviews List using .wn-card
-        var listEl = document.getElementById("wnReviewsList");
-        if (!listEl) return;
-
-        listEl.innerHTML = "";
+        }
 
         if (revList.length === 0) {
           listEl.innerHTML =
             '<div class="wn-empty-state">' +
             '  <div class="wn-empty-icon">📖</div>' +
             '  <h4 class="wn-empty-title">No reviews yet for this edition</h4>' +
-            '  <p class="wn-empty-sub">Genuine reader reviews only — no seeded or fake ratings. Be the first to share your thoughts and rate the novel!</p>' +
+            '  <p class="wn-empty-sub">Genuine reader reviews only — share your thoughts and rate the novel!</p>' +
             '  <button type="button" class="btn btn-primary wn-write-btn" id="wnEmptyWriteBtn">Write the first review</button>' +
             '</div>';
 
           var emptyBtn = listEl.querySelector("#wnEmptyWriteBtn");
           if (emptyBtn) {
-            emptyBtn.addEventListener("click", function() { openReviewModal("Chapter 1"); });
+            emptyBtn.addEventListener("click", function() { openReviewModal(); });
           }
           return;
         }
 
-        revList.forEach(function(rev) {
-          var card = document.createElement("div");
-          card.className = "wn-card";
+        var visibleLimit = 4;
+        function renderCards(showAll) {
+          listEl.innerHTML = "";
+          var subset = showAll ? revList : revList.slice(0, visibleLimit);
 
-          var uName = rev.userName || rev.user || "Reader";
-          var initial = (rev.userAvatar || uName.charAt(0) || "R").toUpperCase();
-          var chText = rev.chapter ? (rev.chapter.indexOf("Chapter") !== -1 ? "Read through " + rev.chapter : "Read through Ch. " + rev.chapter) : "Verified Reader";
-          var starsStr = "★".repeat(Math.round(rev.rating || rev.overall || 5));
-          var dateStr = rev.date || formatDate(rev.createdAt);
+          subset.forEach(function(rev) {
+            var card = document.createElement("div");
+            card.className = "wn-card";
 
-          // Aspect pills
-          var pillsHtml = "";
-          var rCats = rev.categories || {};
-          var pList = [];
-          if (rCats.writing !== undefined) pList.push("Writing: " + floatVal(rCats.writing).toFixed(1));
-          else if (rCats.translation !== undefined) pList.push("Writing: " + floatVal(rCats.translation).toFixed(1));
-          if (rCats.story !== undefined) pList.push("Story: " + floatVal(rCats.story).toFixed(1));
-          if (rCats.characters !== undefined) pList.push("Characters: " + floatVal(rCats.characters).toFixed(1));
-          if (rCats.stability !== undefined) pList.push("Stability: " + floatVal(rCats.stability).toFixed(1));
-          if (rCats.world !== undefined) pList.push("World: " + floatVal(rCats.world).toFixed(1));
+            var uName = rev.userName || rev.user || "Reader";
+            var initial = (rev.userAvatar || uName.charAt(0) || "R").toUpperCase();
+            var starsStr = "★".repeat(Math.round(rev.rating || rev.overall || 5));
+            var dateStr = rev.date || formatDate(rev.createdAt);
 
-          if (pList.length > 0) {
-            pillsHtml = '<div class="wn-card-cats">' + pList.map(function(p) {
-              return '<span class="wn-card-cat-pill">' + p + '</span>';
-            }).join("") + '</div>';
-          }
+            // Text / Spoiler (NO warning triangle)
+            var rBody = rev.body || rev.text || "";
+            var rTitle = rev.title ? '<h4 class="wn-card-title">' + escapeHtml(rev.title) + '</h4>' : '';
+            var textHtml = "";
 
-          // Text / Spoiler
-          var rBody = rev.body || rev.text || "";
-          var rTitle = rev.title ? '<h4 class="wn-card-title">' + escapeHtml(rev.title) + '</h4>' : '';
-          var textHtml = "";
+            var isSpoiler = rev.spoiler || rev.spoilers;
+            if (isSpoiler) {
+              textHtml =
+                rTitle +
+                '<div class="wn-spoiler-box" onclick="this.classList.toggle(&quot;revealed&quot;)">' +
+                '  <span class="wn-spoiler-btn">Contains spoilers — click to reveal</span>' +
+                '  <p class="wn-spoiler-content">' + escapeHtml(rBody) + '</p>' +
+                '</div>';
+            } else {
+              textHtml = rTitle + '<p class="wn-card-body">' + escapeHtml(rBody) + '</p>';
+            }
 
-          var isSpoiler = rev.spoiler || rev.spoilers;
-          if (isSpoiler) {
-            textHtml =
-              rTitle +
-              '<div class="wn-spoiler-box">' +
-              '  <span class="wn-spoiler-btn">⚠️ Contains spoilers — click to reveal</span>' +
-              '  <p class="wn-spoiler-content">' + escapeHtml(rBody) + '</p>' +
+            var likesCount = rev.likes !== undefined ? rev.likes : (rev.helpful || 0);
+            var likeKey = "ri_like_" + (rev.id || uName);
+            var isLiked = store.getItem(likeKey) === "1";
+
+            // Clean card header: NO LV 2, NO Read through Chapter X
+            card.innerHTML =
+              '<div class="wn-card-top">' +
+              '  <div class="wn-card-user-info">' +
+              '    <div class="wn-user-avatar">' + initial + '</div>' +
+              '    <div>' +
+              '      <span class="wn-user-name">' + escapeHtml(uName) + '</span> ' +
+              '      <span class="wn-verified-badge" style="font-size:10.5px; font-weight:700; color:#27ae60; background:rgba(39,174,96,0.12); padding:1px 6px; border-radius:99px; margin-left:4px;">✓ Verified Reader</span>' +
+              '    </div>' +
+              '  </div>' +
+              '  <div class="wn-card-stars-date">' +
+              '    <span class="wn-card-stars">' + starsStr + '</span>' +
+              '    <span class="wn-card-date">' + dateStr + '</span>' +
+              '  </div>' +
+              '</div>' +
+              textHtml +
+              '<div class="wn-card-footer">' +
+              '  <button type="button" class="wn-helpful-btn ' + (isLiked ? 'is-voted' : '') + '" data-id="' + rev.id + '">' +
+              '    👍 Helpful (' + likesCount + ')' +
+              '  </button>' +
+              '  <span class="wn-reply-link">💬 0 Replies</span>' +
               '</div>';
-          } else {
-            textHtml = rTitle + '<p class="wn-card-body">' + escapeHtml(rBody) + '</p>';
+
+            var hBtn = card.querySelector(".wn-helpful-btn");
+            if (hBtn) {
+              hBtn.addEventListener("click", function() {
+                if (!isLiked) {
+                  isLiked = true;
+                  likesCount++;
+                  try { store.setItem(likeKey, "1"); } catch (e) {}
+                  hBtn.classList.add("is-voted");
+                  hBtn.textContent = "👍 Helpful (" + likesCount + ")";
+                  callApi("/api/reviews/vote", "POST", { reviewId: rev.id }).catch(function() {});
+                }
+              });
+            }
+
+            listEl.appendChild(card);
+          });
+
+          // Show More Reviews button if more exist
+          if (!showAll && revList.length > visibleLimit) {
+            var moreBox = document.createElement("div");
+            moreBox.style.cssText = "text-align:center; margin-top:24px; padding-bottom:12px;";
+            moreBox.innerHTML = '<button type="button" class="btn btn-secondary" id="btnSeeMoreReviews" style="padding:11px 28px; border-radius:99px; font-size:14px; font-weight:600; cursor:pointer;">See More Reviews (' + (revList.length - visibleLimit) + ' more) &darr;</button>';
+            listEl.appendChild(moreBox);
+
+            var seeMoreBtn = moreBox.querySelector("#btnSeeMoreReviews");
+            if (seeMoreBtn) {
+              seeMoreBtn.addEventListener("click", function() {
+                renderCards(true);
+              });
+            }
           }
+        }
 
-          var likesCount = rev.likes !== undefined ? rev.likes : (rev.helpful || 0);
-          var likeKey = "ri_like_" + (rev.id || uName);
-          var isLiked = store.getItem(likeKey) === "1";
-
-          card.innerHTML =
-            '<div class="wn-card-top">' +
-            '  <div class="wn-card-user-info">' +
-            '    <div class="wn-user-avatar">' + initial + '</div>' +
-            '    <div>' +
-            '      <span class="wn-user-name">' + escapeHtml(uName) + '</span> ' +
-            '      <span class="wn-user-level">' + escapeHtml(rev.userLevel || "LV 2") + '</span> ' +
-            '      <span class="wn-ch-badge">' + escapeHtml(chText) + '</span>' +
-            '    </div>' +
-            '  </div>' +
-            '  <div class="wn-card-stars-date">' +
-            '    <span class="wn-card-stars">' + starsStr + '</span>' +
-            '    <span class="wn-card-date">' + dateStr + '</span>' +
-            '  </div>' +
-            '</div>' +
-            pillsHtml +
-            textHtml +
-            '<div class="wn-card-footer">' +
-            '  <button type="button" class="wn-helpful-btn ' + (isLiked ? 'is-voted' : '') + '" data-id="' + rev.id + '">' +
-            '    👍 Helpful (' + likesCount + ')' +
-            '  </button>' +
-            '  <span class="wn-reply-link">💬 0 Replies</span>' +
-            '</div>';
-
-          var hBtn = card.querySelector(".wn-helpful-btn");
-          if (hBtn) {
-            hBtn.addEventListener("click", function() {
-              if (!isLiked) {
-                isLiked = true;
-                likesCount++;
-                try { store.setItem(likeKey, "1"); } catch (e) {}
-                hBtn.classList.add("is-voted");
-                hBtn.textContent = "👍 Helpful (" + likesCount + ")";
-                callApi("/api/reviews/vote", "POST", { reviewId: rev.id }).catch(function() {});
-              }
-            });
-          }
-
-          listEl.appendChild(card);
-        });
+        renderCards(false);
       })
       .catch(function() {});
   }

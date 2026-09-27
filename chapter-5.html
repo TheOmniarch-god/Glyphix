@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Noto+Sans+SC:wght@400&family=Playfair+Display:ital,wght@0,700;0,800;1,400&family=Spectral:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=20260927-d150f">
+<link rel="stylesheet" href="style.css?v=20260927-e172c">
 <link rel="icon" href="favicon.ico" sizes="32x32">
 <link rel="icon" href="icon-48.png" type="image/png" sizes="48x48">
 <link rel="icon" href="icon-192.png" type="image/png" sizes="192x192">
@@ -397,7 +397,7 @@
 </div>
 
 
-<!-- ============ CULTIVATOR PROFILE MODAL ============ -->
+<!-- ============ READER ACCOUNT MODAL ============ -->
 <div class="auth-modal" id="profileModal" hidden role="dialog" aria-modal="true" aria-labelledby="profileModalTitle">
   <div class="auth-modal-backdrop" id="profileModalBackdrop"></div>
   <div class="auth-modal-box wn-passport-card profile-card-box">
@@ -407,144 +407,69 @@
       <div class="profile-modal-meta">
         <h3 class="profile-modal-name" id="pmName">Reader</h3>
         <p class="profile-modal-email" id="pmEmail">reader@example.com</p>
-        <span class="profile-modal-badge" id="pmBadge">Rank 3 Gu Master</span>
+        <span class="profile-modal-badge" id="pmBadge">✓ Verified Reader</span>
       </div>
     </div>
 
-    <div class="profile-stats-grid">
+    <div class="profile-stats-grid" style="grid-template-columns: 1fr 1fr;">
       <div class="p-stat-card">
         <span class="p-stat-num" id="pmReadingProg">Chapter 1</span>
         <span class="p-stat-label">Reading Bookmark</span>
       </div>
       <div class="p-stat-card">
-        <span class="p-stat-num" id="pmReviewsCount">1</span>
+        <span class="p-stat-num" id="pmReviewsCount">0</span>
         <span class="p-stat-label">Reviews Published</span>
-      </div>
-      <div class="p-stat-card">
-        <span class="p-stat-num" id="pmAuthMethod">Google</span>
-        <span class="p-stat-label">Auth Method</span>
-      </div>
-      <div class="p-stat-card">
-        <span class="p-stat-num" id="pmStatus">Active</span>
-        <span class="p-stat-label">Reader Status</span>
       </div>
     </div>
 
     <div class="profile-actions">
-      <a href="#reviewsSection" class="btn btn-secondary profile-action-btn" id="pmJumpReviews">My Community Reviews</a>
-      <button type="button" class="btn btn-outline-danger profile-action-btn" id="pmSignOutBtn">Sign Out of Account</button>
+      <a href="#reviewsSection" class="btn btn-secondary profile-action-btn" id="pmJumpReviews">Community Reviews</a>
+      <button type="button" class="btn btn-outline-danger profile-action-btn" id="pmSignOutBtn">Sign Out</button>
     </div>
   </div>
 </div>
 
-<!-- ============ WEBNOVEL COMPACT REVIEW MODAL ============ -->
+<!-- ============ NORMAL CLEAN REVIEW MODAL ============ -->
 <div class="auth-modal" id="reviewModal" hidden role="dialog" aria-modal="true" aria-labelledby="reviewModalTitle">
   <div class="auth-modal-backdrop" id="reviewModalBackdrop"></div>
-  <div class="auth-modal-box review-modal-box">
+  <div class="auth-modal-box wn-passport-card normal-review-box">
     <button type="button" class="auth-modal-close" id="reviewModalClose" aria-label="Close dialog">&times;</button>
-    <div class="auth-header">
-      <div class="auth-badge">Webnovel Review</div>
-      <h3 class="auth-title" id="reviewModalTitle">Review Reverend Insanity</h3>
-      <p class="auth-sub" id="reviewModalUserLine">Publishing as <strong id="reviewUserNameDisplay" class="text-gold">Reader</strong></p>
+    <div class="auth-header" style="text-align: center; margin-bottom: 20px;">
+      <h3 class="auth-title" id="reviewModalTitle" style="font-size: 22px; margin-bottom: 6px;">Rate &amp; Review Reverend Insanity</h3>
+      <p class="auth-sub" id="reviewModalUserLine" style="margin: 0;">Publishing as <strong id="reviewUserNameDisplay" class="text-gold">Reader</strong></p>
     </div>
 
-    <form class="auth-form" id="reviewSubmitForm">
-      <!-- 5-Star Overall Rating Picker -->
-      <div class="rating-picker-card">
-        <span class="rpc-label">Overall Rating:</span>
-        <div class="rpc-stars" id="rpcStars" role="radiogroup" aria-label="Overall 5 star rating">
+    <form class="wn-form" id="reviewSubmitForm">
+      <!-- 5-Star Rating Picker -->
+      <div class="rating-picker-card" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: rgba(212,163,71,0.08); border: 1px solid rgba(212,163,71,0.25); border-radius: 12px; margin-bottom: 12px;">
+        <span class="rpc-label" style="font-weight: 700; font-size: 14px;">Your Rating:</span>
+        <div class="rpc-stars" id="rpcStars" role="radiogroup" aria-label="Rating from 1 to 5 stars" style="display: flex; gap: 4px;">
           <button type="button" class="star-btn" data-val="1" aria-label="1 star">&#9733;</button>
           <button type="button" class="star-btn" data-val="2" aria-label="2 stars">&#9733;</button>
           <button type="button" class="star-btn" data-val="3" aria-label="3 stars">&#9733;</button>
           <button type="button" class="star-btn" data-val="4" aria-label="4 stars">&#9733;</button>
           <button type="button" class="star-btn active" data-val="5" aria-label="5 stars">&#9733;</button>
         </div>
-        <span class="rpc-score" id="rpcScoreDisplay">5.0 / 5.0</span>
-      </div>
-
-      <!-- 5 Canonical Webnovel Dimensions -->
-      <div class="aspect-grid" style="grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));">
-        <div class="aspect-row">
-          <span class="aspect-name">Writing Quality</span>
-          <select class="aspect-select" id="dimWriting">
-            <option value="5.0" selected>5.0 ★ Masterpiece</option>
-            <option value="4.5">4.5 ★ Great</option>
-            <option value="4.0">4.0 ★ Good</option>
-            <option value="3.5">3.5 ★ Decent</option>
-            <option value="3.0">3.0 ★ Average</option>
-          </select>
-        </div>
-        <div class="aspect-row">
-          <span class="aspect-name">Story Development</span>
-          <select class="aspect-select" id="dimStory">
-            <option value="5.0" selected>5.0 ★ Masterpiece</option>
-            <option value="4.5">4.5 ★ Great</option>
-            <option value="4.0">4.0 ★ Good</option>
-            <option value="3.5">3.5 ★ Decent</option>
-            <option value="3.0">3.0 ★ Average</option>
-          </select>
-        </div>
-        <div class="aspect-row">
-          <span class="aspect-name">Character Design</span>
-          <select class="aspect-select" id="dimCharacters">
-            <option value="5.0" selected>5.0 ★ Masterpiece</option>
-            <option value="4.5">4.5 ★ Great</option>
-            <option value="4.0">4.0 ★ Good</option>
-            <option value="3.5">3.5 ★ Decent</option>
-            <option value="3.0">3.0 ★ Average</option>
-          </select>
-        </div>
-        <div class="aspect-row">
-          <span class="aspect-name">Updating Stability</span>
-          <select class="aspect-select" id="dimStability">
-            <option value="5.0" selected>5.0 ★ Masterpiece</option>
-            <option value="4.5">4.5 ★ Great</option>
-            <option value="4.0">4.0 ★ Good</option>
-            <option value="3.5">3.5 ★ Decent</option>
-            <option value="3.0">3.0 ★ Average</option>
-          </select>
-        </div>
-        <div class="aspect-row">
-          <span class="aspect-name">World Background</span>
-          <select class="aspect-select" id="dimWorld">
-            <option value="5.0" selected>5.0 ★ Masterpiece</option>
-            <option value="4.5">4.5 ★ Great</option>
-            <option value="4.0">4.0 ★ Good</option>
-            <option value="3.5">3.5 ★ Decent</option>
-            <option value="3.0">3.0 ★ Average</option>
-          </select>
-        </div>
+        <span class="rpc-score" id="rpcScoreDisplay" style="font-weight: 800; color: var(--gold, #d4a347); font-size: 14.5px;">5.0 / 5.0</span>
       </div>
 
       <!-- Headline -->
       <div class="auth-field">
         <label for="reviewTitle" class="auth-label">Review Headline</label>
-        <input type="text" id="reviewTitle" class="auth-input" placeholder="e.g. Masterclass in ruthless pragmatism" required maxlength="100">
+        <input type="text" id="reviewTitle" class="auth-input" placeholder="e.g. Masterpiece in ruthless pragmatism" required maxlength="100">
       </div>
 
       <!-- Body -->
       <div class="auth-field">
-        <label for="reviewBody" class="auth-label">Detailed Review <small class="text-gold">(min. 10 chars)</small></label>
-        <textarea id="reviewBody" class="auth-input auth-textarea" rows="4" placeholder="Share your analysis of the schemes, cultivation system, and prose..." required minlength="10"></textarea>
+        <label for="reviewBody" class="auth-label">Your Review</label>
+        <textarea id="reviewBody" class="auth-input auth-textarea" rows="4" placeholder="Write your thoughts on the characters, the world, or the translation..." required minlength="10"></textarea>
       </div>
 
-      <!-- Metadata & Options -->
-      <div class="review-meta-row">
-        <div class="rm-chapter">
-          <label for="reviewChapterSelect" class="rm-label">Chapter:</label>
-          <select id="reviewChapterSelect" class="rm-select">
-            <option value="Chapter 1">Chapter 1</option>
-            <option value="Chapter 2">Chapter 2</option>
-            <option value="Chapter 3" selected>Chapter 3</option>
-            <option value="Chapter 4">Chapter 4</option>
-            <option value="Book 1 (Chapters 1–199)">Book 1</option>
-            <option value="Book 2 (Chapters 200–405)">Book 2</option>
-            <option value="Completed (Chapter 2,334)">Completed</option>
-          </select>
-        </div>
-        <label class="rm-spoiler-label">
+      <!-- Spoiler check -->
+      <div style="display: flex; align-items: center; justify-content: space-between; margin: 4px 0 10px;">
+        <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted, #6e675c); cursor: pointer;">
           <input type="checkbox" id="reviewSpoilerCheck">
-          <span>Contains Spoilers</span>
+          <span>Contains spoilers</span>
         </label>
       </div>
 
@@ -555,8 +480,8 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="config.js?v=20260927-d150f"></script>
-<script src="app.js?v=20260927-d150f"></script>
+<script src="config.js?v=20260927-e172c"></script>
+<script src="app.js?v=20260927-e172c"></script>
 </body>
 </html>
 
@@ -681,7 +606,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="config.js?v=20260927-d150f"></script>
-<script src="app.js?v=20260927-d150f"></script>
+<script src="config.js?v=20260927-e172c"></script>
+<script src="app.js?v=20260927-e172c"></script>
 </body>
 </html>
