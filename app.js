@@ -1573,14 +1573,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
           // Text / Spoiler
           var rBody = rev.body || rev.text || "";
-          var rTitle = rev.title ? '<h4 style="font-family:'Cormorant Garamond', Georgia, serif; font-size:19px; font-weight:700; color:var(--head, #f4ede2); margin:0 0 8px;">' + escapeHtml(rev.title) + '</h4>' : '';
+          var rTitle = rev.title ? '<h4 class="wn-card-title">' + escapeHtml(rev.title) + '</h4>' : '';
           var textHtml = "";
 
           var isSpoiler = rev.spoiler || rev.spoilers;
           if (isSpoiler) {
             textHtml =
               rTitle +
-              '<div class="wn-spoiler-box" onclick="this.classList.toggle('revealed')">' +
+              '<div class="wn-spoiler-box">' +
               '  <span class="wn-spoiler-btn">⚠️ Contains spoilers — click to reveal</span>' +
               '  <p class="wn-spoiler-content">' + escapeHtml(rBody) + '</p>' +
               '</div>';

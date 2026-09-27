@@ -63,30 +63,34 @@ def calculate_summary(reviews):
             "avg": 5.0,
             "count": 0,
             "categories": {
+                "writing": 5.0,
                 "story": 5.0,
                 "characters": 5.0,
+                "stability": 5.0,
                 "world": 5.0,
-                "translation": 5.0,
             },
         }
-    total_rating = sum(r.get("rating", 5.0) for r in reviews)
+    total_rating = sum(float(r.get("rating", r.get("overall", 5.0))) for r in reviews)
     count = len(reviews)
     avg_rating = round(total_rating / max(1, count), 1)
 
-    cats = {"story": 0.0, "characters": 0.0, "world": 0.0, "translation": 0.0}
-    cat_counts = {"story": 0, "characters": 0, "world": 0, "translation": 0}
+    cats = {"writing": 0.0, "story": 0.0, "characters": 0.0, "stability": 0.0, "world": 0.0}
+    cat_counts = {"writing": 0, "story": 0, "characters": 0, "stability": 0, "world": 0}
 
     for r in reviews:
         rcats = r.get("categories", {})
         for k in cats.keys():
-            if k in rcats:
-                cats[k] += float(rcats[k])
+            val = rcats.get(k)
+            if val is None and k == "writing":
+                val = rcats.get("translation")
+            if val is not None:
+                cats[k] += float(val)
                 cat_counts[k] += 1
 
     cat_summary = {}
     for k, s in cats.items():
         c = cat_counts[k]
-        cat_summary[k] = round(s / max(1, c), 1) if c > 0 else 5.0
+        cat_summary[k] = round(s / max(1, c), 1) if c > 0 else avg_rating
 
     return {
         "avg": avg_rating,
@@ -171,10 +175,26 @@ class LabRequestHandler(http.server.SimpleHTTPRequestHandler):
             })
             return
 
-        if self.path == "/api/reviews":
+        if self.path in ("/api/reviews", "/api/ratings"):
             reviews = read_json(REVIEWS_FILE, [])
             summary = calculate_summary(reviews)
-            self.send_json({"ok": True, "reviews": reviews, "summary": summary})
+            overall_sum = sum(float(r.get("rating", r.get("overall", 5.0))) for r in reviews)
+            overall_count = len(reviews)
+            cats = summary.get("categories", {})
+            ratings_format = {
+                "ok": True,
+                "overall": {"sum": overall_sum, "count": overall_count},
+                "categories": {
+                    "writing": {"sum": cats.get("writing", 5.0) * max(1, overall_count), "count": overall_count},
+                    "story": {"sum": cats.get("story", 5.0) * max(1, overall_count), "count": overall_count},
+                    "characters": {"sum": cats.get("characters", 5.0) * max(1, overall_count), "count": overall_count},
+                    "stability": {"sum": cats.get("stability", 5.0) * max(1, overall_count), "count": overall_count},
+                    "world": {"sum": cats.get("world", 5.0) * max(1, overall_count), "count": overall_count}
+                },
+                "summary": summary,
+                "reviews": reviews
+            }
+            self.send_json(ratings_format)
             return
 
         if self.path == "/api/auth/me":
@@ -385,7 +405,7 @@ class LabRequestHandler(http.server.SimpleHTTPRequestHandler):
         # 5. GOOGLE AUTH FAST-PASS
         if self.path == "/api/auth/google":
             email = body.get("email", "").strip().lower() or "cultivator@gmail.com"
-            name = body.get("name", "").strip() or "Cultivator FY"
+            name = body.get("name", "").strip() or "Reader"
             avatar = body.get("avatar", "")
 
             users = read_json(USERS_FILE, [])
@@ -466,23 +486,31 @@ class LabRequestHandler(http.server.SimpleHTTPRequestHandler):
             new_rev = {
                 "id": f"rev_{uuid.uuid4().hex[:8]}",
                 "userId": user_id,
+                "user": user_name,
                 "userName": user_name,
                 "userAvatar": (user_name[0].upper() if user_name else "R"),
                 "userEmail": user_email,
                 "userProvider": (user.get("provider", "email") if user else "email"),
                 "verified": is_verified,
                 "rating": rating,
+                "overall": round(rating),
                 "categories": {
+                    "writing": float(cats.get("writing", cats.get("translation", 5.0))),
                     "story": float(cats.get("story", 5.0)),
                     "characters": float(cats.get("characters", 5.0)),
+                    "stability": float(cats.get("stability", 5.0)),
                     "world": float(cats.get("world", 5.0)),
-                    "translation": float(cats.get("translation", 5.0)),
                 },
+                "userLevel": "LV 2",
                 "title": title,
                 "body": review_text,
+                "text": review_text,
                 "chapter": chapter,
                 "spoiler": spoiler,
+                "spoilers": spoiler,
                 "likes": 0,
+                "helpful": 0,
+                "date": "Just now",
                 "createdAt": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
             }
 
