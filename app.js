@@ -825,10 +825,10 @@ document.addEventListener("DOMContentLoaded", function () {
         var newR = {
           id: "rev_" + Math.random().toString(36).substring(2, 10),
           userId: "usr_" + Math.random().toString(36).substring(2, 8),
-          user: data.userName || data.user || "Cultivator",
-          userName: data.userName || data.user || "Cultivator",
+          user: data.userName || data.user || "Reader",
+          userName: data.userName || data.user || "Reader",
           userAvatar: (data.userName || data.user || "C").charAt(0).toUpperCase(),
-          userEmail: data.userEmail || "reader@cultivator.lab",
+          userEmail: data.userEmail || "reader@example.com",
           userProvider: "email",
           verified: true,
           overall: Math.round(data.rating || 5.0),
@@ -865,7 +865,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (endpoint === "/api/auth/verify-code") {
       var savedCode = store.getItem("ri_mock_otp_" + data.email);
       if (savedCode && savedCode === data.code) {
-        var savedName = store.getItem("ri_mock_name_" + data.email) || "Cultivator";
+        var savedName = store.getItem("ri_mock_name_" + data.email) || "Reader";
         var newUser = {
           id: "usr_" + Math.random().toString(36).substring(2, 8),
           name: savedName,
@@ -899,8 +899,8 @@ document.addEventListener("DOMContentLoaded", function () {
     if (endpoint === "/api/auth/google") {
       var gUser = {
         id: "usr_g_" + Math.random().toString(36).substring(2, 8),
-        name: data.name || "Cultivator FY",
-        email: data.email || "cultivator@gmail.com",
+        name: data.name || "Reader",
+        email: data.email || "reader@gmail.com",
         emailVerified: true,
         avatarBg: "#b8860b",
         provider: "google"
@@ -941,7 +941,13 @@ document.addEventListener("DOMContentLoaded", function () {
   function getStoredUser() {
     try {
       var raw = store.getItem(USER_KEY);
-      return raw ? JSON.parse(raw) : null;
+      if (!raw) return null;
+      var parsed = JSON.parse(raw);
+      if (parsed && parsed.name === "Reader") {
+        parsed.name = "Reader";
+        store.setItem(USER_KEY, JSON.stringify(parsed));
+      }
+      return parsed;
     } catch (e) { return null; }
   }
 
@@ -969,32 +975,35 @@ document.addEventListener("DOMContentLoaded", function () {
     var popBadge = document.getElementById("umpUserBadge");
     var popProg = document.getElementById("umpProgVal");
 
-    // Dynamic avatar element in header
     var navAvatar = document.getElementById("navUserAvatar");
-    if (!navAvatar && authBtn) {
-      navAvatar = document.createElement("span");
-      navAvatar.id = "navUserAvatar";
-      navAvatar.className = "auth-user-avatar";
+    if (navAvatar) {
       navAvatar.style.display = "none";
-      authBtn.insertBefore(navAvatar, authBtn.firstChild);
     }
 
     if (user) {
-      var initial = (user.name ? user.name.charAt(0) : "R").toUpperCase();
-      if (navAvatar) {
-        navAvatar.textContent = initial;
-        navAvatar.style.display = "inline-flex";
+      if (authLabel) authLabel.textContent = "Sign Out";
+      if (authBtn) {
+        authBtn.setAttribute("aria-label", "Sign out of your reader account");
+        authBtn.setAttribute("title", "Sign Out");
       }
-      if (authIcon) authIcon.style.display = "none";
-      if (authLabel) authLabel.textContent = user.name;
-      if (popAvatar) popAvatar.textContent = initial;
-      if (popName) popName.textContent = user.name;
-      if (popEmail) popEmail.textContent = user.email || "reader@cultivator.lab";
-      if (popBadge) popBadge.textContent = user.userLevel || (user.provider === "google" ? "LV 3" : "LV 1");
+      if (authIcon) {
+        authIcon.style.display = "inline-block";
+        authIcon.innerHTML = '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line>';
+      }
+      if (popAvatar) popAvatar.textContent = (user.name ? user.name.charAt(0) : "R").toUpperCase();
+      if (popName) popName.textContent = user.name || "Reader";
+      if (popEmail) popEmail.textContent = user.email || "";
+      if (popBadge) popBadge.textContent = user.userLevel || "Verified";
     } else {
-      if (navAvatar) navAvatar.style.display = "none";
-      if (authIcon) authIcon.style.display = "inline-block";
       if (authLabel) authLabel.textContent = "Sign In";
+      if (authBtn) {
+        authBtn.setAttribute("aria-label", "Sign in to your reader account");
+        authBtn.setAttribute("title", "Sign In");
+      }
+      if (authIcon) {
+        authIcon.style.display = "inline-block";
+        authIcon.innerHTML = '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle>';
+      }
       if (popAvatar) popAvatar.textContent = "R";
       if (popName) popName.textContent = "Reader";
       if (popEmail) popEmail.textContent = "reader@example.com";
@@ -1091,16 +1100,13 @@ document.addEventListener("DOMContentLoaded", function () {
       if (!user) {
         openAuthModal();
       } else {
+        saveSession(null, null);
         if (userMenuPopover) {
-          var isHidden = userMenuPopover.hasAttribute("hidden") || userMenuPopover.style.display === "none";
-          if (isHidden) {
-            userMenuPopover.removeAttribute("hidden");
-            userMenuPopover.style.display = "block";
-          } else {
-            userMenuPopover.setAttribute("hidden", "");
-            userMenuPopover.style.display = "none";
-          }
+          userMenuPopover.setAttribute("hidden", "");
+          userMenuPopover.style.display = "none";
         }
+        showToast("✓ Signed out.");
+        loadReviews();
       }
     });
   }
@@ -1175,16 +1181,16 @@ document.addEventListener("DOMContentLoaded", function () {
       e.preventDefault();
       var gUser = {
         id: "usr_g_" + Math.random().toString(36).substring(2, 8),
-        name: "Cultivator FY",
-        email: "cultivator.fy@gmail.com",
+        name: "Reader",
+        email: "reader@gmail.com",
         emailVerified: true,
-        userLevel: "LV 3",
+        userLevel: "Verified",
         avatarBg: "#b8860b",
         provider: "google"
       };
       saveSession(gUser, "tok_g_" + gUser.id);
       closeAuthModal();
-      showToast("✓ Signed in with Google as " + gUser.name);
+      showToast("✓ Signed in with Google.");
       if (labState.pendingReviewTriggered) {
         labState.pendingReviewTriggered = false;
         openReviewModal(labState.pendingChapter);
@@ -1210,7 +1216,7 @@ document.addEventListener("DOMContentLoaded", function () {
         submitBtn.textContent = "Signing In...";
       }
 
-      var uName = email.split("@")[0] || "Cultivator";
+      var uName = email.split("@")[0] || "Reader";
       uName = uName.charAt(0).toUpperCase() + uName.slice(1);
 
       var loggedUser = {
@@ -1249,7 +1255,7 @@ document.addEventListener("DOMContentLoaded", function () {
       var nameInp = document.getElementById("signUpName");
       var emailInp = document.getElementById("signUpEmail");
       var passInp = document.getElementById("signUpPassword");
-      var name = nameInp ? nameInp.value.trim() : "Cultivator";
+      var name = nameInp ? nameInp.value.trim() : "Reader";
       var email = emailInp ? emailInp.value.trim() : "";
       var password = passInp ? passInp.value : "";
       var submitBtn = document.getElementById("signUpSubmitBtn");
@@ -1542,7 +1548,7 @@ document.addEventListener("DOMContentLoaded", function () {
           var card = document.createElement("div");
           card.className = "wn-card";
 
-          var uName = rev.userName || rev.user || "Cultivator";
+          var uName = rev.userName || rev.user || "Reader";
           var initial = (rev.userAvatar || uName.charAt(0) || "R").toUpperCase();
           var chText = rev.chapter ? (rev.chapter.indexOf("Chapter") !== -1 ? "Read through " + rev.chapter : "Read through Ch. " + rev.chapter) : "Verified Reader";
           var starsStr = "★".repeat(Math.round(rev.rating || rev.overall || 5));
