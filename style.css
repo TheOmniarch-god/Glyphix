@@ -7531,3 +7531,527 @@ a.fc.on:hover { box-shadow: 0 0 0 2px rgba(143,29,29,.35); }
   display: inline-block;
   vertical-align: middle;
 }
+
+/* ============================================================
+   LIGHT/DARK THEME FIXES FOR REVIEW MODAL & AVATARS
+   ============================================================ */
+
+.normal-review-box {
+  max-width: 440px !important;
+  width: 100% !important;
+  padding: 38px 26px 26px !important;
+  border-radius: 20px !important;
+  box-sizing: border-box !important;
+}
+
+/* Light Theme: High contrast, rich readable typography */
+.normal-review-box .auth-title {
+  color: #1c1813 !important;
+  font-family: 'Cormorant Garamond', Georgia, serif !important;
+  font-size: 23px !important;
+  font-weight: 700 !important;
+  margin-bottom: 6px !important;
+  text-align: center !important;
+}
+
+.normal-review-box .auth-sub {
+  color: #6e675c !important;
+  font-size: 13.5px !important;
+  text-align: center !important;
+}
+
+.normal-review-box .auth-label {
+  color: #383229 !important;
+  font-weight: 600 !important;
+  font-size: 12.5px !important;
+  margin-bottom: 5px !important;
+  display: block !important;
+}
+
+.normal-review-box .rating-picker-card {
+  background: #fbf7f0 !important;
+  border: 1.5px solid #dfd6c8 !important;
+  border-radius: 12px !important;
+  padding: 12px 16px !important;
+  margin-bottom: 14px !important;
+}
+
+.normal-review-box .rpc-label {
+  color: #1c1813 !important;
+  font-weight: 700 !important;
+  font-size: 13.5px !important;
+}
+
+.normal-review-box .rpc-score {
+  color: #b38628 !important;
+  font-weight: 800 !important;
+  font-size: 15px !important;
+}
+
+.normal-review-box .star-btn {
+  color: #d1c8b8 !important;
+  font-size: 26px !important;
+  background: none !important;
+  border: none !important;
+  cursor: pointer !important;
+  padding: 0 3px !important;
+  transition: transform 0.1s ease, color 0.15s ease !important;
+}
+
+.normal-review-box .star-btn.active,
+.normal-review-box .star-btn:hover {
+  color: #e6a817 !important;
+}
+
+.normal-review-box .auth-input,
+.normal-review-box .auth-textarea {
+  background: #ffffff !important;
+  border: 1.5px solid #dcd4c7 !important;
+  color: #1c1813 !important;
+  border-radius: 10px !important;
+  padding: 11px 14px !important;
+  font-size: 14px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+}
+
+.normal-review-box .auth-input:focus,
+.normal-review-box .auth-textarea:focus {
+  border-color: #b38628 !important;
+  box-shadow: 0 0 0 3px rgba(179, 134, 40, 0.18) !important;
+  outline: none !important;
+}
+
+.normal-review-box .auth-input::placeholder,
+.normal-review-box .auth-textarea::placeholder {
+  color: #9c9487 !important;
+}
+
+/* Dark Theme Overrides for Review Modal */
+[data-theme="obsidian"] .normal-review-box .auth-title {
+  color: #f4ede2 !important;
+}
+
+[data-theme="obsidian"] .normal-review-box .auth-sub {
+  color: #9a958d !important;
+}
+
+[data-theme="obsidian"] .normal-review-box .auth-label {
+  color: #c4beb4 !important;
+}
+
+[data-theme="obsidian"] .normal-review-box .rating-picker-card {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border-color: rgba(212, 163, 71, 0.28) !important;
+}
+
+[data-theme="obsidian"] .normal-review-box .rpc-label {
+  color: #f4ede2 !important;
+}
+
+[data-theme="obsidian"] .normal-review-box .rpc-score {
+  color: #d4a347 !important;
+}
+
+[data-theme="obsidian"] .normal-review-box .star-btn {
+  color: #4a4843 !important;
+}
+
+[data-theme="obsidian"] .normal-review-box .star-btn.active,
+[data-theme="obsidian"] .normal-review-box .star-btn:hover {
+  color: #d4a347 !important;
+}
+
+[data-theme="obsidian"] .normal-review-box .auth-input,
+[data-theme="obsidian"] .normal-review-box .auth-textarea {
+  background: #0e0f14 !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  color: #f4ede2 !important;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4) !important;
+}
+
+[data-theme="obsidian"] .normal-review-box .auth-input:focus,
+[data-theme="obsidian"] .normal-review-box .auth-textarea:focus {
+  border-color: #d4a347 !important;
+  box-shadow: 0 0 0 3px rgba(212, 163, 71, 0.2) !important;
+}
+
+[data-theme="obsidian"] .normal-review-box .auth-input::placeholder,
+[data-theme="obsidian"] .normal-review-box .auth-textarea::placeholder {
+  color: #6c6861 !important;
+}
+
+/* Review Card Real User Avatar Image */
+.wn-user-avatar-img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1.5px solid var(--gold, #d4a347);
+  flex-shrink: 0;
+}
+
+/* ============================================================
+   DRAGONHOLIC OFF-CANVAS READER DRAWER STYLES
+   ============================================================ */
+
+.reader-drawer-wrap {
+  position: fixed;
+  inset: 0;
+  z-index: 100000;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.reader-drawer-wrap[hidden] {
+  display: none !important;
+}
+
+.drawer-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 10, 14, 0.6);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.drawer-panel {
+  position: relative;
+  z-index: 1;
+  width: 320px;
+  max-width: 85vw;
+  height: 100%;
+  background: var(--card, #fcf9f4);
+  border-left: 1.5px solid var(--line, #e3dad0);
+  box-shadow: -12px 0 48px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 24px 22px;
+  box-sizing: border-box;
+  animation: drawerSlideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[data-theme="obsidian"] .drawer-panel {
+  background: #13141a;
+  border-left-color: rgba(212, 163, 71, 0.25);
+  box-shadow: -16px 0 54px rgba(0, 0, 0, 0.85);
+}
+
+@keyframes drawerSlideIn {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+.drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line, #e3dad0);
+}
+
+[data-theme="obsidian"] .drawer-header {
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+.drawer-title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--head, #1c1813);
+}
+
+[data-theme="obsidian"] .drawer-title {
+  color: #f4ede2;
+}
+
+.drawer-close {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: var(--muted, #6e675c);
+  font-size: 20px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.drawer-close:hover {
+  background: rgba(179, 134, 40, 0.15);
+  color: var(--gold, #b38628);
+  transform: rotate(90deg);
+}
+
+[data-theme="obsidian"] .drawer-close {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #a09d94;
+}
+
+[data-theme="obsidian"] .drawer-close:hover {
+  background: rgba(212, 163, 71, 0.2);
+  color: #ecc768;
+}
+
+.drawer-profile-box {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px;
+  background: rgba(212, 163, 71, 0.08);
+  border: 1px solid rgba(212, 163, 71, 0.25);
+  border-radius: 14px;
+  margin-bottom: 18px;
+}
+
+.dp-avatar-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.dp-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #d4a347, #9e6f15);
+  color: #0b0c10;
+  font-weight: 800;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--gold, #d4a347);
+  overflow: hidden;
+}
+
+.dp-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.dp-edit-avatar-btn {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--gold, #d4a347);
+  color: #0b0c10;
+  border: 1.5px solid #fff;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+}
+
+.dp-info {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  gap: 2px;
+}
+
+.dp-name-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dp-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--head, #1c1813);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+[data-theme="obsidian"] .dp-name {
+  color: #f4ede2;
+}
+
+.dp-edit-name-btn {
+  background: none;
+  border: none;
+  color: var(--muted, #6e675c);
+  font-size: 12px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.dp-edit-name-btn:hover {
+  color: var(--gold, #b38628);
+}
+
+.dp-email {
+  font-size: 12px;
+  color: var(--muted, #6e675c);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+[data-theme="obsidian"] .dp-email {
+  color: #9a958d;
+}
+
+.dp-badge {
+  font-size: 10px;
+  font-weight: 700;
+  color: #27ae60;
+  background: rgba(39, 174, 96, 0.12);
+  border: 1px solid rgba(39, 174, 96, 0.28);
+  border-radius: 99px;
+  padding: 1px 6px;
+  align-self: flex-start;
+  margin-top: 2px;
+}
+
+.drawer-subpanel {
+  padding: 14px;
+  background: var(--bg, #f5f0e6);
+  border: 1px solid var(--line, #e3dad0);
+  border-radius: 12px;
+  margin-bottom: 16px;
+}
+
+[data-theme="obsidian"] .drawer-subpanel {
+  background: rgba(0, 0, 0, 0.4);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.dsp-title {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--head, #1c1813);
+  margin-bottom: 8px;
+}
+
+[data-theme="obsidian"] .dsp-title {
+  color: #f4ede2;
+}
+
+.preset-avatars {
+  display: flex;
+  gap: 8px;
+  margin: 8px 0;
+}
+
+.preset-img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.preset-img:hover {
+  border-color: var(--gold, #d4a347);
+  transform: scale(1.1);
+}
+
+.drawer-nav {
+  margin-bottom: 20px;
+}
+
+.drawer-links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.drawer-links a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  color: var(--ink, #2c261e);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+[data-theme="obsidian"] .drawer-links a {
+  color: #d4cfc7;
+}
+
+.drawer-links a:hover {
+  background: rgba(212, 163, 71, 0.12);
+  color: var(--gold, #b38628);
+}
+
+.drawer-actions {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line, #e3dad0);
+}
+
+[data-theme="obsidian"] .drawer-actions {
+  border-top-color: rgba(255, 255, 255, 0.08);
+}
+
+.drawer-btn {
+  width: 100%;
+  text-align: center;
+  padding: 10px;
+  font-size: 13.5px;
+  font-weight: 600;
+  border-radius: 10px;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+
+/* All Reviews Modal Dialog Styling */
+#allReviewsModal[hidden] {
+  display: none !important;
+}
+
+#allReviewsModal:not([hidden]) {
+  display: flex !important;
+}
+
+#allReviewsScrollList {
+  max-height: 65vh;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+#allReviewsScrollList::-webkit-scrollbar {
+  width: 6px;
+}
+
+#allReviewsScrollList::-webkit-scrollbar-thumb {
+  background: rgba(212, 163, 71, 0.5);
+  border-radius: 4px;
+}
+
+.preset-img.selected {
+  border-color: var(--gold, #d4a347) !important;
+  box-shadow: 0 0 0 2px rgba(212, 163, 71, 0.4) !important;
+  transform: scale(1.08);
+}

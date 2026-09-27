@@ -46,6 +46,10 @@ document.addEventListener("DOMContentLoaded", function () {
     burger.setAttribute("aria-expanded", "false");
     burger.addEventListener("click", function (e) {
       e.stopPropagation();
+      if (document.getElementById("readerDrawer")) {
+        openReaderDrawer();
+        return;
+      }
       var isOpen = links.classList.toggle("open");
       burger.setAttribute("aria-expanded", isOpen ? "true" : "false");
     });
@@ -624,7 +628,7 @@ document.addEventListener("DOMContentLoaded", function () {
           userId: "usr_01",
           user: "Heaven Refining",
           userName: "Heaven Refining",
-          userAvatar: "H",
+          userAvatar: "logo-circle.png",
           userEmail: "venerable@gmail.com",
           userProvider: "google",
           verified: true,
@@ -827,7 +831,7 @@ document.addEventListener("DOMContentLoaded", function () {
           userId: "usr_" + Math.random().toString(36).substring(2, 8),
           user: data.userName || data.user || "Reader",
           userName: data.userName || data.user || "Reader",
-          userAvatar: (data.userName || data.user || "C").charAt(0).toUpperCase(),
+          userAvatar: data.userAvatar || (data.userName || data.user || "R").charAt(0).toUpperCase(),
           userEmail: data.userEmail || "reader@example.com",
           userProvider: "email",
           verified: true,
@@ -1110,7 +1114,11 @@ function getStoredToken() {
         if (pmProg) pmProg.textContent = lastCh;
       } catch (e) {}
     }
+    try {
+      if (typeof updateDrawerUI === "function") updateDrawerUI();
+    } catch (e) {}
   }
+  var updateAuthUI = updateHeaderUI;
 
   updateHeaderUI();
 
@@ -1196,20 +1204,7 @@ function getStoredToken() {
       if (!user) {
         openAuthModal();
       } else {
-        var pop = document.getElementById("userMenuPopover");
-        var wrap = document.getElementById("userNavWrap");
-        if (pop) {
-          var isHidden = pop.hasAttribute("hidden") || pop.style.display === "none";
-          if (isHidden) {
-            pop.removeAttribute("hidden");
-            pop.style.display = "block";
-            if (wrap) wrap.classList.add("open");
-          } else {
-            pop.setAttribute("hidden", "");
-            pop.style.display = "none";
-            if (wrap) wrap.classList.remove("open");
-          }
-        }
+        openReaderDrawer();
       }
     });
   }
@@ -1684,42 +1679,56 @@ function getStoredToken() {
     var user = getStoredUser();
     if (!user) {
       labState.pendingReviewTriggered = true;
-      labState.pendingChapter = chapter || "Chapter 1";
+      labState.pendingChapter = chapter || "Novel Review";
       openAuthModal("signin");
       showToast("Please sign in or create an account to review.");
       return;
     }
 
     if (!reviewModal) return;
-    reviewModal.hidden = false;
+    reviewModal.removeAttribute("hidden");
+    reviewModal.style.setProperty("display", "flex", "important");
 
     var nameDisp = document.getElementById("reviewUserNameDisplay");
     if (nameDisp && user) {
-      nameDisp.textContent = user.name;
+      nameDisp.textContent = user.name || "Reader";
     }
 
-    if (chapter) {
-      var sel = document.getElementById("reviewChapterSelect");
-      if (sel) {
-        for (var i = 0; i < sel.options.length; i++) {
-          if (sel.options[i].value.indexOf(chapter) !== -1) {
-            sel.selectedIndex = i;
-            break;
-          }
-        }
-      }
-    }
+    var statusEl = document.getElementById("reviewStatus");
+    if (statusEl) statusEl.hidden = true;
   }
 
-  // Bind write buttons
+  function closeReviewModal() {
+    if (!reviewModal) return;
+    reviewModal.setAttribute("hidden", "");
+    reviewModal.style.setProperty("display", "none", "important");
+  }
+
+  // Bind universal modal close buttons for review modal
+  var reviewModalClose = document.getElementById("reviewModalClose");
+  if (reviewModalClose) {
+    reviewModalClose.addEventListener("click", closeReviewModal);
+  }
+
+  var reviewModalBackdrop = document.getElementById("reviewModalBackdrop");
+  if (reviewModalBackdrop) {
+    reviewModalBackdrop.addEventListener("click", closeReviewModal);
+  }
+
+  var reviewModalCancelBtn = document.getElementById("reviewModalCancelBtn");
+  if (reviewModalCancelBtn) {
+    reviewModalCancelBtn.addEventListener("click", closeReviewModal);
+  }
+
+  // Bind write buttons across the page
   var wnWriteBtn = document.getElementById("wnWriteBtn");
   if (wnWriteBtn) {
-    wnWriteBtn.addEventListener("click", function() { openReviewModal("Chapter 1"); });
+    wnWriteBtn.addEventListener("click", function() { openReviewModal("Novel Review"); });
   }
 
   document.querySelectorAll(".btn-open-review, .wn-write-btn").forEach(function(btn) {
     btn.addEventListener("click", function() {
-      var ch = btn.getAttribute("data-chapter") || "Chapter 1";
+      var ch = btn.getAttribute("data-chapter") || "Novel Review";
       openReviewModal(ch);
     });
   });
@@ -1784,7 +1793,8 @@ function getStoredToken() {
         spoiler: spoiler,
         spoilers: spoiler,
         userName: user.name || "Reader",
-        userEmail: user.email || ""
+        userEmail: user.email || "",
+        userAvatar: user.avatar || ""
       }, token)
         .then(function(data) {
           if (submitBtn) {
@@ -1800,10 +1810,7 @@ function getStoredToken() {
             return;
           }
 
-          if (reviewModal) {
-            reviewModal.setAttribute("hidden", "");
-            reviewModal.style.setProperty("display", "none", "important");
-          }
+          closeReviewModal();
           document.getElementById("reviewTitle").value = "";
           document.getElementById("reviewBody").value = "";
           showToast("✓ Review published to Reverend Insanity Community!");
@@ -1840,12 +1847,115 @@ function getStoredToken() {
     });
   }
 
-  // ── Load & Render Reviews According to Site Design ─────────────────────
-  function formatStarsString(score) {
-    var s = Math.round(score || 5);
-    return "★".repeat(Math.max(1, Math.min(5, s)));
+  // Helper function to build a single review card
+  function createReviewCard(rev) {
+    var card = document.createElement("div");
+    card.className = "wn-card";
+
+    var uName = rev.userName || rev.user || "Reader";
+    var avatarSrc = rev.userAvatar || "";
+    var avatarHtml = "";
+    if (avatarSrc && (avatarSrc.startsWith("http") || avatarSrc.startsWith("data:") || avatarSrc.indexOf(".png") !== -1 || avatarSrc.indexOf(".jpg") !== -1 || avatarSrc.indexOf(".webp") !== -1)) {
+      avatarHtml = '<img src="' + escapeHtml(avatarSrc) + '" alt="' + escapeHtml(uName) + '" class="wn-user-avatar-img">';
+    } else {
+      var initial = (avatarSrc || uName.charAt(0) || "R").substring(0, 1).toUpperCase();
+      avatarHtml = '<div class="wn-user-avatar">' + initial + '</div>';
+    }
+
+    var starsStr = "★".repeat(Math.round(rev.rating || rev.overall || 5));
+    var dateStr = rev.date || formatDate(rev.createdAt);
+
+    // Text / Spoiler (Clean, NO danger warning emoji)
+    var rBody = rev.body || rev.text || "";
+    var rTitle = rev.title ? '<h4 class="wn-card-title">' + escapeHtml(rev.title) + '</h4>' : '';
+    var textHtml = "";
+
+    var isSpoiler = rev.spoiler || rev.spoilers;
+    if (isSpoiler) {
+      textHtml =
+        rTitle +
+        '<div class="wn-spoiler-box" onclick="this.classList.toggle(&quot;revealed&quot;)">' +
+        '  <span class="wn-spoiler-btn">Contains spoilers — click to reveal</span>' +
+        '  <p class="wn-spoiler-content">' + escapeHtml(rBody) + '</p>' +
+        '</div>';
+    } else {
+      textHtml = rTitle + '<p class="wn-card-body">' + escapeHtml(rBody) + '</p>';
+    }
+
+    var likesCount = rev.likes !== undefined ? rev.likes : (rev.helpful || 0);
+    var likeKey = "ri_like_" + (rev.id || uName);
+    var isLiked = store.getItem(likeKey) === "1";
+
+    // Clean normal card header: Verified Reader, NO fake LV2 or gamified badges
+    card.innerHTML =
+      '<div class="wn-card-top">' +
+      '  <div class="wn-card-user-info">' +
+      avatarHtml +
+      '    <div>' +
+      '      <span class="wn-user-name">' + escapeHtml(uName) + '</span> ' +
+      '      <span class="wn-verified-badge" style="font-size:10.5px; font-weight:700; color:#27ae60; background:rgba(39,174,96,0.12); padding:1px 6px; border-radius:99px; margin-left:4px;">✓ Verified Reader</span>' +
+      '    </div>' +
+      '  </div>' +
+      '  <div class="wn-card-stars-date">' +
+      '    <span class="wn-card-stars">' + starsStr + '</span>' +
+      '    <span class="wn-card-date">' + dateStr + '</span>' +
+      '  </div>' +
+      '</div>' +
+      textHtml +
+      '<div class="wn-card-footer">' +
+      '  <button type="button" class="wn-helpful-btn ' + (isLiked ? 'is-voted' : '') + '" data-id="' + rev.id + '">' +
+      '    👍 Helpful (' + likesCount + ')' +
+      '  </button>' +
+      '  <span class="wn-reply-link">💬 0 Replies</span>' +
+      '</div>';
+
+    var hBtn = card.querySelector(".wn-helpful-btn");
+    if (hBtn) {
+      hBtn.addEventListener("click", function() {
+        if (!isLiked) {
+          isLiked = true;
+          likesCount++;
+          try { store.setItem(likeKey, "1"); } catch (e) {}
+          hBtn.classList.add("is-voted");
+          hBtn.textContent = "👍 Helpful (" + likesCount + ")";
+          callApi("/api/reviews/vote", "POST", { reviewId: rev.id }).catch(function() {});
+        }
+      });
+    }
+
+    return card;
   }
 
+  // ── Dedicated All Reviews Modal ───────────────────────────────────────
+  var allReviewsModal = document.getElementById("allReviewsModal");
+  var allReviewsClose = document.getElementById("allReviewsClose");
+  var allReviewsBackdrop = document.getElementById("allReviewsBackdrop");
+  var allReviewsScrollList = document.getElementById("allReviewsScrollList");
+
+  function openAllReviewsModal(revList) {
+    if (!allReviewsModal || !allReviewsScrollList) return;
+    allReviewsScrollList.innerHTML = "";
+
+    (revList || []).forEach(function(rev) {
+      allReviewsScrollList.appendChild(createReviewCard(rev));
+    });
+
+    allReviewsModal.removeAttribute("hidden");
+    allReviewsModal.style.setProperty("display", "flex", "important");
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeAllReviewsModal() {
+    if (!allReviewsModal) return;
+    allReviewsModal.setAttribute("hidden", "");
+    allReviewsModal.style.setProperty("display", "none", "important");
+    document.body.style.overflow = "";
+  }
+
+  if (allReviewsClose) allReviewsClose.addEventListener("click", closeAllReviewsModal);
+  if (allReviewsBackdrop) allReviewsBackdrop.addEventListener("click", closeAllReviewsModal);
+
+  // ── Load Reviews (Capped at 4 on homepage to keep layout tight) ─────────
   function loadReviews() {
     var listEl = document.getElementById("wnReviewsList");
     if (!listEl) return;
@@ -1886,100 +1996,209 @@ function getStoredToken() {
         }
 
         var visibleLimit = 4;
-        function renderCards(showAll) {
-          listEl.innerHTML = "";
-          var subset = showAll ? revList : revList.slice(0, visibleLimit);
+        listEl.innerHTML = "";
+        var subset = revList.slice(0, visibleLimit);
 
-          subset.forEach(function(rev) {
-            var card = document.createElement("div");
-            card.className = "wn-card";
+        subset.forEach(function(rev) {
+          listEl.appendChild(createReviewCard(rev));
+        });
 
-            var uName = rev.userName || rev.user || "Reader";
-            var initial = (rev.userAvatar || uName.charAt(0) || "R").toUpperCase();
-            var starsStr = "★".repeat(Math.round(rev.rating || rev.overall || 5));
-            var dateStr = rev.date || formatDate(rev.createdAt);
+        // If more reviews exist, show modal opener and link to dedicated reviews page
+        if (revList.length > visibleLimit) {
+          var moreBox = document.createElement("div");
+          moreBox.style.cssText = "text-align:center; margin-top:24px; padding-bottom:12px; display:flex; justify-content:center; align-items:center; gap:12px; flex-wrap:wrap;";
+          moreBox.innerHTML =
+            '<button type="button" class="btn btn-secondary" id="btnOpenAllReviewsModal" style="padding:11px 24px; border-radius:99px; font-size:14px; font-weight:600; cursor:pointer;">' +
+            '  View All Community Reviews (' + revList.length + ') &rarr;' +
+            '</button>' +
+            '<a href="reviews" class="btn btn-outline" style="padding:11px 20px; border-radius:99px; font-size:13.5px; text-decoration:none; display:inline-flex; align-items:center; color:var(--head);">' +
+            '  Dedicated Reviews Page' +
+            '</a>';
+          listEl.appendChild(moreBox);
 
-            // Text / Spoiler (NO warning triangle)
-            var rBody = rev.body || rev.text || "";
-            var rTitle = rev.title ? '<h4 class="wn-card-title">' + escapeHtml(rev.title) + '</h4>' : '';
-            var textHtml = "";
-
-            var isSpoiler = rev.spoiler || rev.spoilers;
-            if (isSpoiler) {
-              textHtml =
-                rTitle +
-                '<div class="wn-spoiler-box" onclick="this.classList.toggle(&quot;revealed&quot;)">' +
-                '  <span class="wn-spoiler-btn">Contains spoilers — click to reveal</span>' +
-                '  <p class="wn-spoiler-content">' + escapeHtml(rBody) + '</p>' +
-                '</div>';
-            } else {
-              textHtml = rTitle + '<p class="wn-card-body">' + escapeHtml(rBody) + '</p>';
-            }
-
-            var likesCount = rev.likes !== undefined ? rev.likes : (rev.helpful || 0);
-            var likeKey = "ri_like_" + (rev.id || uName);
-            var isLiked = store.getItem(likeKey) === "1";
-
-            // Clean card header: NO LV 2, NO Read through Chapter X
-            card.innerHTML =
-              '<div class="wn-card-top">' +
-              '  <div class="wn-card-user-info">' +
-              '    <div class="wn-user-avatar">' + initial + '</div>' +
-              '    <div>' +
-              '      <span class="wn-user-name">' + escapeHtml(uName) + '</span> ' +
-              '      <span class="wn-verified-badge" style="font-size:10.5px; font-weight:700; color:#27ae60; background:rgba(39,174,96,0.12); padding:1px 6px; border-radius:99px; margin-left:4px;">✓ Verified Reader</span>' +
-              '    </div>' +
-              '  </div>' +
-              '  <div class="wn-card-stars-date">' +
-              '    <span class="wn-card-stars">' + starsStr + '</span>' +
-              '    <span class="wn-card-date">' + dateStr + '</span>' +
-              '  </div>' +
-              '</div>' +
-              textHtml +
-              '<div class="wn-card-footer">' +
-              '  <button type="button" class="wn-helpful-btn ' + (isLiked ? 'is-voted' : '') + '" data-id="' + rev.id + '">' +
-              '    👍 Helpful (' + likesCount + ')' +
-              '  </button>' +
-              '  <span class="wn-reply-link">💬 0 Replies</span>' +
-              '</div>';
-
-            var hBtn = card.querySelector(".wn-helpful-btn");
-            if (hBtn) {
-              hBtn.addEventListener("click", function() {
-                if (!isLiked) {
-                  isLiked = true;
-                  likesCount++;
-                  try { store.setItem(likeKey, "1"); } catch (e) {}
-                  hBtn.classList.add("is-voted");
-                  hBtn.textContent = "👍 Helpful (" + likesCount + ")";
-                  callApi("/api/reviews/vote", "POST", { reviewId: rev.id }).catch(function() {});
-                }
-              });
-            }
-
-            listEl.appendChild(card);
-          });
-
-          // Show More Reviews button if more exist
-          if (!showAll && revList.length > visibleLimit) {
-            var moreBox = document.createElement("div");
-            moreBox.style.cssText = "text-align:center; margin-top:24px; padding-bottom:12px;";
-            moreBox.innerHTML = '<button type="button" class="btn btn-secondary" id="btnSeeMoreReviews" style="padding:11px 28px; border-radius:99px; font-size:14px; font-weight:600; cursor:pointer;">See More Reviews (' + (revList.length - visibleLimit) + ' more) &darr;</button>';
-            listEl.appendChild(moreBox);
-
-            var seeMoreBtn = moreBox.querySelector("#btnSeeMoreReviews");
-            if (seeMoreBtn) {
-              seeMoreBtn.addEventListener("click", function() {
-                renderCards(true);
-              });
-            }
+          var openAllBtn = moreBox.querySelector("#btnOpenAllReviewsModal");
+          if (openAllBtn) {
+            openAllBtn.addEventListener("click", function() {
+              openAllReviewsModal(revList);
+            });
           }
         }
-
-        renderCards(false);
       })
       .catch(function() {});
   }
+
+  // ── Dragonholic Slide-Out Reader Drawer ────────────────────────────────
+  var readerDrawer = document.getElementById("readerDrawer");
+  var drawerClose = document.getElementById("drawerClose");
+  var drawerBackdrop = document.getElementById("drawerBackdrop");
+  var drawerSignOutBtn = document.getElementById("drawerSignOutBtn");
+  var drawerSignInBtn = document.getElementById("drawerSignInBtn");
+  var drawerReviewBtn = document.getElementById("drawerReviewBtn");
+  var btnEditAvatar = document.getElementById("btnEditAvatar");
+  var btnEditName = document.getElementById("btnEditName");
+  var avatarPickerPanel = document.getElementById("avatarPickerPanel");
+  var inpCustomAvatarUrl = document.getElementById("inpCustomAvatarUrl");
+  var btnSaveCustomAvatar = document.getElementById("btnSaveCustomAvatar");
+  var btnCancelCustomAvatar = document.getElementById("btnCancelCustomAvatar");
+
+  function openReaderDrawer() {
+    if (!readerDrawer) return;
+    readerDrawer.removeAttribute("hidden");
+    readerDrawer.style.setProperty("display", "flex", "important");
+    document.body.style.overflow = "hidden";
+    updateDrawerUI();
+  }
+
+  function closeReaderDrawer() {
+    if (!readerDrawer) return;
+    readerDrawer.setAttribute("hidden", "");
+    readerDrawer.style.setProperty("display", "none", "important");
+    document.body.style.overflow = "";
+    if (avatarPickerPanel) avatarPickerPanel.style.display = "none";
+  }
+
+  if (drawerClose) drawerClose.addEventListener("click", closeReaderDrawer);
+  if (drawerBackdrop) drawerBackdrop.addEventListener("click", closeReaderDrawer);
+
+  if (drawerSignInBtn) {
+    drawerSignInBtn.addEventListener("click", function() {
+      closeReaderDrawer();
+      openAuthModal("signin");
+    });
+  }
+
+  if (drawerSignOutBtn) {
+    drawerSignOutBtn.addEventListener("click", function() {
+      closeReaderDrawer();
+      clearSession();
+      if (supabaseClient) supabaseClient.auth.signOut().catch(function() {});
+      updateAuthUI(null);
+      showToast("Signed out successfully.");
+    });
+  }
+
+  if (drawerReviewBtn) {
+    drawerReviewBtn.addEventListener("click", function() {
+      closeReaderDrawer();
+      openReviewModal("Novel Review");
+    });
+  }
+
+  if (btnEditAvatar) {
+    btnEditAvatar.addEventListener("click", function(e) {
+      e.stopPropagation();
+      if (avatarPickerPanel) {
+        var isHidden = avatarPickerPanel.style.display === "none";
+        avatarPickerPanel.style.display = isHidden ? "block" : "none";
+      }
+    });
+  }
+
+  if (btnCancelCustomAvatar) {
+    btnCancelCustomAvatar.addEventListener("click", function() {
+      if (avatarPickerPanel) avatarPickerPanel.style.display = "none";
+    });
+  }
+
+  // Handle Preset Avatar Selection
+  document.querySelectorAll(".preset-img").forEach(function(pImg) {
+    pImg.addEventListener("click", function() {
+      var url = pImg.getAttribute("data-url");
+      if (inpCustomAvatarUrl) inpCustomAvatarUrl.value = url;
+      document.querySelectorAll(".preset-img").forEach(function(img) { img.classList.remove("selected"); });
+      pImg.classList.add("selected");
+    });
+  });
+
+  // Handle Saving Custom Avatar
+  if (btnSaveCustomAvatar) {
+    btnSaveCustomAvatar.addEventListener("click", function() {
+      var user = getStoredUser();
+      if (!user) return;
+      var newUrl = inpCustomAvatarUrl ? inpCustomAvatarUrl.value.trim() : "";
+      if (!newUrl) {
+        showToast("Please enter an image URL or choose a preset.");
+        return;
+      }
+      user.avatar = newUrl;
+      saveSession(user, getStoredToken());
+      updateAuthUI(user);
+      updateDrawerUI();
+      loadReviews();
+      if (avatarPickerPanel) avatarPickerPanel.style.display = "none";
+      showToast("✓ Profile avatar updated successfully!");
+    });
+  }
+
+  // Handle Editing Display Name
+  if (btnEditName) {
+    btnEditName.addEventListener("click", function() {
+      var user = getStoredUser();
+      if (!user) return;
+      var newName = window.prompt("Change your reader display name:", user.name || "Reader");
+      if (newName && newName.trim() && newName.trim() !== user.name) {
+        user.name = newName.trim();
+        saveSession(user, getStoredToken());
+        updateAuthUI(user);
+        updateDrawerUI();
+        loadReviews();
+        showToast("✓ Display name updated to " + user.name);
+      }
+    });
+  }
+
+  function updateDrawerUI() {
+    var user = getStoredUser();
+    var dpBox = document.getElementById("drawerProfileBox");
+    var dpAvatar = document.getElementById("dpAvatar");
+    var dpName = document.getElementById("dpName");
+    var dpEmail = document.getElementById("dpEmail");
+    var dpBadge = document.getElementById("dpBadge");
+    var dpBookmarkBox = document.getElementById("dpBookmarkBox");
+    var dpBookmarkLink = document.getElementById("dpBookmarkLink");
+
+    if (user) {
+      if (dpBox) dpBox.style.display = "flex";
+      if (drawerSignOutBtn) drawerSignOutBtn.style.display = "block";
+      if (drawerSignInBtn) drawerSignInBtn.style.display = "none";
+
+      if (dpAvatar) {
+        var aSrc = user.avatar || "";
+        if (aSrc && (aSrc.startsWith("http") || aSrc.startsWith("data:") || aSrc.indexOf(".png") !== -1 || aSrc.indexOf(".jpg") !== -1 || aSrc.indexOf(".webp") !== -1)) {
+          dpAvatar.innerHTML = '<img src="' + escapeHtml(aSrc) + '" alt="' + escapeHtml(user.name || "Reader") + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
+        } else {
+          var initial = (user.name || "R").charAt(0).toUpperCase();
+          dpAvatar.textContent = initial;
+        }
+      }
+      if (dpName) dpName.textContent = user.name || "Reader";
+      if (dpEmail) dpEmail.textContent = user.email || "";
+      if (dpBadge) dpBadge.innerHTML = "&check; Verified Reader";
+
+      // Bookmark / reading progress
+      var lastCh = store.getItem("ri_bookmark_ch") || store.getItem("ri_last_read_ch") || "Chapter 1";
+      var lastNum = lastCh.replace(/[^0-9]/g, "") || "1";
+      if (dpBookmarkBox && dpBookmarkLink) {
+        dpBookmarkBox.style.display = "block";
+        dpBookmarkLink.href = "chapter-" + lastNum;
+        dpBookmarkLink.innerHTML = "Resume " + escapeHtml(lastCh) + " &rarr;";
+      }
+    } else {
+      if (dpBox) dpBox.style.display = "none";
+      if (drawerSignOutBtn) drawerSignOutBtn.style.display = "none";
+      if (drawerSignInBtn) drawerSignInBtn.style.display = "block";
+    }
+  }
+
+  // Universal Modal & Drawer Dismissal on Escape key
+  document.addEventListener("keydown", function(e) {
+    if (e.key === "Escape") {
+      closeAuthModal();
+      closeReviewModal();
+      closeAllReviewsModal();
+      closeReaderDrawer();
+    }
+  });
 
   function escapeHtml(str) {
     if (!str) return "";
@@ -1995,6 +2214,7 @@ function getStoredToken() {
       return "Recent";
     }
   }
+
 
   // Load reviews on page ready
   loadReviews();
