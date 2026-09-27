@@ -595,6 +595,243 @@ document.addEventListener("DOMContentLoaded", function () {
   var TOKEN_KEY = "ri_lab_token";
   var USER_KEY = "ri_lab_user";
 
+  // Static LocalStorage Database Fallback (active on GitHub Pages & offline)
+  var localDb = {
+    getUsers: function() {
+      try {
+        var r = store.getItem("ri_lab_users_db");
+        if (r) return JSON.parse(r);
+      } catch (e) {}
+      var initial = [
+        { id: "usr_01", name: "Heaven Refining", email: "venerable@gmail.com", emailVerified: true, avatarBg: "#b8860b", provider: "google" },
+        { id: "usr_02", name: "Bai Ning Bing", email: "icemuscle@qingmao.net", emailVerified: true, avatarBg: "#4a7a96", provider: "email" },
+        { id: "usr_03", name: "Gu Yue Mo Chen", email: "mochen@guyue.clan", emailVerified: true, avatarBg: "#7c5295", provider: "email" }
+      ];
+      store.setItem("ri_lab_users_db", JSON.stringify(initial));
+      return initial;
+    },
+    saveUsers: function(users) {
+      store.setItem("ri_lab_users_db", JSON.stringify(users));
+    },
+    getReviews: function() {
+      try {
+        var r = store.getItem("ri_lab_reviews_db");
+        if (r) return JSON.parse(r);
+      } catch (e) {}
+      var initial = [
+        {
+          id: "rev_01",
+          userId: "usr_01",
+          userName: "Heaven Refining",
+          userAvatar: "H",
+          userEmail: "venerable@gmail.com",
+          verified: true,
+          rating: 5.0,
+          categories: { story: 5.0, characters: 5.0, world: 5.0, translation: 5.0 },
+          title: "A masterwork of ruthless philosophy and perseverance",
+          body: "Fang Yuan is one of the most logically consistent and compelling protagonists in fiction. The world building around Gu worms, primeval essence, and clan politics is layered and unyielding. The Omniarch translation is remarkably crisp and elevates the prose.",
+          chapter: "Chapter 3",
+          spoiler: false,
+          likes: 42,
+          createdAt: "2026-09-20T10:14:00Z"
+        },
+        {
+          id: "rev_02",
+          userId: "usr_02",
+          userName: "Bai Ning Bing",
+          userAvatar: "B",
+          userEmail: "icemuscle@qingmao.net",
+          verified: true,
+          rating: 5.0,
+          categories: { story: 5.0, characters: 5.0, world: 5.0, translation: 4.8 },
+          title: "Uncompromising cultivation and zero plot armor",
+          body: "The early chapters at Qing Mao Mountain do a phenomenal job setting up the stakes. Fang Yuan's cold composure during the Awakening ceremony is chilling yet utterly pragmatic.",
+          chapter: "Chapter 2",
+          spoiler: false,
+          likes: 28,
+          createdAt: "2026-09-22T14:40:00Z"
+        },
+        {
+          id: "rev_03",
+          userId: "usr_03",
+          userName: "Gu Yue Mo Chen",
+          userAvatar: "G",
+          userEmail: "mochen@guyue.clan",
+          verified: true,
+          rating: 4.8,
+          categories: { story: 5.0, characters: 4.6, world: 5.0, translation: 4.8 },
+          title: "Clan politics and Gu cultivation done right",
+          body: "The tension between the Mo and Chi factions adds tremendous texture to Gu Yue Village. The translation captures the formal hierarchy and subtle disrespect with pinpoint precision.",
+          chapter: "Chapter 1",
+          spoiler: true,
+          likes: 15,
+          createdAt: "2026-09-24T18:22:00Z"
+        }
+      ];
+      store.setItem("ri_lab_reviews_db", JSON.stringify(initial));
+      return initial;
+    },
+    saveReviews: function(revs) {
+      store.setItem("ri_lab_reviews_db", JSON.stringify(revs));
+    },
+    calcSummary: function(reviews) {
+      if (!reviews || reviews.length === 0) {
+        return { avg: 5.0, count: 0, categories: { story: 5.0, characters: 5.0, world: 5.0, translation: 5.0 } };
+      }
+      var total = 0;
+      var cats = { story: 0, characters: 0, world: 0, translation: 0 };
+      var catCounts = { story: 0, characters: 0, world: 0, translation: 0 };
+      for (var i = 0; i < reviews.length; i++) {
+        var r = reviews[i];
+        total += (r.rating || 5.0);
+        var rc = r.categories || {};
+        for (var k in cats) {
+          if (rc[k] !== undefined) {
+            cats[k] += parseFloat(rc[k]);
+            catCounts[k]++;
+          }
+        }
+      }
+      var catSummary = {};
+      for (var ck in cats) {
+        catSummary[ck] = catCounts[ck] > 0 ? Math.round((cats[ck] / catCounts[ck]) * 10) / 10 : 5.0;
+      }
+      return {
+        avg: Math.round((total / reviews.length) * 10) / 10,
+        count: reviews.length,
+        categories: catSummary
+      };
+    }
+  };
+
+  // Resilient API Caller (Tries Server API, falls back cleanly to localDb on static hosts)
+  function callApi(endpoint, method, data, token) {
+    var headers = { "Content-Type": "application/json" };
+    if (token) headers["Authorization"] = "Bearer " + token;
+
+    return fetch(API_BASE + endpoint, {
+      method: method || "GET",
+      headers: headers,
+      body: data ? JSON.stringify(data) : undefined
+    })
+      .then(function(r) {
+        if (!r.ok && r.status === 404) throw new Error("Static Host");
+        return r.json();
+      })
+      .catch(function() {
+        // Fallback to localDb
+        return localDbHandler(endpoint, method, data);
+      });
+  }
+
+  function localDbHandler(endpoint, method, data) {
+    if (endpoint === "/api/status") {
+      var users = localDb.getUsers();
+      var reviews = localDb.getReviews();
+      return { ok: true, users_count: users.length, reviews_count: reviews.length, storage: "Browser Storage Active (GitHub Pages)" };
+    }
+    if (endpoint === "/api/reviews" && (!method || method === "GET")) {
+      var revs = localDb.getReviews();
+      return { ok: true, reviews: revs, summary: localDb.calcSummary(revs) };
+    }
+    if (endpoint === "/api/auth/register-send-code") {
+      var code = String(Math.floor(100000 + Math.random() * 900000));
+      store.setItem("ri_pending_reg", JSON.stringify({ email: data.email, name: data.name, code: code }));
+      return { ok: true, message: "Code sent", email: data.email, code_hint: code };
+    }
+    if (endpoint === "/api/auth/verify-code") {
+      var pendingRaw = store.getItem("ri_pending_reg");
+      var pending = pendingRaw ? JSON.parse(pendingRaw) : null;
+      if (!pending || String(pending.code) !== String(data.code)) {
+        return { ok: false, error: "Invalid verification code. Please check and try again." };
+      }
+      var allUsers = localDb.getUsers();
+      var newUser = {
+        id: "usr_" + Math.random().toString(36).substring(2, 9),
+        name: pending.name,
+        email: pending.email,
+        emailVerified: true,
+        provider: "email",
+        avatarBg: "#4a7a96",
+        createdAt: new Date().toISOString()
+      };
+      allUsers.push(newUser);
+      localDb.saveUsers(allUsers);
+      return { ok: true, user: newUser, token: "tok_local_" + Date.now() };
+    }
+    if (endpoint === "/api/auth/login") {
+      var usrs = localDb.getUsers();
+      for (var i = 0; i < usrs.length; i++) {
+        if (usrs[i].email === data.email) {
+          return { ok: true, user: usrs[i], token: "tok_local_" + Date.now() };
+        }
+      }
+      return { ok: false, error: "No account found with this email. Please Create Account." };
+    }
+    if (endpoint === "/api/auth/google") {
+      var gUser = {
+        id: "usr_g_" + Math.random().toString(36).substring(2, 8),
+        name: data.name || "Cultivator FY",
+        email: data.email || "cultivator@gmail.com",
+        avatarBg: "#4285F4",
+        provider: "google",
+        emailVerified: true,
+        createdAt: new Date().toISOString()
+      };
+      var usrsG = localDb.getUsers();
+      usrsG.push(gUser);
+      localDb.saveUsers(usrsG);
+      return { ok: true, user: gUser, token: "tok_local_" + Date.now() };
+    }
+    if (endpoint === "/api/reviews" && method === "POST") {
+      var curRevs = localDb.getReviews();
+      var newRev = {
+        id: "rev_" + Math.random().toString(36).substring(2, 9),
+        userId: "usr_cur",
+        userName: data.userName || "Verified Reader",
+        userAvatar: (data.userName || "R").charAt(0).toUpperCase(),
+        userEmail: data.userEmail || "reader@community.lab",
+        verified: true,
+        rating: data.rating || 5.0,
+        categories: data.categories || { story: 5.0, characters: 5.0, world: 5.0, translation: 5.0 },
+        title: data.title || "Cultivation Masterpiece",
+        body: data.body || "",
+        chapter: data.chapter || "Chapter 1",
+        spoiler: !!data.spoiler,
+        likes: 0,
+        createdAt: new Date().toISOString()
+      };
+      curRevs.unshift(newRev);
+      localDb.saveReviews(curRevs);
+      return { ok: true, review: newRev, summary: localDb.calcSummary(curRevs) };
+    }
+    if (endpoint === "/api/reviews/vote") {
+      var vRevs = localDb.getReviews();
+      var likes = 0;
+      for (var v = 0; v < vRevs.length; v++) {
+        if (vRevs[v].id === data.reviewId) {
+          vRevs[v].likes = (vRevs[v].likes || 0) + 1;
+          likes = vRevs[v].likes;
+          break;
+        }
+      }
+      localDb.saveReviews(vRevs);
+      return { ok: true, likes: likes };
+    }
+    if (endpoint === "/api/reviews/delete") {
+      var dRevs = localDb.getReviews();
+      dRevs = dRevs.filter(function(x) { return x.id !== data.reviewId; });
+      localDb.saveReviews(dRevs);
+      return { ok: true, summary: localDb.calcSummary(dRevs) };
+    }
+    if (endpoint === "/api/lab/reset") {
+      store.removeItem("ri_lab_users_db");
+      store.removeItem("ri_lab_reviews_db");
+      return { ok: true, message: "Storage reset" };
+    }
+    return { ok: true };
+  }
+
   var labState = {
     user: null,
     token: null,
@@ -723,35 +960,13 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   } catch (e) {}
 
-  // Initialize Auth state from Server
-  var initialToken = getStoredToken();
-  if (initialToken) {
-    fetch(API_BASE + "/api/auth/me", {
-      headers: { "Authorization": "Bearer " + initialToken }
-    })
-      .then(function(r) { return r.json(); })
-      .then(function(data) {
-        if (data.ok && data.user) {
-          saveSession(data.user, initialToken);
-        } else {
-          saveSession(null, null);
-        }
-      })
-      .catch(function() {
-        // Offline / fallback to localStorage
-        updateNavUI();
-      });
-  } else {
-    updateNavUI();
-  }
-
   // Check Database connection status
-  fetch(API_BASE + "/api/status")
-    .then(function(r) { return r.json(); })
+  callApi("/api/status")
     .then(function(data) {
       var statusBadge = document.getElementById("labDbStatus");
       if (statusBadge && data.ok) {
-        statusBadge.innerHTML = '<span class="status-dot-pulse"></span> Persistent DB Online (' + data.users_count + ' users, ' + data.reviews_count + ' reviews)';
+        var modeStr = data.storage.indexOf("Browser") !== -1 ? "Storage Active" : "Persistent DB Online";
+        statusBadge.innerHTML = '<span class="status-dot-pulse"></span> ' + modeStr + ' (' + data.users_count + ' users, ' + data.reviews_count + ' reviews)';
       }
     })
     .catch(function() {});
@@ -761,8 +976,7 @@ document.addEventListener("DOMContentLoaded", function () {
   if (labResetBtn) {
     labResetBtn.addEventListener("click", function() {
       if (confirm("Reset the Lab test database back to original demo seed data?")) {
-        fetch(API_BASE + "/api/lab/reset", { method: "POST" })
-          .then(function(r) { return r.json(); })
+        callApi("/api/lab/reset", "POST")
           .then(function(d) {
             showToast("Database reset to demo state.");
             loadReviews();
@@ -806,10 +1020,7 @@ document.addEventListener("DOMContentLoaded", function () {
     umpSignOutBtn.addEventListener("click", function() {
       var token = getStoredToken();
       if (token) {
-        fetch(API_BASE + "/api/auth/logout", {
-          method: "POST",
-          headers: { "Authorization": "Bearer " + token }
-        }).catch(function() {});
+        callApi("/api/auth/logout", "POST", null, token).catch(function() {});
       }
       saveSession(null, null);
       if (userMenuPopover) userMenuPopover.hidden = true;
@@ -821,7 +1032,6 @@ document.addEventListener("DOMContentLoaded", function () {
   function openAuthModal(tab) {
     if (!authModal) return;
     authModal.hidden = false;
-    // Reset to main screen
     var screenMain = document.getElementById("authScreenMain");
     var screenVerify = document.getElementById("authScreenVerify");
     if (screenMain) screenMain.hidden = false;
@@ -879,12 +1089,7 @@ document.addEventListener("DOMContentLoaded", function () {
       submitBtn.textContent = "Sending Verification Code...";
       statusEl.hidden = true;
 
-      fetch(API_BASE + "/api/auth/register-send-code", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: name, email: email, password: password })
-      })
-        .then(function(r) { return r.json(); })
+      callApi("/api/auth/register-send-code", "POST", { name: name, email: email, password: password })
         .then(function(data) {
           submitBtn.disabled = false;
           submitBtn.textContent = "Send Verification Code →";
@@ -895,7 +1100,6 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
           }
 
-          // Transition to Verification Screen
           labState.verifyEmail = email;
           labState.currentCode = data.code_hint || "";
 
@@ -1001,12 +1205,7 @@ document.addEventListener("DOMContentLoaded", function () {
     btnResendOtp.addEventListener("click", function() {
       btnResendOtp.disabled = true;
       btnResendOtp.textContent = "Resending...";
-      fetch(API_BASE + "/api/auth/resend-code", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: labState.verifyEmail })
-      })
-        .then(function(r) { return r.json(); })
+      callApi("/api/auth/resend-code", "POST", { email: labState.verifyEmail })
         .then(function(data) {
           btnResendOtp.disabled = false;
           btnResendOtp.textContent = "Resend Code";
@@ -1058,12 +1257,7 @@ document.addEventListener("DOMContentLoaded", function () {
       submitBtn.textContent = "Verifying Code...";
       statusEl.hidden = true;
 
-      fetch(API_BASE + "/api/auth/verify-code", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: labState.verifyEmail, code: code })
-      })
-        .then(function(r) { return r.json(); })
+      callApi("/api/auth/verify-code", "POST", { email: labState.verifyEmail, code: code })
         .then(function(data) {
           submitBtn.disabled = false;
           submitBtn.textContent = "Verify Code & Create Account";
@@ -1078,7 +1272,6 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
           }
 
-          // Verified!
           statusEl.hidden = false;
           statusEl.className = "auth-status success";
           statusEl.textContent = "✓ Email verified! Welcome, " + (data.user.name || "Cultivator") + "!";
@@ -1119,12 +1312,7 @@ document.addEventListener("DOMContentLoaded", function () {
       submitBtn.textContent = "Signing In...";
       statusEl.hidden = true;
 
-      fetch(API_BASE + "/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email, password: password })
-      })
-        .then(function(r) { return r.json(); })
+      callApi("/api/auth/login", "POST", { email: email, password: password })
         .then(function(data) {
           submitBtn.disabled = false;
           submitBtn.textContent = "Sign In";
@@ -1169,12 +1357,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function handleGoogleAuth(name, email, avatar) {
-    fetch(API_BASE + "/api/auth/google", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: name, email: email, avatar: avatar })
-    })
-      .then(function(r) { return r.json(); })
+    callApi("/api/auth/google", "POST", { name: name, email: email, avatar: avatar })
       .then(function(data) {
         if (googleChooserModal) googleChooserModal.hidden = true;
         if (data.ok && data.user) {
@@ -1246,7 +1429,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // Wire trigger buttons on homepage & chapters
   var writeTrigger = document.getElementById("btnWriteReviewTrigger");
   if (writeTrigger) {
     writeTrigger.addEventListener("click", function() { openReviewModal("Chapter 1"); });
@@ -1307,24 +1489,16 @@ document.addEventListener("DOMContentLoaded", function () {
       submitBtn.textContent = "Publishing Review...";
       statusEl.hidden = true;
 
-      fetch(API_BASE + "/api/reviews", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer " + (token || "")
-        },
-        body: JSON.stringify({
-          rating: labState.currentRating,
-          categories: categories,
-          title: title,
-          body: body,
-          chapter: chapter,
-          spoiler: spoiler,
-          userName: user.name,
-          userEmail: user.email
-        })
-      })
-        .then(function(r) { return r.json(); })
+      callApi("/api/reviews", "POST", {
+        rating: labState.currentRating,
+        categories: categories,
+        title: title,
+        body: body,
+        chapter: chapter,
+        spoiler: spoiler,
+        userName: user.name,
+        userEmail: user.email
+      }, token)
         .then(function(data) {
           submitBtn.disabled = false;
           submitBtn.textContent = "Publish Review";
@@ -1341,7 +1515,6 @@ document.addEventListener("DOMContentLoaded", function () {
           showToast("✓ Review published to Community Lab!");
           loadReviews();
 
-          // Scroll to review section if on homepage
           var revSec = document.getElementById("reviewsSection");
           if (revSec) {
             revSec.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -1365,12 +1538,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function loadReviews() {
     var feed = document.getElementById("reviewsFeed");
-    fetch(API_BASE + "/api/reviews")
-      .then(function(r) { return r.json(); })
+    callApi("/api/reviews")
       .then(function(data) {
-        if (!data.ok) return;
+        if (!data || !data.ok) return;
 
-        // 1. Update summary lockup
         var sum = data.summary || {};
         var sumAvgEl = document.getElementById("summaryAvg");
         var sumStarsEl = document.getElementById("summaryStars");
@@ -1380,7 +1551,6 @@ document.addEventListener("DOMContentLoaded", function () {
         if (sumStarsEl) sumStarsEl.textContent = formatStarsString(sum.avg);
         if (sumCountEl) sumCountEl.textContent = sum.count || 0;
 
-        // 2. Update category averages
         var cats = sum.categories || {};
         var elStory = document.getElementById("catStoryAvg");
         var elChars = document.getElementById("catCharsAvg");
@@ -1392,7 +1562,6 @@ document.addEventListener("DOMContentLoaded", function () {
         if (elWorld) elWorld.textContent = (cats.world || 5.0).toFixed(1) + " ★";
         if (elTrans) elTrans.textContent = (cats.translation || 5.0).toFixed(1) + " ★";
 
-        // 3. Render Reviews Feed
         if (!feed) return;
         feed.innerHTML = "";
         var list = data.reviews || [];
@@ -1464,16 +1633,10 @@ document.addEventListener("DOMContentLoaded", function () {
             '  </div>' +
             '</div>';
 
-          // Upvote handler
           var voteBtn = card.querySelector(".btn-rev-vote");
           if (voteBtn) {
             voteBtn.addEventListener("click", function() {
-              fetch(API_BASE + "/api/reviews/vote", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ reviewId: rev.id })
-              })
-                .then(function(r) { return r.json(); })
+              callApi("/api/reviews/vote", "POST", { reviewId: rev.id })
                 .then(function(d) {
                   if (d.ok) {
                     voteBtn.classList.add("voted");
@@ -1483,16 +1646,11 @@ document.addEventListener("DOMContentLoaded", function () {
             });
           }
 
-          // Delete handler
           var delBtn = card.querySelector(".btn-rev-del");
           if (delBtn) {
             delBtn.addEventListener("click", function() {
               if (confirm("Delete your review?")) {
-                fetch(API_BASE + "/api/reviews/delete", {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ reviewId: rev.id })
-                })
+                callApi("/api/reviews/delete", "POST", { reviewId: rev.id })
                   .then(function() {
                     showToast("Review deleted.");
                     loadReviews();
@@ -1544,7 +1702,7 @@ document.addEventListener("DOMContentLoaded", function () {
         '  <p class="wiki-modal-desc">The character codex and 3D world are currently being refined. They will unlock as more chapters are published.</p>' +
         '  <div class="wiki-modal-actions">' +
         '    <button type="button" class="btn btn-primary wiki-modal-dismiss">Got it</button>' +
-        '    <a class="btn btn-ghost" href="/chapter-1">Read Chapter 1 &rarr;</a>' +
+        '    <a class="btn btn-ghost" href="chapter-1">Read Chapter 1 &rarr;</a>' +
         '  </div>' +
         '</div>';
       document.body.appendChild(modal);

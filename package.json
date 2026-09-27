@@ -1,0 +1,9 @@
+{
+  "name": "reverend-insanity-lab",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Reverend Insanity Community Test Lab",
+  "scripts": {
+    "build": "echo 'Static site ready for Vercel'"
+  }
+}

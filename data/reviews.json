@@ -1,0 +1,90 @@
+[
+  {
+    "id": "rev_2df64a82",
+    "userId": "usr_85f32be1",
+    "userName": "SpectralCultivator",
+    "userAvatar": "S",
+    "userEmail": "tester@guworld.org",
+    "userProvider": "email",
+    "verified": true,
+    "rating": 5.0,
+    "categories": {
+      "story": 5.0,
+      "characters": 5.0,
+      "world": 5.0,
+      "translation": 5.0
+    },
+    "title": "Unrivaled philosophical depth in modern web fiction",
+    "body": "The way Fang Yuan navigates Gu Yue Village with 500 years of demonic wisdom makes every interaction thrilling.",
+    "chapter": "Chapter 3",
+    "spoiler": false,
+    "likes": 1,
+    "createdAt": "2026-09-27T08:50:29Z"
+  },
+  {
+    "id": "rev_01",
+    "userId": "usr_01",
+    "userName": "Heaven Refining",
+    "userAvatar": "H",
+    "userEmail": "venerable@gmail.com",
+    "userProvider": "google",
+    "verified": true,
+    "rating": 5.0,
+    "categories": {
+      "story": 5.0,
+      "characters": 5.0,
+      "world": 5.0,
+      "translation": 5.0
+    },
+    "title": "A masterwork of ruthless philosophy and perseverance",
+    "body": "Fang Yuan is one of the most logically consistent and compelling protagonists in fiction. The world building around Gu worms, primeval essence, and clan politics is layered and unyielding. The Omniarch translation is remarkably crisp and elevates the prose.",
+    "chapter": "Chapter 3",
+    "spoiler": false,
+    "likes": 42,
+    "createdAt": "2026-09-20T10:14:00Z"
+  },
+  {
+    "id": "rev_02",
+    "userId": "usr_02",
+    "userName": "Bai Ning Bing",
+    "userAvatar": "B",
+    "userEmail": "icemuscle@qingmao.net",
+    "userProvider": "email",
+    "verified": true,
+    "rating": 5.0,
+    "categories": {
+      "story": 5.0,
+      "characters": 5.0,
+      "world": 5.0,
+      "translation": 4.8
+    },
+    "title": "Uncompromising cultivation and zero plot armor",
+    "body": "The early chapters at Qing Mao Mountain do a phenomenal job setting up the stakes. Fang Yuan's cold composure during the Awakening ceremony is chilling yet utterly pragmatic.",
+    "chapter": "Chapter 2",
+    "spoiler": false,
+    "likes": 28,
+    "createdAt": "2026-09-22T14:40:00Z"
+  },
+  {
+    "id": "rev_03",
+    "userId": "usr_03",
+    "userName": "Gu Yue Mo Chen",
+    "userAvatar": "G",
+    "userEmail": "mochen@guyue.clan",
+    "userProvider": "email",
+    "verified": true,
+    "rating": 4.8,
+    "categories": {
+      "story": 5.0,
+      "characters": 4.6,
+      "world": 5.0,
+      "translation": 4.8
+    },
+    "title": "Clan politics and Gu cultivation done right",
+    "body": "The tension between the Mo and Chi factions adds tremendous texture to Gu Yue Village. The translation captures the formal hierarchy and subtle disrespect with pinpoint precision.",
+    "chapter": "Chapter 1",
+    "spoiler": true,
+    "likes": 15,
+    "createdAt": "2026-09-24T18:22:00Z"
+  }
+]

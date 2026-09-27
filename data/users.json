@@ -1,0 +1,22 @@
+[
+  {
+    "id": "usr_01",
+    "name": "Heaven Refining",
+    "email": "venerable@gmail.com",
+    "password_hash": "ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f",
+    "provider": "google",
+    "emailVerified": true,
+    "createdAt": "2026-09-01T12:00:00Z",
+    "avatarBg": "#b8860b"
+  },
+  {
+    "id": "usr_02",
+    "name": "Bai Ning Bing",
+    "email": "icemuscle@qingmao.net",
+    "password_hash": "ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f",
+    "provider": "email",
+    "emailVerified": true,
+    "createdAt": "2026-09-10T15:30:00Z",
+    "avatarBg": "#4a7a96"
+  }
+]
