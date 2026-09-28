@@ -8778,3 +8778,15 @@ a.btn.btn-primary.btn-resumed:hover {
     padding: 6px 9px;
   }
 }
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+.user-nav-wrap {
+  display: flex;
+  align-items: center;
+  margin-left: 2px;
+}
