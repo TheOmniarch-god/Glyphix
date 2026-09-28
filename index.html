@@ -535,39 +535,6 @@
         <button type="button" class="wn-link-btn" id="authSwitchBtn">Create account</button>
       </div>
     </div>
-
-    <!-- View 3: 6-Digit OTP Email Verification Screen -->
-    <div id="authViewVerify" class="wn-auth-view" style="display: none;">
-      <div class="wn-auth-nav-top">
-        <button type="button" class="btn-back-nav" id="btnVerifyBack" aria-label="Go back">&larr; Back</button>
-        <span class="wn-auth-mode-label">Verify Your Email</span>
-      </div>
-
-      <div class="wn-verify-intro">
-        <p class="auth-sub" style="margin-bottom: 6px;">We sent a 6-digit verification code to:</p>
-        <p class="wn-verify-email text-gold" id="verifyTargetEmail">reader@example.com</p>
-        <div class="wn-code-pill" id="verifyCodeHintBox">
-          <span class="wn-code-pill-label">Dispatch Code:</span>
-          <span class="wn-code-pill-val" id="verifyCodeHint">123456</span>
-          <button type="button" class="wn-copy-code-btn" id="btnAutoFillCode">Auto-fill</button>
-        </div>
-      </div>
-
-      <form class="wn-form" id="verifyCodeForm">
-        <div class="auth-field">
-          <label for="otpCodeInput" class="auth-label">6-Digit Verification Code</label>
-          <input type="text" id="otpCodeInput" class="auth-input otp-input" placeholder="&bull; &bull; &bull; &bull; &bull; &bull;" maxlength="6" pattern="[0-9]{6}" inputmode="numeric" required autocomplete="one-time-code">
-        </div>
-        <button type="submit" class="btn btn-primary auth-submit-btn" id="verifySubmitBtn">Verify &amp; Activate Account</button>
-        <p class="auth-status" id="verifyStatus" hidden></p>
-      </form>
-
-      <div class="wn-auth-switch">
-        <span id="resendCountdown">Didn't receive code?</span>
-        <button type="button" class="wn-link-btn" id="btnResendOtp">Resend code</button>
-      </div>
-    </div>
-
   </div>
 </div>
 

@@ -231,6 +231,53 @@ class LabRequestHandler(http.server.SimpleHTTPRequestHandler):
         except Exception as e:
             sys.stderr.write(f"Parse error: {e}\n")
 
+        # 1. DIRECT READER ACCOUNT REGISTRATION
+        if self.path == "/api/auth/register-direct" or self.path == "/api/auth/register":
+            email = body.get("email", "").strip().lower()
+            name = body.get("name", "").strip() or (email.split("@")[0] if email else "Reader")
+            password = body.get("password", "").strip()
+
+            if not email or "@" not in email:
+                self.send_json({"ok": False, "error": "Valid email address required."}, status=400)
+                return
+            if len(password) < 6:
+                self.send_json({"ok": False, "error": "Password must be at least 6 characters."}, status=400)
+                return
+
+            users = read_json(USERS_FILE, [])
+            for u in users:
+                if u.get("email") == email:
+                    self.send_json({"ok": False, "error": "An account with this email already exists. Please Sign In."}, status=400)
+                    return
+
+            user_id = f"usr_{uuid.uuid4().hex[:8]}"
+            user = {
+                "id": user_id,
+                "name": name,
+                "email": email,
+                "password_hash": hash_pw(password),
+                "provider": "email",
+                "emailVerified": True,
+                "createdAt": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                "avatarBg": random.choice(["#b8860b", "#4a7a96", "#7c5295", "#8c6239", "#2e7d32", "#c0392b"])
+            }
+            users.append(user)
+            write_json(USERS_FILE, users)
+
+            token = f"tok_{uuid.uuid4().hex}"
+            sessions = read_json(SESSIONS_FILE, {})
+            sessions[token] = user_id
+            write_json(SESSIONS_FILE, sessions)
+
+            safe_user = {k: v for k, v in user.items() if k != "password_hash"}
+            self.send_json({
+                "ok": True,
+                "message": f"Welcome to Reverend Insanity, {name}!",
+                "user": safe_user,
+                "token": token
+            })
+            return
+
         # 1. SEND VERIFICATION CODE (Sign-up step 1)
         if self.path == "/api/auth/register-send-code":
             email = body.get("email", "").strip().lower()
@@ -492,9 +539,9 @@ class LabRequestHandler(http.server.SimpleHTTPRequestHandler):
                     if r.get("userEmail") and r.get("userEmail").lower() == user_email.lower():
                         existing_rev = r
                         break
-            if not existing_rev and user_name:
+            if not existing_rev and user_id:
                 for r in reviews:
-                    if r.get("userName") and r.get("userName").lower() == user_name.lower():
+                    if r.get("userId") and r.get("userId") == user_id:
                         existing_rev = r
                         break
 

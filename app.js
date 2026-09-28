@@ -607,32 +607,10 @@ document.addEventListener("DOMContentLoaded", function () {
         if (r) return JSON.parse(r);
       } catch (e) {}
       var initial = [
-        {
-          id: "rev_3a78bfb9",
-          userId: "usr_guest_03d3e6",
-          user: "The Omniarch",
-          userName: "The Omniarch",
-          userAvatar: "",
-          userEmail: "theomniarch6@gmail.com",
-          userProvider: "google",
-          verified: true,
-          overall: 5,
-          rating: 5.0,
-          categories: { writing: 5.0, story: 5.0, characters: 5.0, stability: 5.0, world: 5.0 },
-          title: "Unrivaled philosophical depth",
-          text: "The schemes and perseverance in this translation are transcendent.",
-          body: "The schemes and perseverance in this translation are transcendent.",
-          chapter: "Novel Review",
-          spoilers: false,
-          spoiler: false,
-          helpful: 0,
-          likes: 0,
-          date: "Just now",
-          createdAt: "2026-09-27T20:07:45Z"
-        },
-        { id: "usr_01", name: "Heaven Refining", email: "venerable@gmail.com", emailVerified: true, avatarBg: "#b8860b", provider: "google" },
-        { id: "usr_02", name: "Bai Ning Bing", email: "icemuscle@qingmao.net", emailVerified: true, avatarBg: "#4a7a96", provider: "email" },
-        { id: "usr_03", name: "Gu Yue Mo Chen", email: "mochen@guyue.clan", emailVerified: true, avatarBg: "#734d26", provider: "email" }
+        { id: "usr_omniarch", name: "The Omniarch", email: "theomniarch6@gmail.com", provider: "google" },
+        { id: "usr_01", name: "Heaven Refining", email: "venerable@gmail.com", provider: "google" },
+        { id: "usr_02", name: "Bai Ning Bing", email: "icemuscle@qingmao.net", provider: "email" },
+        { id: "usr_03", name: "Gu Yue Mo Chen", email: "mochen@guyue.clan", provider: "email" }
       ];
       store.setItem("ri_lab_users_db", JSON.stringify(initial));
       return initial;
@@ -1034,41 +1012,32 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function syncUserReviewWithAccount(user) {
-    if (!user) return;
-    var avatarUrl = user.avatar || "";
-    var realName = user.name || "Reader";
-    var userEmail = user.email || "";
-
+    if (!user || !user.email) return;
     try {
       var revs = localDb.getReviews();
       var myRev = findMyReview(revs, user);
       if (myRev) {
         var changed = false;
-        if (avatarUrl && myRev.userAvatar !== avatarUrl) {
-          myRev.userAvatar = avatarUrl;
+        if (user.avatar && myRev.userAvatar !== user.avatar) {
+          myRev.userAvatar = user.avatar;
           changed = true;
         }
-        if (realName && myRev.userName !== realName) {
-          myRev.userName = realName;
-          myRev.user = realName;
-          changed = true;
-        }
-        if (userEmail && myRev.userEmail !== userEmail) {
-          myRev.userEmail = userEmail;
+        if (user.name && myRev.userName !== user.name) {
+          myRev.userName = user.name;
+          myRev.user = user.name;
           changed = true;
         }
         if (changed) {
           localDb.saveReviews(revs);
-          store.setItem("ri_my_review_id", myRev.id);
           callApi("/api/reviews", "POST", {
             reviewId: myRev.id,
-            userAvatar: avatarUrl,
-            userName: realName,
-            userEmail: userEmail
+            userAvatar: user.avatar,
+            userName: user.name,
+            userEmail: user.email
           }).catch(function() {});
         }
       }
-    } catch(e) {}
+    } catch (e) {}
   }
 
   if (supabaseClient) {
@@ -1265,8 +1234,6 @@ function getStoredToken() {
 
     var viewGateway = document.getElementById("authViewGateway");
     var viewEmail = document.getElementById("authViewEmail");
-    var viewVerify = document.getElementById("authViewVerify");
-    if (viewVerify) viewVerify.style.display = "none";
 
     if (mode === "email-signup" || mode === "signup") {
       if (viewGateway) viewGateway.style.display = "none";
@@ -1516,23 +1483,32 @@ function getStoredToken() {
       }
 
       function handleSignInFailure(errorMsg) {
-        // Fallback: check localDb users
+        // Direct fallback: check local accounts
         try {
           var users = localDb.getUsers();
           var matched = users.find(function(u) {
             return u.email && u.email.toLowerCase() === email;
           });
-          if (matched && (!matched.password || matched.password === password)) {
-            var localUser = {
-              id: matched.id || ("usr_" + Math.random().toString(36).substring(2, 8)),
-              name: matched.name || (email.split("@")[0]),
-              email: matched.email,
-              avatar: matched.avatar || "",
-              provider: "email",
-              userLevel: "Verified"
-            };
-            handleSuccessfulLogin(localUser, "tok_" + localUser.id);
-            return;
+          if (matched) {
+            if (!matched.password || matched.password === password) {
+              var localUser = {
+                id: matched.id || ("usr_" + Math.random().toString(36).substring(2, 8)),
+                name: matched.name || (email.split("@")[0]),
+                email: matched.email,
+                avatar: matched.avatar || "",
+                provider: "email"
+              };
+              handleSuccessfulLogin(localUser, "tok_" + localUser.id);
+              return;
+            } else {
+              if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = "Sign In"; }
+              if (statusEl) {
+                statusEl.textContent = "Incorrect password. Please try again.";
+                statusEl.hidden = false;
+                statusEl.style.display = "block";
+              }
+              return;
+            }
           }
         } catch (e) {}
 
@@ -1590,7 +1566,7 @@ function getStoredToken() {
     });
   }
 
-  // Sign Up Form submission (Transitions to OTP Verification)
+  // Direct Reader Account Registration (Instant, Honest, Real)
   var signUpForm = document.getElementById("signUpForm");
   if (signUpForm) {
     signUpForm.addEventListener("submit", function(e) {
@@ -1606,155 +1582,57 @@ function getStoredToken() {
 
       if (!name || !email || !password) return;
 
+      if (statusEl) {
+        statusEl.hidden = true;
+        statusEl.style.display = "none";
+      }
       if (submitBtn) {
         submitBtn.disabled = true;
-        submitBtn.textContent = "Sending Code...";
+        submitBtn.textContent = "Creating Account...";
       }
 
-      var generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
-      labState.pendingSignup = {
+      var newUserId = "usr_" + Math.random().toString(36).substring(2, 10);
+      var newUser = {
+        id: newUserId,
         name: name,
         email: email,
         password: password,
-        code: generatedOtp
-      };
-
-      // Call API or local handler
-      callApi("/api/auth/register-send-code", "POST", { name: name, email: email, password: password })
-        .catch(function() {})
-        .then(function(res) {
-          if (submitBtn) {
-            submitBtn.disabled = false;
-            submitBtn.textContent = "Create Account";
-          }
-
-          var codeToShow = (res && res.code_hint) ? res.code_hint : generatedOtp;
-          labState.pendingSignup.code = codeToShow;
-
-          // Transition to OTP verification screen
-          var viewEmail = document.getElementById("authViewEmail");
-          var viewVerify = document.getElementById("authViewVerify");
-          var targetEmailEl = document.getElementById("verifyTargetEmail");
-          var codeHintEl = document.getElementById("verifyCodeHint");
-
-          if (viewEmail) viewEmail.style.display = "none";
-          if (viewVerify) viewVerify.style.display = "block";
-          if (targetEmailEl) targetEmailEl.textContent = email;
-          if (codeHintEl) codeHintEl.textContent = codeToShow;
-
-          showToast("📧 Verification code sent to " + email);
-        });
-    });
-  }
-
-  // ── OTP Code Verification Screen Handlers ──
-  var btnVerifyBack = document.getElementById("btnVerifyBack");
-  if (btnVerifyBack) {
-    btnVerifyBack.addEventListener("click", function(e) {
-      e.preventDefault();
-      var viewEmail = document.getElementById("authViewEmail");
-      var viewVerify = document.getElementById("authViewVerify");
-      if (viewVerify) viewVerify.style.display = "none";
-      if (viewEmail) viewEmail.style.display = "block";
-    });
-  }
-
-  var btnAutoFillCode = document.getElementById("btnAutoFillCode");
-  if (btnAutoFillCode) {
-    btnAutoFillCode.addEventListener("click", function(e) {
-      e.preventDefault();
-      var hint = document.getElementById("verifyCodeHint");
-      var inp = document.getElementById("otpCodeInput");
-      if (hint && inp) {
-        inp.value = hint.textContent.trim();
-        inp.focus();
-      }
-    });
-  }
-
-  var btnResendOtp = document.getElementById("btnResendOtp");
-  if (btnResendOtp) {
-    btnResendOtp.addEventListener("click", function(e) {
-      e.preventDefault();
-      var newOtp = Math.floor(100000 + Math.random() * 900000).toString();
-      if (labState.pendingSignup) labState.pendingSignup.code = newOtp;
-      var hint = document.getElementById("verifyCodeHint");
-      if (hint) hint.textContent = newOtp;
-      showToast("📧 Fresh verification code generated!");
-    });
-  }
-
-  var verifyCodeForm = document.getElementById("verifyCodeForm");
-  if (verifyCodeForm) {
-    verifyCodeForm.addEventListener("submit", function(e) {
-      e.preventDefault();
-      var codeInp = document.getElementById("otpCodeInput");
-      var submittedCode = codeInp ? codeInp.value.trim() : "";
-      var submitBtn = document.getElementById("verifySubmitBtn");
-      var statusEl = document.getElementById("verifyStatus");
-
-      if (!submittedCode) return;
-
-      var pending = labState.pendingSignup || {};
-      if (submittedCode !== pending.code && submittedCode !== "123456") {
-        if (statusEl) {
-          statusEl.hidden = false;
-          statusEl.className = "auth-status error";
-          statusEl.textContent = "Incorrect verification code. Please check and try again.";
-        }
-        return;
-      }
-
-      if (submitBtn) {
-        submitBtn.disabled = true;
-        submitBtn.textContent = "Verifying...";
-      }
-
-      var verifiedUser = {
-        id: "usr_" + Math.random().toString(36).substring(2, 8),
-        name: pending.name || "Reader",
-        email: pending.email,
-        emailVerified: true,
-        userLevel: "Verified",
-        avatarBg: "#b8860b",
+        avatar: "",
         provider: "email"
       };
 
+      // 1. Save in localDb
       try {
-        var existingUsers = localDb.getUsers();
-        var existingIdx = existingUsers.findIndex(function(u) { return u.email === pending.email; });
-        var record = {
-          id: verifiedUser.id,
-          name: verifiedUser.name,
-          email: verifiedUser.email,
-          password: pending.password,
-          emailVerified: true,
-          provider: "email"
-        };
+        var users = localDb.getUsers();
+        var existingIdx = users.findIndex(function(u) { return u.email && u.email.toLowerCase() === email; });
         if (existingIdx !== -1) {
-          existingUsers[existingIdx] = record;
+          users[existingIdx] = newUser;
         } else {
-          existingUsers.push(record);
+          users.push(newUser);
         }
-        localDb.saveUsers(existingUsers);
+        localDb.saveUsers(users);
       } catch (e) {}
 
-      // Also register in Supabase if client is ready
-      if (supabaseClient && pending.email && pending.password) {
+      // 2. Register in Supabase Auth (for cloud persistence)
+      if (supabaseClient) {
         supabaseClient.auth.signUp({
-          email: pending.email,
-          password: pending.password,
-          options: { data: { full_name: pending.name, name: pending.name } }
+          email: email,
+          password: password,
+          options: { data: { full_name: name, name: name } }
         }).catch(function() {});
       }
 
-      saveSession(verifiedUser, "tok_" + verifiedUser.id);
+      // 3. Immediately activate and log in this reader
+      saveSession(newUser, "tok_" + newUserId);
+
       if (submitBtn) {
         submitBtn.disabled = false;
-        submitBtn.textContent = "Verify & Activate Account";
+        submitBtn.textContent = "Create Account";
       }
+
       closeAuthModal();
-      showToast("✓ Account verified! Welcome, " + verifiedUser.name + "!");
+      showToast("✓ Welcome to Reverend Insanity, " + name + "!");
+
       if (labState.pendingReviewTriggered) {
         labState.pendingReviewTriggered = false;
         openReviewModal(labState.pendingChapter);
@@ -1765,7 +1643,10 @@ function getStoredToken() {
   // ── User Sign Out & Profile Modal Handlers ──
   function performSignOut(e) {
     if (e) { e.preventDefault(); e.stopPropagation(); }
+    labState.userReview = null;
+    labState.editingReviewId = null;
     saveSession(null, null);
+    try { store.removeItem("ri_my_review_id"); } catch (err) {}
     if (supabaseClient) {
       try { supabaseClient.auth.signOut().catch(function() {}); } catch (err) {}
     }
@@ -1839,28 +1720,25 @@ function getStoredToken() {
 
   // ── Webnovel Review Modal ─────────────────────────────────────────────
     // Helper to find the current user's review
+  // Strict review finder: ONLY matches authenticated user's email or user ID. Never leaks.
   function findMyReview(revList, user) {
-    if (!revList || revList.length === 0) return null;
-    var myRevId = store.getItem("ri_my_review_id");
-    if (myRevId) {
-      var byId = revList.find(function(r) { return r.id === myRevId; });
-      if (byId) return byId;
-    }
-    if (!user) return null;
-    var uEmail = (user.email || "").toLowerCase();
-    var uName = (user.name || "").toLowerCase();
+    if (!user || !user.email || !revList || revList.length === 0) return null;
+    var uEmail = (user.email || "").trim().toLowerCase();
+    var uId = user.id || "";
 
-    return revList.find(function(r) {
-      var rEmail = (r.userEmail || "").toLowerCase();
-      var rName = (r.userName || r.user || "").toLowerCase();
+    for (var i = 0; i < revList.length; i++) {
+      var r = revList[i];
+      var rEmail = (r.userEmail || "").trim().toLowerCase();
       var rId = r.userId || "";
 
-      if (uEmail && rEmail && rEmail === uEmail) return true;
-      if (uName && rName && rName === uName) return true;
-      if (user.id && rId && rId === user.id) return true;
-      if (uName.indexOf("omniarch") !== -1 && (rName.indexOf("omniarch") !== -1 || r.id === "rev_3a78bfb9")) return true;
-      return false;
-    });
+      if (uEmail && rEmail && rEmail === uEmail) {
+        return r;
+      }
+      if (uId && rId && rId === uId) {
+        return r;
+      }
+    }
+    return null;
   }
 
   function openReviewModal(chapter) {
@@ -1884,8 +1762,10 @@ function getStoredToken() {
     var statusEl = document.getElementById("reviewStatus");
     if (statusEl) statusEl.hidden = true;
 
-    // Check if user already published a review
-    var myRev = labState.userReview || null;
+    // Strict user review resolution: NEVER use stale state from another user
+    var currentRevs = localDb.getReviews();
+    var myRev = findMyReview(currentRevs, user);
+    labState.userReview = myRev;
     var titleInp = document.getElementById("reviewTitle");
     var bodyInp = document.getElementById("reviewBody");
     var spoilerCheck = document.getElementById("reviewSpoilerCheck");
@@ -2003,6 +1883,7 @@ function getStoredToken() {
         chapter: "Novel Review",
         spoiler: spoiler,
         spoilers: spoiler,
+        userId: user.id || "",
         userName: user.name || "Reader",
         userEmail: user.email || "",
         userAvatar: user.avatar || ""
@@ -2250,11 +2131,15 @@ function getStoredToken() {
     allReviewsScrollList.innerHTML = "";
 
     (revList || []).forEach(function(rev) {
-      var isMyRev = currentUser && (
-        (rev.userEmail && currentUser.email && rev.userEmail === currentUser.email) ||
-        (rev.userName && currentUser.name && rev.userName === currentUser.name) ||
-        (rev.userId && currentUser.id && rev.userId === currentUser.id)
-      );
+      var isMyRev = false;
+      if (currentUser && currentUser.email) {
+        var ce = currentUser.email.trim().toLowerCase();
+        var re = (rev.userEmail || "").trim().toLowerCase();
+        var ci = currentUser.id || "";
+        var ri = rev.userId || "";
+        if (ce && re && ce === re) isMyRev = true;
+        else if (ci && ri && ci === ri) isMyRev = true;
+      }
       allReviewsScrollList.appendChild(createReviewCard(rev, isMyRev));
     });
 
@@ -2351,11 +2236,15 @@ function getStoredToken() {
         var subset = revList.slice(0, visibleLimit);
 
         subset.forEach(function(rev) {
-          var isMy = currentUser && (
-            (rev.userEmail && currentUser.email && rev.userEmail === currentUser.email) ||
-            (rev.userName && currentUser.name && rev.userName === currentUser.name) ||
-            (rev.userId && currentUser.id && rev.userId === currentUser.id)
-          );
+          var isMy = false;
+          if (currentUser && currentUser.email) {
+            var ce = currentUser.email.trim().toLowerCase();
+            var re = (rev.userEmail || "").trim().toLowerCase();
+            var ci = currentUser.id || "";
+            var ri = rev.userId || "";
+            if (ce && re && ce === re) isMy = true;
+            else if (ci && ri && ci === ri) isMy = true;
+          }
           listEl.appendChild(createReviewCard(rev, isMy));
         });
 
