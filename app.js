@@ -1228,19 +1228,28 @@ function getStoredToken() {
 
   updateHeaderUI();
 
-  // Toast notification helper
+  // Toast notification helper (Proper floating glassmorphic pill)
   function showToast(msg) {
     var toast = document.getElementById("labToast");
     if (!toast) {
       toast = document.createElement("div");
       toast.id = "labToast";
       toast.className = "status-toast";
-      toast.innerHTML = '<span class="toast-icon">✨</span><span class="toast-msg"></span>';
+      toast.innerHTML = '<span class="toast-icon">✨</span><span class="toast-msg"></span><button type="button" class="toast-close-btn" aria-label="Dismiss">&times;</button>';
       document.body.appendChild(toast);
+      var closeBtn = toast.querySelector(".toast-close-btn");
+      if (closeBtn) {
+        closeBtn.addEventListener("click", function() {
+          toast.classList.remove("visible");
+        });
+      }
     }
     toast.querySelector(".toast-msg").textContent = msg;
     toast.classList.add("visible");
-    setTimeout(function() { toast.classList.remove("visible"); }, 3800);
+    if (window._toastTimer) clearTimeout(window._toastTimer);
+    window._toastTimer = setTimeout(function() {
+      toast.classList.remove("visible");
+    }, 3200);
   }
 
   // ── Auth Modal & Navigation Triggers ──────────────────────────────────
@@ -1469,33 +1478,82 @@ function getStoredToken() {
     });
   }
 
-  // Sign In Form submission (Supabase + Local fallback)
+  // Sign In Form submission (Supabase + Local fallback + clear in-form feedback)
   var signInForm = document.getElementById("signInForm");
   if (signInForm) {
     signInForm.addEventListener("submit", function(e) {
       e.preventDefault();
       var emailInp = document.getElementById("signInEmail");
       var passInp = document.getElementById("signInPassword");
-      var email = emailInp ? emailInp.value.trim() : "";
+      var email = emailInp ? emailInp.value.trim().toLowerCase() : "";
       var password = passInp ? passInp.value : "";
       var submitBtn = document.getElementById("signInSubmitBtn");
+      var statusEl = document.getElementById("signInStatus");
 
       if (!email || !password) return;
 
+      if (statusEl) {
+        statusEl.hidden = true;
+        statusEl.style.display = "none";
+      }
       if (submitBtn) {
         submitBtn.disabled = true;
         submitBtn.textContent = "Signing In...";
       }
 
+      function handleSuccessfulLogin(userObj, token) {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = "Sign In";
+        }
+        saveSession(userObj, token);
+        closeAuthModal();
+        showToast("✓ Welcome back, " + userObj.name + "!");
+        if (labState.pendingReviewTriggered) {
+          labState.pendingReviewTriggered = false;
+          openReviewModal(labState.pendingChapter);
+        }
+      }
+
+      function handleSignInFailure(errorMsg) {
+        // Fallback: check localDb users
+        try {
+          var users = localDb.getUsers();
+          var matched = users.find(function(u) {
+            return u.email && u.email.toLowerCase() === email;
+          });
+          if (matched && (!matched.password || matched.password === password)) {
+            var localUser = {
+              id: matched.id || ("usr_" + Math.random().toString(36).substring(2, 8)),
+              name: matched.name || (email.split("@")[0]),
+              email: matched.email,
+              avatar: matched.avatar || "",
+              provider: "email",
+              userLevel: "Verified"
+            };
+            handleSuccessfulLogin(localUser, "tok_" + localUser.id);
+            return;
+          }
+        } catch (e) {}
+
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = "Sign In";
+        }
+        if (statusEl) {
+          statusEl.textContent = errorMsg || "Invalid email or password. Need an account? Click Create Account below.";
+          statusEl.hidden = false;
+          statusEl.style.display = "block";
+        } else {
+          showToast("⚠️ " + (errorMsg || "Invalid email or password."));
+        }
+      }
+
       if (supabaseClient) {
         supabaseClient.auth.signInWithPassword({ email: email, password: password })
           .then(function(res) {
-            if (submitBtn) {
-              submitBtn.disabled = false;
-              submitBtn.textContent = "Sign In";
-            }
             if (res.error) {
-              showToast("⚠️ " + res.error.message);
+              handleSignInFailure(res.error.message);
               return;
             }
             var u = res.data.user;
@@ -1509,51 +1567,25 @@ function getStoredToken() {
               provider: "email",
               userLevel: "Verified"
             };
-            saveSession(userObj, res.data.session ? res.data.session.access_token : ("tok_" + u.id));
-            closeAuthModal();
-            showToast("✓ Welcome back, " + realName + "!");
-            if (labState.pendingReviewTriggered) {
-              labState.pendingReviewTriggered = false;
-              openReviewModal(labState.pendingChapter);
-            }
+            handleSuccessfulLogin(userObj, res.data.session ? res.data.session.access_token : ("tok_" + u.id));
           })
           .catch(function(err) {
-            if (submitBtn) {
-              submitBtn.disabled = false;
-              submitBtn.textContent = "Sign In";
-            }
-            showToast("⚠️ Sign in error: " + (err.message || err));
+            handleSignInFailure(err.message || "Authentication failed.");
           });
         return;
       }
 
-      var uName = email.split("@")[0] || "Reader";
-      uName = uName.charAt(0).toUpperCase() + uName.slice(1);
-
-      var loggedUser = {
-        id: "usr_" + Math.random().toString(36).substring(2, 8),
-        name: uName,
-        email: email,
-        emailVerified: true,
-        userLevel: "Verified",
-        avatarBg: "#b8860b",
-        provider: "email"
-      };
-
+      // Offline / API fallback
       callApi("/api/auth/login", "POST", { email: email, password: password })
-        .catch(function() {})
-        .then(function() {
-          saveSession(loggedUser, "tok_" + loggedUser.id);
-          if (submitBtn) {
-            submitBtn.disabled = false;
-            submitBtn.textContent = "Sign In";
+        .then(function(res) {
+          if (res && res.ok && res.user) {
+            handleSuccessfulLogin(res.user, res.token || ("tok_" + res.user.id));
+          } else {
+            handleSignInFailure(res ? res.error : null);
           }
-          closeAuthModal();
-          showToast("✓ Welcome back, " + loggedUser.name + "!");
-          if (labState.pendingReviewTriggered) {
-            labState.pendingReviewTriggered = false;
-            openReviewModal(labState.pendingChapter);
-          }
+        })
+        .catch(function() {
+          handleSignInFailure("Invalid credentials.");
         });
     });
   }
@@ -1683,10 +1715,29 @@ function getStoredToken() {
         name: pending.name || "Reader",
         email: pending.email,
         emailVerified: true,
-        userLevel: "LV 1",
+        userLevel: "Verified",
         avatarBg: "#b8860b",
         provider: "email"
       };
+
+      try {
+        var existingUsers = localDb.getUsers();
+        var existingIdx = existingUsers.findIndex(function(u) { return u.email === pending.email; });
+        var record = {
+          id: verifiedUser.id,
+          name: verifiedUser.name,
+          email: verifiedUser.email,
+          password: pending.password,
+          emailVerified: true,
+          provider: "email"
+        };
+        if (existingIdx !== -1) {
+          existingUsers[existingIdx] = record;
+        } else {
+          existingUsers.push(record);
+        }
+        localDb.saveUsers(existingUsers);
+      } catch (e) {}
 
       // Also register in Supabase if client is ready
       if (supabaseClient && pending.email && pending.password) {
@@ -1715,6 +1766,9 @@ function getStoredToken() {
   function performSignOut(e) {
     if (e) { e.preventDefault(); e.stopPropagation(); }
     saveSession(null, null);
+    if (supabaseClient) {
+      try { supabaseClient.auth.signOut().catch(function() {}); } catch (err) {}
+    }
     if (userMenuPopover) {
       userMenuPopover.setAttribute("hidden", "");
       userMenuPopover.style.display = "none";
@@ -1724,8 +1778,11 @@ function getStoredToken() {
       pmModal.setAttribute("hidden", "");
       pmModal.style.setProperty("display", "none", "important");
     }
-    showToast("✓ Signed out.");
+    closeReaderDrawer();
+    updateHeaderUI();
+    updateDrawerUI();
     loadReviews();
+    showToast("✓ Signed out successfully.");
   }
 
   var umpSignOutBtn = document.getElementById("umpSignOutBtn");
@@ -2368,12 +2425,8 @@ function getStoredToken() {
   }
 
   if (drawerSignOutBtn) {
-    drawerSignOutBtn.addEventListener("click", function() {
-      closeReaderDrawer();
-      clearSession();
-      if (supabaseClient) supabaseClient.auth.signOut().catch(function() {});
-      updateAuthUI(null);
-      showToast("Signed out successfully.");
+    drawerSignOutBtn.addEventListener("click", function(e) {
+      performSignOut(e);
     });
   }
 
