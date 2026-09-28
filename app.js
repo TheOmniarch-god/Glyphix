@@ -768,9 +768,64 @@ document.addEventListener("DOMContentLoaded", function () {
     return isNaN(p) ? 5.0 : p;
   }
 
-  // Dual-mode API Caller: tries server API, seamlessly falls back to localDb if offline
+  // Live Supabase Cloud Database + Server API Caller
   function callApi(endpoint, method, data, token) {
     method = method || "GET";
+
+    // 1. Live Supabase PostgreSQL query for reviews if available
+    if (supabaseClient && (endpoint === "/api/reviews" || endpoint === "/api/ratings")) {
+      if (method === "GET") {
+        return supabaseClient.from("reviews").select("*").order("created_at", { ascending: false })
+          .then(function(res) {
+            if (!res.error && res.data && res.data.length > 0) {
+              var formatted = res.data.map(function(r) {
+                return {
+                  id: r.id,
+                  userId: r.user_id,
+                  userName: r.user_name,
+                  user: r.user_name,
+                  userEmail: r.user_email,
+                  userAvatar: r.user_avatar,
+                  rating: floatVal(r.rating || r.overall || 5.0),
+                  overall: parseInt(r.overall || 5, 10),
+                  title: r.title,
+                  body: r.body,
+                  text: r.body,
+                  chapter: r.chapter || "Novel Review",
+                  spoiler: !!r.spoiler,
+                  likes: r.likes || 0,
+                  helpful: r.helpful || 0,
+                  date: formatDate(r.created_at),
+                  createdAt: r.created_at
+                };
+              });
+              var summ = localDb.calcSummary(formatted);
+              return { ok: true, reviews: formatted, summary: summ };
+            }
+            throw new Error("Use local fallback");
+          })
+          .catch(function() {
+            return fallbackApiHandler(endpoint, method, data);
+          });
+      }
+      if (method === "POST" && data) {
+        var supaRow = {
+          id: data.reviewId || ("rev_" + Math.random().toString(36).substring(2, 10)),
+          user_id: data.userId || "",
+          user_name: data.userName || "Reader",
+          user_email: (data.userEmail || "").toLowerCase(),
+          user_avatar: data.userAvatar || "",
+          rating: floatVal(data.rating || 5.0),
+          overall: Math.round(floatVal(data.rating || 5.0)),
+          title: data.title || "",
+          body: data.body || data.text || "",
+          chapter: data.chapter || "Novel Review",
+          spoiler: !!(data.spoiler || data.spoilers)
+        };
+        supabaseClient.from("reviews").upsert(supaRow).catch(function(e) {});
+      }
+    }
+
     var headers = { "Content-Type": "application/json" };
     if (token) headers["Authorization"] = "Bearer " + token;
 
@@ -786,8 +841,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         return res.json();
       })
-      .catch(function(err) {
-        // Fallback simulation for offline or static hosting
+      .catch(function() {
         return fallbackApiHandler(endpoint, method, data);
       });
   }
@@ -1529,7 +1583,11 @@ function getStoredToken() {
         supabaseClient.auth.signInWithPassword({ email: email, password: password })
           .then(function(res) {
             if (res.error) {
-              handleSignInFailure(res.error.message);
+              var errMsg = res.error.message;
+              if (errMsg && errMsg.indexOf("Email not confirmed") !== -1) {
+                errMsg = "Email not confirmed in Supabase yet. Please check your inbox or turn OFF 'Confirm email' in Supabase Auth settings.";
+              }
+              handleSignInFailure(errMsg);
               return;
             }
             var u = res.data.user;
@@ -1613,26 +1671,69 @@ function getStoredToken() {
         localDb.saveUsers(users);
       } catch (e) {}
 
-      // 2. Register in Supabase Auth (for cloud persistence)
+      // First-Class Supabase Cloud Auth Registration
       if (supabaseClient) {
         supabaseClient.auth.signUp({
           email: email,
           password: password,
           options: { data: { full_name: name, name: name } }
-        }).catch(function() {});
+        }).then(function(res) {
+          if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = "Create Account"; }
+
+          if (res.error) {
+            var errText = res.error.message;
+            if (errText && errText.indexOf("rate limit") !== -1) {
+              errText = "Supabase email rate limit reached (3-4/hr). To allow unlimited instant accounts, disable 'Confirm email' in Supabase Auth settings.";
+            }
+            if (statusEl) {
+              statusEl.textContent = errText;
+              statusEl.hidden = false;
+              statusEl.style.display = "block";
+            } else {
+              showToast("⚠️ " + errText);
+            }
+            return;
+          }
+
+          var supaUser = res.data.user;
+          var token = (res.data.session && res.data.session.access_token) ? res.data.session.access_token : ("tok_" + (supaUser ? supaUser.id : newUserId));
+          var realUser = {
+            id: supaUser ? supaUser.id : newUserId,
+            name: name,
+            email: email,
+            avatar: "",
+            provider: "email",
+            userLevel: "Verified"
+          };
+
+          saveSession(realUser, token);
+          closeAuthModal();
+
+          if (res.data.session) {
+            showToast("✓ Supabase verified: Welcome to Reverend Insanity, " + name + "!");
+          } else {
+            showToast("✓ Account registered in Supabase! Welcome, " + name + "!");
+          }
+
+          if (labState.pendingReviewTriggered) {
+            labState.pendingReviewTriggered = false;
+            openReviewModal(labState.pendingChapter);
+          }
+        }).catch(function(err) {
+          if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = "Create Account"; }
+          // Offline fallback
+          saveSession(newUser, "tok_" + newUserId);
+          closeAuthModal();
+          showToast("✓ Welcome to Reverend Insanity, " + name + "!");
+        });
+        return;
       }
 
-      // 3. Immediately activate and log in this reader
+      // Offline / Static fallback
       saveSession(newUser, "tok_" + newUserId);
-
-      if (submitBtn) {
-        submitBtn.disabled = false;
-        submitBtn.textContent = "Create Account";
-      }
-
+      if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = "Create Account"; }
       closeAuthModal();
       showToast("✓ Welcome to Reverend Insanity, " + name + "!");
-
       if (labState.pendingReviewTriggered) {
         labState.pendingReviewTriggered = false;
         openReviewModal(labState.pendingChapter);
