@@ -449,95 +449,36 @@
   </div>
 </footer>
 
-<!-- ============ WEBNOVEL AUTH MODAL (OFFICIAL PASSPORT LAYOUT) ============ -->
+<!-- ============ GOOGLE AUTH MODAL (CLEAN 1-CLICK ACCESS) ============ -->
 <div class="auth-modal" id="authModal" hidden role="dialog" aria-modal="true" aria-labelledby="authModalTitle">
   <div class="auth-modal-backdrop" id="authModalBackdrop"></div>
-  <div class="auth-modal-box wn-passport-card">
+  <div class="auth-modal-box wn-passport-card" style="max-width: 420px; padding: 36px 30px; text-align: center; border: 1px solid rgba(212, 163, 71, 0.3); background: #0a0a0c; border-radius: 18px; box-shadow: 0 24px 60px rgba(0,0,0,0.85);">
     <button type="button" class="auth-modal-close" id="authModalClose" aria-label="Close dialog">&times;</button>
     
-    <!-- View 1: Main Gateway (Google / Email Options) -->
-    <div id="authViewGateway" class="wn-auth-view">
-      <div class="wn-auth-brand">
-        <img src="logo-circle.png" width="48" height="48" alt="Reverend Insanity" class="wn-brand-logo">
-        <h3 class="auth-title" id="authModalTitle">Welcome to Reverend Insanity</h3>
-        <p class="auth-sub">Sign in to sync your bookmarks, reading progress, and reviews across devices.</p>
-      </div>
-
-      <div class="wn-auth-options">
-        <!-- 1-Click Google Sign In -->
-        <button type="button" class="btn-passport btn-google" id="googleLoginBtn">
-          <svg class="google-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-            <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.66v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.15z"/>
-            <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.34 24 12 24z"/>
-            <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
-            <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
-          </svg>
-          <span>Continue with Google</span>
-        </button>
-
-        <!-- Continue with Email -->
-        <button type="button" class="btn-passport btn-email" id="btnGatewayEmail">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-          <span>Continue with Email</span>
-        </button>
-      </div>
-
-      <div class="wn-auth-footer-note">
-        <span>Don't have an account?</span>
-        <button type="button" class="wn-link-btn" id="btnGatewaySignUp">Sign up</button>
-      </div>
+    <div class="wn-auth-brand" style="margin-bottom: 24px;">
+      <img src="logo-circle.png" width="52" height="52" alt="Reverend Insanity" class="wn-brand-logo" style="margin: 0 auto 14px; display: block; border-radius: 50%; box-shadow: 0 0 20px rgba(212,163,71,0.2);">
+      <h3 class="auth-title" id="authModalTitle" style="font-size: 21px; font-weight: 700; color: var(--head, #f4ede2); margin: 0 0 8px;">Cultivator Access</h3>
+      <p class="auth-sub" style="font-size: 13.5px; line-height: 1.5; color: var(--muted, #9a958d); margin: 0;">Sign in with your Google account to post reviews, rate the translation, and sync your reading progress.</p>
     </div>
 
-    <!-- View 2: Email Sign In / Sign Up Form -->
-    <div id="authViewEmail" class="wn-auth-view" style="display: none;">
-      <div class="wn-auth-nav-top">
-        <button type="button" class="btn-back-nav" id="btnAuthBack" aria-label="Go back">← Back</button>
-        <span class="wn-auth-mode-label" id="authEmailModeLabel">Sign in with Email</span>
-      </div>
+    <div class="wn-auth-options" style="margin: 24px 0 16px;">
+      <!-- 1-Click Google Sign In Button -->
+      <button type="button" class="btn-passport btn-google" id="googleLoginBtn" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 12px; padding: 13px 20px; border-radius: 10px; font-size: 14.5px; font-weight: 600; background: #ffffff; color: #1f1f1f; border: 1px solid #d2d2d2; cursor: pointer; transition: all 0.2s ease;">
+        <svg class="google-icon" viewBox="0 0 24 24" width="19" height="19" aria-hidden="true">
+          <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.66v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.15z"/>
+          <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.34 24 12 24z"/>
+          <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
+          <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+        </svg>
+        <span>Continue with Google</span>
+      </button>
+    </div>
 
-      <!-- Sign In Form -->
-      <form class="wn-form" id="signInForm">
-        <div class="auth-field">
-          <label for="signInEmail" class="auth-label">Email</label>
-          <input type="email" id="signInEmail" class="auth-input" placeholder="name@example.com" required autocomplete="email">
-        </div>
-        <div class="auth-field">
-          <div class="auth-label-row">
-            <label for="signInPassword" class="auth-label">Password</label>
-            <button type="button" class="auth-forgot-link" id="authForgotBtn">Forgot?</button>
-          </div>
-          <input type="password" id="signInPassword" class="auth-input" placeholder="Your password" required autocomplete="current-password">
-        </div>
-        <button type="submit" class="btn btn-primary auth-submit-btn" id="signInSubmitBtn">Sign In</button>
-        <p class="auth-status" id="signInStatus" hidden></p>
-      </form>
-
-      <!-- Sign Up Form (hidden by default) -->
-      <form class="wn-form" id="signUpForm" style="display: none;">
-        <div class="auth-field">
-          <label for="signUpName" class="auth-label">Reader Name / Handle</label>
-          <input type="text" id="signUpName" class="auth-input" placeholder="e.g. FangYuanScholar" required maxlength="30" autocomplete="nickname">
-        </div>
-        <div class="auth-field">
-          <label for="signUpEmail" class="auth-label">Email</label>
-          <input type="email" id="signUpEmail" class="auth-input" placeholder="name@example.com" required autocomplete="email">
-        </div>
-        <div class="auth-field">
-          <label for="signUpPassword" class="auth-label">Password <small class="text-gold">(min. 6 chars)</small></label>
-          <input type="password" id="signUpPassword" class="auth-input" placeholder="Create password" required minlength="6" autocomplete="new-password">
-        </div>
-        <button type="submit" class="btn btn-primary auth-submit-btn" id="signUpSubmitBtn">Create Account</button>
-        <p class="auth-status" id="signUpStatus" hidden></p>
-      </form>
-
-      <div class="wn-auth-switch">
-        <span id="authSwitchPrompt">Need an account?</span>
-        <button type="button" class="wn-link-btn" id="authSwitchBtn">Create account</button>
-      </div>
+    <div class="wn-auth-footer-note" style="font-size: 11.5px; color: var(--muted, #888); margin-top: 14px;">
+      <span>1-click verified sign-in &bull; No passwords &bull; Zero spam</span>
     </div>
   </div>
 </div>
-
 
 <!-- ============ READER ACCOUNT MODAL ============ -->
 <div class="auth-modal" id="profileModal" hidden role="dialog" aria-modal="true" aria-labelledby="profileModalTitle">

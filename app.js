@@ -1275,61 +1275,22 @@ function getStoredToken() {
     }, 3200);
   }
 
-  // ── Auth Modal & Navigation Triggers ──────────────────────────────────
+  // ── 1-Click Google Auth Modal & Navigation Triggers ──────────────────
   var authTriggerBtn = document.getElementById("authTriggerBtn");
   var userMenuPopover = document.getElementById("userMenuPopover");
   var authModal = document.getElementById("authModal");
   var reviewModal = document.getElementById("reviewModal");
 
-  function openAuthModal(mode) {
+  function openAuthModal() {
     if (!authModal) return;
     authModal.removeAttribute("hidden");
     authModal.style.setProperty("display", "flex", "important");
-
-    var viewGateway = document.getElementById("authViewGateway");
-    var viewEmail = document.getElementById("authViewEmail");
-
-    if (mode === "email-signup" || mode === "signup") {
-      if (viewGateway) viewGateway.style.display = "none";
-      if (viewEmail) viewEmail.style.display = "block";
-      setAuthEmailMode("signup");
-    } else if (mode === "email-signin" || mode === "signin") {
-      if (viewGateway) viewGateway.style.display = "none";
-      if (viewEmail) viewEmail.style.display = "block";
-      setAuthEmailMode("signin");
-    } else {
-      // Default: show the Webnovel Gateway
-      if (viewGateway) viewGateway.style.display = "block";
-      if (viewEmail) viewEmail.style.display = "none";
-    }
   }
 
   function closeAuthModal() {
     if (!authModal) return;
     authModal.setAttribute("hidden", "");
     authModal.style.setProperty("display", "none", "important");
-  }
-
-  function setAuthEmailMode(mode) {
-    var formIn = document.getElementById("signInForm");
-    var formUp = document.getElementById("signUpForm");
-    var modeLabel = document.getElementById("authEmailModeLabel");
-    var switchPrompt = document.getElementById("authSwitchPrompt");
-    var switchBtn = document.getElementById("authSwitchBtn");
-
-    if (mode === "signup") {
-      if (formIn) formIn.style.display = "none";
-      if (formUp) formUp.style.display = "flex";
-      if (modeLabel) modeLabel.textContent = "Create Reader Account";
-      if (switchPrompt) switchPrompt.textContent = "Already have an account?";
-      if (switchBtn) switchBtn.textContent = "Sign in";
-    } else {
-      if (formIn) formIn.style.display = "flex";
-      if (formUp) formUp.style.display = "none";
-      if (modeLabel) modeLabel.textContent = "Sign in with Email";
-      if (switchPrompt) switchPrompt.textContent = "Need an account?";
-      if (switchBtn) switchBtn.textContent = "Create account";
-    }
   }
 
   if (authTriggerBtn) {
@@ -1360,383 +1321,26 @@ function getStoredToken() {
   if (authCloseBtn) authCloseBtn.addEventListener("click", closeAuthModal);
   if (authBackdrop) authBackdrop.addEventListener("click", closeAuthModal);
 
-  // Gateway buttons
-  var btnGatewayEmail = document.getElementById("btnGatewayEmail");
-  if (btnGatewayEmail) {
-    btnGatewayEmail.addEventListener("click", function(e) {
-      e.preventDefault();
-      var viewGateway = document.getElementById("authViewGateway");
-      var viewEmail = document.getElementById("authViewEmail");
-      if (viewGateway) viewGateway.style.display = "none";
-      if (viewEmail) viewEmail.style.display = "block";
-      setAuthEmailMode("signin");
-    });
-  }
-
-  var btnGatewaySignUp = document.getElementById("btnGatewaySignUp");
-  if (btnGatewaySignUp) {
-    btnGatewaySignUp.addEventListener("click", function(e) {
-      e.preventDefault();
-      var viewGateway = document.getElementById("authViewGateway");
-      var viewEmail = document.getElementById("authViewEmail");
-      if (viewGateway) viewGateway.style.display = "none";
-      if (viewEmail) viewEmail.style.display = "block";
-      setAuthEmailMode("signup");
-    });
-  }
-
-  // Back button inside email view
-  var btnAuthBack = document.getElementById("btnAuthBack");
-  if (btnAuthBack) {
-    btnAuthBack.addEventListener("click", function(e) {
-      e.preventDefault();
-      var viewGateway = document.getElementById("authViewGateway");
-      var viewEmail = document.getElementById("authViewEmail");
-      if (viewGateway) viewGateway.style.display = "block";
-      if (viewEmail) viewEmail.style.display = "none";
-    });
-  }
-
-  // Switch between Sign in and Create account in email view
-  var authSwitchBtn = document.getElementById("authSwitchBtn");
-  if (authSwitchBtn) {
-    authSwitchBtn.addEventListener("click", function(e) {
-      e.preventDefault();
-      var formIn = document.getElementById("signInForm");
-      var isCurrentlySignIn = formIn && formIn.style.display !== "none";
-      setAuthEmailMode(isCurrentlySignIn ? "signup" : "signin");
-    });
-  }
-
-  function promptSupabaseSetup() {
-    var noticeBox = document.getElementById("supabaseNoticeBox");
-    if (!noticeBox) {
-      noticeBox = document.createElement("div");
-      noticeBox.id = "supabaseNoticeBox";
-      noticeBox.style.cssText = "margin-top:14px; padding:12px; border-radius:8px; background:rgba(212,163,71,0.08); border:1px solid rgba(212,163,71,0.3); font-size:12px; color:var(--head, #f4ede2);";
-      noticeBox.innerHTML =
-        '<div style="font-weight:700; color:var(--gold, #d4a347); margin-bottom:6px;">⚡ Connect Supabase for Google OAuth</div>' +
-        '<p style="margin:0 0 10px; color:var(--muted, #9a958d); line-height:1.4;">Live Google Sign-In requires your Supabase Project URL and Public Anon Key.</p>' +
-        '<input type="url" id="sbUrlInput" placeholder="https://xyzcompany.supabase.co" style="width:100%; box-sizing:border-box; padding:7px 10px; margin-bottom:8px; border-radius:6px; border:1px solid var(--line, #333); background:var(--bg, #0b0c10); color:#fff; font-size:12px;">' +
-        '<input type="text" id="sbKeyInput" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6..." style="width:100%; box-sizing:border-box; padding:7px 10px; margin-bottom:10px; border-radius:6px; border:1px solid var(--line, #333); background:var(--bg, #0b0c10); color:#fff; font-size:12px;">' +
-        '<button type="button" id="btnSaveSupabase" style="width:100%; padding:8px; border-radius:6px; background:#d4a347; color:#0b0c10; font-weight:700; border:none; cursor:pointer;">Save &amp; Connect Google</button>';
-
-      var viewGateway = document.getElementById("authViewGateway");
-      if (viewGateway) viewGateway.appendChild(noticeBox);
-
-      var btnSave = document.getElementById("btnSaveSupabase");
-      if (btnSave) {
-        btnSave.addEventListener("click", function() {
-          var u = (document.getElementById("sbUrlInput").value || "").trim();
-          var k = (document.getElementById("sbKeyInput").value || "").trim();
-          if (!u || !k) {
-            alert("Please provide both Supabase URL and Anon Key.");
-            return;
-          }
-          store.setItem("ri_supabase_url", u);
-          store.setItem("ri_supabase_anon_key", k);
-          window.RI_SUPABASE_URL = u;
-          window.RI_SUPABASE_ANON_KEY = k;
-          if (window.supabase) {
-            supabaseClient = window.supabase.createClient(u, k);
-            showToast("✓ Supabase connected! Initiating Google Sign-In...");
-            setTimeout(function() {
-              supabaseClient.auth.signInWithOAuth({
-                provider: "google",
-                options: { redirectTo: window.location.origin + window.location.pathname }
-              });
-            }, 600);
-          } else {
-            showToast("Supabase credentials saved. Reloading...");
-            setTimeout(function() { window.location.reload(); }, 600);
-          }
-        });
-      }
-    }
-    noticeBox.scrollIntoView({ behavior: "smooth", block: "nearest" });
-  }
-
-  function showGoogleSetupNotice() {
-    var noticeBox = document.getElementById("googleSetupNoticeBox");
-    if (!noticeBox) {
-      noticeBox = document.createElement("div");
-      noticeBox.id = "googleSetupNoticeBox";
-      noticeBox.style.cssText = "margin-top:14px; padding:12px; border-radius:8px; background:rgba(212,163,71,0.08); border:1px solid rgba(212,163,71,0.3); font-size:12px; color:var(--head, #f4ede2);";
-      noticeBox.innerHTML =
-        '<div style="font-weight:700; color:var(--gold, #d4a347); margin-bottom:6px;">⚡ Google Login Not Enabled in Supabase Yet</div>' +
-        '<p style="margin:0 0 8px; color:var(--muted, #9a958d); line-height:1.4;">To activate Google login, enable Google in your Supabase Dashboard under <b>Authentication &rarr; Providers &rarr; Google</b> with your Google Client ID &amp; Secret.</p>' +
-        '<p style="margin:0; color:var(--gold, #d4a347); font-weight:600;">You can sign in or create an account right now with Email &amp; Password below!</p>';
-
-      var viewGateway = document.getElementById("authViewGateway");
-      if (viewGateway) viewGateway.appendChild(noticeBox);
-    }
-    noticeBox.scrollIntoView({ behavior: "smooth", block: "nearest" });
-  }
-
-  // Google OAuth Sign In
+  // 1-Click Google OAuth Sign In
   var googleLoginBtn = document.getElementById("googleLoginBtn");
   if (googleLoginBtn) {
     googleLoginBtn.addEventListener("click", function(e) {
       e.preventDefault();
       if (supabaseClient) {
+        googleLoginBtn.disabled = true;
+        googleLoginBtn.innerHTML = '<span>Connecting to Google...</span>';
         supabaseClient.auth.signInWithOAuth({
           provider: "google",
           options: {
             redirectTo: window.location.origin + window.location.pathname
           }
-        }).then(function(res) {
-          if (res && res.error) {
-            showToast("⚠️ " + res.error.message);
-            showGoogleSetupNotice();
-          }
         }).catch(function(err) {
+          googleLoginBtn.disabled = false;
+          googleLoginBtn.innerHTML = '<span>Continue with Google</span>';
           showToast("⚠️ " + (err.message || err));
-          showGoogleSetupNotice();
         });
       } else {
-        promptSupabaseSetup();
-      }
-    });
-  }
-
-  // Sign In Form submission (Supabase + Local fallback + clear in-form feedback)
-  var signInForm = document.getElementById("signInForm");
-  if (signInForm) {
-    signInForm.addEventListener("submit", function(e) {
-      e.preventDefault();
-      var emailInp = document.getElementById("signInEmail");
-      var passInp = document.getElementById("signInPassword");
-      var email = emailInp ? emailInp.value.trim().toLowerCase() : "";
-      var password = passInp ? passInp.value : "";
-      var submitBtn = document.getElementById("signInSubmitBtn");
-      var statusEl = document.getElementById("signInStatus");
-
-      if (!email || !password) return;
-
-      if (statusEl) {
-        statusEl.hidden = true;
-        statusEl.style.display = "none";
-      }
-      if (submitBtn) {
-        submitBtn.disabled = true;
-        submitBtn.textContent = "Signing In...";
-      }
-
-      function handleSuccessfulLogin(userObj, token) {
-        if (submitBtn) {
-          submitBtn.disabled = false;
-          submitBtn.textContent = "Sign In";
-        }
-        saveSession(userObj, token);
-        closeAuthModal();
-        showToast("✓ Welcome back, " + userObj.name + "!");
-        if (labState.pendingReviewTriggered) {
-          labState.pendingReviewTriggered = false;
-          openReviewModal(labState.pendingChapter);
-        }
-      }
-
-      function handleSignInFailure(errorMsg) {
-        // Direct fallback: check local accounts
-        try {
-          var users = localDb.getUsers();
-          var matched = users.find(function(u) {
-            return u.email && u.email.toLowerCase() === email;
-          });
-          if (matched) {
-            if (!matched.password || matched.password === password) {
-              var localUser = {
-                id: matched.id || ("usr_" + Math.random().toString(36).substring(2, 8)),
-                name: matched.name || (email.split("@")[0]),
-                email: matched.email,
-                avatar: matched.avatar || "",
-                provider: "email"
-              };
-              handleSuccessfulLogin(localUser, "tok_" + localUser.id);
-              return;
-            } else {
-              if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = "Sign In"; }
-              if (statusEl) {
-                statusEl.textContent = "Incorrect password. Please try again.";
-                statusEl.hidden = false;
-                statusEl.style.display = "block";
-              }
-              return;
-            }
-          }
-        } catch (e) {}
-
-        if (submitBtn) {
-          submitBtn.disabled = false;
-          submitBtn.textContent = "Sign In";
-        }
-        if (statusEl) {
-          statusEl.textContent = errorMsg || "Invalid email or password. Need an account? Click Create Account below.";
-          statusEl.hidden = false;
-          statusEl.style.display = "block";
-        } else {
-          showToast("⚠️ " + (errorMsg || "Invalid email or password."));
-        }
-      }
-
-      if (supabaseClient) {
-        supabaseClient.auth.signInWithPassword({ email: email, password: password })
-          .then(function(res) {
-            if (res.error) {
-              var errMsg = res.error.message;
-              if (errMsg && errMsg.indexOf("Email not confirmed") !== -1) {
-                errMsg = "Email not confirmed in Supabase yet. Please check your inbox or turn OFF 'Confirm email' in Supabase Auth settings.";
-              }
-              handleSignInFailure(errMsg);
-              return;
-            }
-            var u = res.data.user;
-            var meta = u.user_metadata || {};
-            var realName = meta.full_name || meta.name || email.split("@")[0] || "Reader";
-            var userObj = {
-              id: u.id,
-              name: realName,
-              email: u.email,
-              avatar: meta.avatar_url || meta.picture || "",
-              provider: "email",
-              userLevel: "Verified"
-            };
-            handleSuccessfulLogin(userObj, res.data.session ? res.data.session.access_token : ("tok_" + u.id));
-          })
-          .catch(function(err) {
-            handleSignInFailure(err.message || "Authentication failed.");
-          });
-        return;
-      }
-
-      // Offline / API fallback
-      callApi("/api/auth/login", "POST", { email: email, password: password })
-        .then(function(res) {
-          if (res && res.ok && res.user) {
-            handleSuccessfulLogin(res.user, res.token || ("tok_" + res.user.id));
-          } else {
-            handleSignInFailure(res ? res.error : null);
-          }
-        })
-        .catch(function() {
-          handleSignInFailure("Invalid credentials.");
-        });
-    });
-  }
-
-  // Direct Reader Account Registration (Instant, Honest, Real)
-  var signUpForm = document.getElementById("signUpForm");
-  if (signUpForm) {
-    signUpForm.addEventListener("submit", function(e) {
-      e.preventDefault();
-      var nameInp = document.getElementById("signUpName");
-      var emailInp = document.getElementById("signUpEmail");
-      var passInp = document.getElementById("signUpPassword");
-      var name = nameInp ? nameInp.value.trim() : "Reader";
-      var email = emailInp ? emailInp.value.trim().toLowerCase() : "";
-      var password = passInp ? passInp.value : "";
-      var submitBtn = document.getElementById("signUpSubmitBtn");
-      var statusEl = document.getElementById("signUpStatus");
-
-      if (!name || !email || !password) return;
-
-      if (statusEl) {
-        statusEl.hidden = true;
-        statusEl.style.display = "none";
-      }
-      if (submitBtn) {
-        submitBtn.disabled = true;
-        submitBtn.textContent = "Creating Account...";
-      }
-
-      var newUserId = "usr_" + Math.random().toString(36).substring(2, 10);
-      var newUser = {
-        id: newUserId,
-        name: name,
-        email: email,
-        password: password,
-        avatar: "",
-        provider: "email"
-      };
-
-      // 1. Save in localDb
-      try {
-        var users = localDb.getUsers();
-        var existingIdx = users.findIndex(function(u) { return u.email && u.email.toLowerCase() === email; });
-        if (existingIdx !== -1) {
-          users[existingIdx] = newUser;
-        } else {
-          users.push(newUser);
-        }
-        localDb.saveUsers(users);
-      } catch (e) {}
-
-      // First-Class Supabase Cloud Auth Registration
-      if (supabaseClient) {
-        supabaseClient.auth.signUp({
-          email: email,
-          password: password,
-          options: { data: { full_name: name, name: name } }
-        }).then(function(res) {
-          if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = "Create Account"; }
-
-          if (res.error) {
-            var errText = res.error.message;
-            if (errText && errText.indexOf("rate limit") !== -1) {
-              errText = "Supabase email rate limit reached (3-4/hr). To allow unlimited instant accounts, disable 'Confirm email' in Supabase Auth settings.";
-            }
-            if (statusEl) {
-              statusEl.textContent = errText;
-              statusEl.hidden = false;
-              statusEl.style.display = "block";
-            } else {
-              showToast("⚠️ " + errText);
-            }
-            return;
-          }
-
-          var supaUser = res.data.user;
-          var token = (res.data.session && res.data.session.access_token) ? res.data.session.access_token : ("tok_" + (supaUser ? supaUser.id : newUserId));
-          var realUser = {
-            id: supaUser ? supaUser.id : newUserId,
-            name: name,
-            email: email,
-            avatar: "",
-            provider: "email",
-            userLevel: "Verified"
-          };
-
-          saveSession(realUser, token);
-          closeAuthModal();
-
-          if (res.data.session) {
-            showToast("✓ Supabase verified: Welcome to Reverend Insanity, " + name + "!");
-          } else {
-            showToast("✓ Account registered in Supabase! Welcome, " + name + "!");
-          }
-
-          if (labState.pendingReviewTriggered) {
-            labState.pendingReviewTriggered = false;
-            openReviewModal(labState.pendingChapter);
-          }
-        }).catch(function(err) {
-          if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = "Create Account"; }
-          // Offline fallback
-          saveSession(newUser, "tok_" + newUserId);
-          closeAuthModal();
-          showToast("✓ Welcome to Reverend Insanity, " + name + "!");
-        });
-        return;
-      }
-
-      // Offline / Static fallback
-      saveSession(newUser, "tok_" + newUserId);
-      if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = "Create Account"; }
-      closeAuthModal();
-      showToast("✓ Welcome to Reverend Insanity, " + name + "!");
-      if (labState.pendingReviewTriggered) {
-        labState.pendingReviewTriggered = false;
-        openReviewModal(labState.pendingChapter);
+        showToast("⚠️ Supabase authentication client not initialized.");
       }
     });
   }
