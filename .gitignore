@@ -2,3 +2,7 @@ __pycache__/
 *.pyc
 .DS_Store
 
+
+# Discord exporter output + any local credentials
+_discord_export/
+tools/.token
